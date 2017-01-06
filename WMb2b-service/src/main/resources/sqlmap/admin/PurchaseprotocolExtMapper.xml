@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wangmeng.protocols.mapping.PurchaseprotocolExtMapper" >
+
+  <resultMap id="BaseExtResultMap" type="com.wangmeng.protocols.vo.PurchaseprotocolVo" >
+    <result column="Id" property="id" jdbcType="BIGINT" />
+    <result column="PurchaseNo" property="purchaseno" jdbcType="VARCHAR" />
+    <result column="OrderNo" property="orderno" jdbcType="VARCHAR" />
+    <result column="ProtocolNo" property="protocolno" jdbcType="VARCHAR" />
+    <result column="DocId" property="docid" jdbcType="VARCHAR" />
+    <result column="ProtocolName" property="protocolname" jdbcType="VARCHAR" />
+    <result column="BuyCompany" property="buycompany" jdbcType="BIGINT" />
+    <result column="BuyUser" property="buyuser" jdbcType="BIGINT" />
+    <result column="BuySigner" property="buysigner" jdbcType="VARCHAR" />
+    <result column="SupplyCompany" property="supplycompany" jdbcType="BIGINT" />
+    <result column="SupplyUser" property="supplyuser" jdbcType="BIGINT" />
+    <result column="SupplySigner" property="supplysigner" jdbcType="VARCHAR" />
+    <result column="Invoice" property="invoice" jdbcType="TINYINT" />
+    <result column="ExpressWay" property="expressway" jdbcType="TINYINT" />
+    <result column="ShipTo" property="shipto" jdbcType="VARCHAR" />
+    <result column="ReceiverMobile" property="receivermobile" jdbcType="VARCHAR" />
+    <result column="ReceiveAddr" property="receiveaddr" jdbcType="VARCHAR" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+    <result column="ProtocolModel" property="protocolmodel" jdbcType="VARCHAR" />
+    <result column="ProtocolFile" property="protocolfile" jdbcType="VARCHAR" />
+    <result column="ProtocolPict" property="protocolpict" jdbcType="VARCHAR" />
+    <result column="BuyerTime" property="buyertime" jdbcType="TIMESTAMP" />
+    <result column="SupplyerTime" property="supplyertime" jdbcType="TIMESTAMP" />
+    <result column="FinishTime" property="finishtime" jdbcType="TIMESTAMP" />
+    <result column="ProjectName" property="projectName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <!-- 统计 -->
+  <select id="countByExample" parameterType="com.wangmeng.protocols.filter.PurchaseprotocolExample" resultType="java.lang.Integer" >
+    <choose>
+        <when test="extProperties != null and extProperties.projectName != null">
+            SELECT count(1)
+		    	FROM wm_purchaseinfo_t t2 
+		    	JOIN (SELECT PurchaseNo FROM wm_purchaseprotocol_t 
+		     <if test="_parameter != null" >
+		      <include refid="Example_Where_Clause" />
+		    </if>
+		    )t1 ON t1.PurchaseNo=t2.PurchaseNo
+		     <if test="extProperties != null and extProperties.projectName != null" >
+		       WHERE t2.Name LIKE #{extProperties.projectName}
+		    </if>
+        </when>
+        <otherwise>
+          select count(*) from wm_purchaseprotocol_t
+	     <if test="_parameter != null" >
+	     	 <include refid="Example_Where_Clause" />
+	   	 </if>
+        </otherwise>
+    </choose>
+  </select>
+ 
+  <!-- 根据条件查询 
+    目前采用LEFT JOIN 
+  -->
+  <select id="selectByExample" resultMap="BaseExtResultMap" parameterType="com.wangmeng.protocols.filter.PurchaseprotocolExample" >
+     <choose>
+        <when test="extProperties != null and extProperties.projectName != null">
+          SELECT 
+    t1.Id, t1.PurchaseNo, t1.OrderNo, t1.ProtocolNo, t1.DocId, t1.ProtocolName, t1.BuyCompany, t1.BuyUser, t1.BuySigner, 
+    t1.SupplyCompany, t1.SupplyUser, t1.SupplySigner, t1.Invoice, t1.ExpressWay, t1.ShipTo, t1.ReceiverMobile, 
+    t1.ReceiveAddr, t1.Status, t1.ProtocolModel, t1.ProtocolFile, t1.ProtocolPict, t1.BuyerTime, t1.SupplyerTime, 
+    t1.FinishTime, t2.Name as ProjectName 
+    	FROM wm_purchaseinfo_t t2 JOIN 
+    	 (SELECT Id, PurchaseNo, OrderNo, ProtocolNo, DocId, ProtocolName, BuyCompany, BuyUser, BuySigner, 
+    SupplyCompany, SupplyUser, SupplySigner, Invoice, ExpressWay, ShipTo, ReceiverMobile, 
+    ReceiveAddr, Status, ProtocolModel, ProtocolFile, ProtocolPict, BuyerTime, SupplyerTime, 
+    FinishTime FROM wm_purchaseprotocol_t 
+     <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    )t1 ON t1.PurchaseNo=t2.PurchaseNo WHERE t2.Name LIKE #{extProperties.projectName}
+    <if test="orderByClause != null" >
+      ORDER BY ${orderByClause}
+    </if>   
+        </when>
+        <otherwise>
+    SELECT 
+    t1.Id, t1.PurchaseNo, t1.OrderNo, t1.ProtocolNo, t1.DocId, t1.ProtocolName, t1.BuyCompany, t1.BuyUser, t1.BuySigner, 
+    t1.SupplyCompany, t1.SupplyUser, t1.SupplySigner, t1.Invoice, t1.ExpressWay, t1.ShipTo, t1.ReceiverMobile, 
+    t1.ReceiveAddr, t1.Status, t1.ProtocolModel, t1.ProtocolFile, t1.ProtocolPict, t1.BuyerTime, t1.SupplyerTime, 
+    t1.FinishTime, t2.Name as ProjectName 
+    	FROM
+    	 (SELECT Id, PurchaseNo, OrderNo, ProtocolNo, DocId, ProtocolName, BuyCompany, BuyUser, BuySigner, 
+    SupplyCompany, SupplyUser, SupplySigner, Invoice, ExpressWay, ShipTo, ReceiverMobile, 
+    ReceiveAddr, Status, ProtocolModel, ProtocolFile, ProtocolPict, BuyerTime, SupplyerTime, 
+    FinishTime FROM wm_purchaseprotocol_t 
+     <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    )t1 LEFT JOIN wm_purchaseinfo_t t2 ON t1.PurchaseNo=t2.PurchaseNo
+    <if test="orderByClause != null" >
+      ORDER BY ${orderByClause}
+    </if>         
+          
+          
+        </otherwise>
+    </choose>
+  </select>
+  
+   <select id="selectStatisticCount" resultType="map">
+    SELECT CONCAT('status', Status) AS _status , count(1) AS _count FROM wm_purchaseprotocol_t GROUP BY `Status`
+   </select>
+</mapper>

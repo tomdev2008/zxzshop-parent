@@ -1,0 +1,317 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>商品管理</title>
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-brand-mgr.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-article-add.css" rel="stylesheet">
+	
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-product-mgr.js"></script>    
+     <script type="text/javascript" language="JavaScript">
+     function searchProduct(){
+	 	$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+     function seacrchAll(){
+   		$("#status").val("");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+     function seacrchDaiShenHe(){
+   		$("#status").val("1");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+     function seacrchWeiTongGuo(){
+   		$("#status").val("3");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+     function seacrchDianPuXiaJia(){
+   		$("#status").val("4");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+     function seacrchXiaoShouZhong(){
+   		$("#status").val("2");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+	 function seacrchWeiGuiXiaJia(){
+   		$("#status").val("5");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+    
+    </script>
+    </head>
+    <body>
+     #parse("include/page_normal_detect.vm")
+    <div class="demo-content">
+     <div class="span24 doc-content" style="width:90%">
+        <div class="account_mgr_nav">
+        	<a href="$request.getContextPath()/product/toProductList.do" class="active">商品管理</a>
+        	<a href="$request.getContextPath()/product/toProductAdd.do">新增商品</a>
+		</div>
+		<input type="hidden" name="passIds" id="passIds"/>
+		<form name="pageForm" id="pageForm" class="form-horizontal" action="$request.getContextPath()/product/toProductList.do">
+            <input type="hidden" name="nullFlag" id="nullFlag" value="$!nullFlag"/>
+            <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+            <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+            <div class="search_box mt20">
+    			<div class="clearfix">
+    				<label for="" class="field_label" style="width:100px">商品:</label>
+    				<input type="text" name="searchName" class="field_input" placeholder="商品名称/品牌/分类/编号" value="$!productVo.searchName">
+    			</div>
+    			<div class="clearfix">
+    				<label for="" class="field_label" style="width:100px">所属供应商:</label>
+    				<input type="text" name="companyName" class="field_input" placeholder="企业名称" value="$!productVo.companyName">
+    			</div>
+    			<div class="clearfix">
+    				<label for="" class="field_label" style="width:100px">发布日期:</label>
+    					<input type="text" name="beginTime" class="field_input field_date" placeholder="起始日期"> <span class="fl dash">-</span> <input placeholder="截止日期" name="endTime" type="text" class="field_input field_date" >
+    				<button class="submit" onclick="searchProduct()">查询</button>
+    			</div>
+    			<div class="clearfix status">
+    				<input id="status" name="status" type="hidden" value="$!productVo.status">
+    				<label for="" class="field_label" style="width:100px">商品状态:</label>
+    				<button data-id="null" onclick=seacrchAll();>全部</button>
+                    <button data-id="1" onclick=seacrchDaiShenHe()>待审核</button>
+                    <button data-id="3" onclick=seacrchWeiTongGuo()>未通过</button>
+                    <button data-id="5" onclick=seacrchWeiGuiXiaJia()>违规下架</button>
+                    <button data-id="2" onclick=seacrchXiaoShouZhong()>销售中</button>
+					<button data-id="4" onclick=seacrchDianPuXiaJia()>店铺下架</button>
+    			</div>
+		</form> 
+		</div>
+
+
+             <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="30">选择</th>
+                  <th>商品ID</th>
+                  <th>供应商</th>
+                  <th>商品</th>
+                  <th>品牌</th>
+                  <th>分类</th>
+                  <th>发布时间</th>
+                  <th>市场指导价</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+               <tbody>
+                #foreach($entity in $page.data)
+                    <tr>
+                      <td>#if($!{entity.status}==1)<input type="checkbox" name="oneCheck" class="uuid" value="$!{entity.id}">#end</td>
+                      <td>$!{entity.id}</td>
+                      <td>$!{entity.companyName}</td>
+                      <td>$!{entity.name}</td>
+                      <td>$!{entity.brandName}</td>
+                      <td>$!{entity.categoryName}</td>
+                      <td>$dateUtil.formatDate($!{entity.addTime},"yyyy-MM-dd")</td>
+                      <td>￥$!{entity.marketPrice}</td>
+                      <td>
+                        #if($!{entity.status}==1)
+                      		待审核
+						#elseif($!{entity.status}==2)
+						          销售中
+						#elseif($!{entity.status}==3)
+							未通过
+						#elseif($!{entity.status}==4)	
+						           店铺下架
+						#elseif($!{entity.status}==5)	
+						          违规下架
+						#end
+                      </td>
+                      <td nowrap>
+                     	 #if($!{entity.status}==1)
+
+							 #auth($request.getSession().getAttribute("session.user").getId(),"商品管理.查看")
+								<a href="$request.getContextPath()/product/toProductPreview.do?id=$!{entity.id}">预览</a>
+							 #end
+							<a href="$request.getContextPath()/product/toProductEdit.do?id=$!{entity.id}">编辑</a>
+
+							 #auth($request.getSession().getAttribute("session.user").getId(),"商品管理.审核")
+                      			<a href="javascript:;" class="check" tab="$!{entity.id}" rel="$!{entity.name}">审核</a>
+                      		 #end
+							#auth($request.getSession().getAttribute("session.user").getId(),"商品管理.删除")
+							 	<a href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.name}">删除</a>
+							#end
+
+						 #elseif($!{entity.status}==2)
+
+							 #auth($request.getSession().getAttribute("session.user").getId(),"商品管理.查看")
+								<a href="$request.getContextPath()/product/toProductPreview.do?id=$!{entity.id}">预览</a>
+							 #end
+						    <a href="$request.getContextPath()/product/toProductEdit.do?id=$!{entity.id}">编辑</a>
+
+							#auth($request.getSession().getAttribute("session.user").getId(),"商品管理.下架")
+						    	<a href="javascript:;" class="off" tab="$!{entity.id}" rel="$!{entity.name}">违规下架</a>
+						    #end
+				   			#auth($request.getSession().getAttribute("session.user").getId(),"商品管理.删除")
+							<a href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.name}">删除</a>
+			   				#end
+
+						 #elseif($!{entity.status}==3)
+							 #auth($request.getSession().getAttribute("session.user").getId(),"商品管理.查看")
+								<a href="$request.getContextPath()/product/toProductPreview.do?id=$!{entity.id}">预览</a>
+							 #end
+							<a href="$request.getContextPath()/product/toProductEdit.do?id=$!{entity.id}">编辑</a>
+							<a href="javascript:;" class="view" tab="$!{entity.id}" rel="$!{entity.name}">查看原因</a>
+
+							 #auth($request.getSession().getAttribute("session.user").getId(),"商品管理.删除")
+								<a href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.name}">删除</a>
+							 #end
+
+							 <div style="display:none">
+						        <div class="view-detail">
+						            <div class="entry">
+						                <label for="" class="field_label">
+						                    备注：
+						                </label>
+						                <textarea>$!{entity.refuseReason}</textarea>
+						            </div>
+						        </div>
+						    </div>
+						 #elseif($!{entity.status}==4)	
+							<a href="$request.getContextPath()/product/toProductPreview.do?id=$!{entity.id}">预览</a>
+						    <a href="$request.getContextPath()/product/toProductEdit.do?id=$!{entity.id}">编辑</a>
+							<a href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.name}">删除</a>
+						 #elseif($!{entity.status}==5)	
+							<a href="$request.getContextPath()/product/toProductPreview.do?id=$!{entity.id}">预览</a>
+						    <a href="$request.getContextPath()/product/toProductEdit.do?id=$!{entity.id}">编辑</a>
+							<a href="javascript:;" class="offshelf-view" tab="$!{entity.id}" rel="$!{entity.name}">查看原因</a>
+							<a href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.name}">删除</a>
+							<div style="display:none">
+						        <div class="offshelf-detail">
+						            <div class="entry">
+						                <label for="" class="field_label">
+						                    备注：
+						                </label>
+						                <textarea>$!{entity.offshelf}</textarea>
+						            </div>
+						        </div>
+						    </div>
+						 #end
+                      </td>
+                    </tr>
+                #end
+              </tbody>
+            </table>
+			<div style="float:left;">
+				<input type="checkbox" id="checked-all">
+				全选&nbsp;&nbsp;
+				<a href="javascript:;" id="passed">审核通过</a>
+			</div>
+		    #parse("include/page_normal.vm")
+
+    	</div>
+    </div>
+
+	<div style="display:none">
+        <div id="check_content">
+            <div class="entry">
+                <label for="" class="field_label">
+                    填写备注：
+                </label>
+                <textarea id="refuseReason"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:none">
+        <div id="view_content">
+            <div class="entry">
+                <label for="" class="field_label">
+                    备注：
+                </label>
+                <textarea >查看一下原因</textarea>
+            </div>
+        </div>
+    </div>
+
+      <div style="display:none">
+	        <div class="off_content" id="off_content">
+	            <div class="entry">
+	                <label for="" class="field_label">
+	                    下架理由：
+	                </label>
+	                <textarea id="offshelfReason"></textarea>
+	            </div>
+	        </div>
+	    </div>
+
+    <script type="text/javascript" language="JavaScript">
+    	$(function(){
+	    	var _status = $('#status').val();
+	    	_status = _status == "" ? "null" :  _status;
+    		$('.status > button[data-id='+_status+']').addClass('active').siblings().removeClass('active');
+    		var nullFlag = $('#nullFlag').val();
+    		if(nullFlag==1){
+    			$('#pageSize').removeAttr('value');
+    			$('#currentPage').removeAttr('value');
+    			$('#pageSize').val("10");
+    			$('#currentPage').val("1");
+    		}
+    	})
+		
+		$('#checked-all').click(function(){
+			if($(this).is(':checked')){
+			  $('input.uuid').prop('checked', true);
+			}else{
+				$('input.uuid').prop('checked', false);
+			}
+		});
+		
+		$('#passed').click(function(){
+			var ids = [];
+			$('input.uuid:checked').each(function(){
+				ids.push($(this).val());
+			});
+			$("#passIds").val(ids);
+			var passIds = $("#passIds").val();
+			if(passIds.length == 0){
+				return;
+			}
+			
+			$.ajax({
+    				type:"POST",
+    				url:'auditPassIds.do',
+    				data:"passIds=" + passIds,
+    				success:function(data){
+    					window.location.href="$request.getContextPath()/product/toProductList.do"; 
+    			    }
+    				
+    		});
+			
+		});
+		
+    </script>
+    
+    </body>
+    </html>       

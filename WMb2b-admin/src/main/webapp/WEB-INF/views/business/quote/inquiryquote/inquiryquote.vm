@@ -1,0 +1,222 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+  <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+        <script src="$!{request.getContextPath()}/assets/js/sea.js"></script>
+        <script src="$!{request.getContextPath()}/assets/js/config.js"></script>
+    </head>
+    <body>
+        #parse("include/page_normal_detect.vm")
+      <div class="demo-content">
+          <div class="doc-content">
+            <ul class="nav-tabs">
+              <li><a href="$request.getContextPath()/inquiry/queryInquerySheet.do">普通询价</a></li>
+            <!--   <li class="active"><a href="$request.getContextPath()/quotedeal/queryQuoteDealList.do">普通报价</a></li> -->
+              <a href="$request.getContextPath()/inquiry/queryInquerySheet.do" style="color: #888;float: right;padding-left: 30px;background-position: left center;background-repeat: no-repeat;font-size: 16px;margin-right: 133px;"><<返回询价管理</a>
+            </ul>
+             <div class="row">
+             <div class="span24 doc-content" style="width:90%">
+           
+               #foreach($InquiryQueryResult in $result.obj.data)
+                  <div class="row detail-row form-horizontal well">
+                      <div class="span6">
+                        <label>询价单号：</label><span class="detail-text">$!InquiryQueryResult.inquirySheetCode</span>   
+                      </div>
+                      <div class="span6">
+                        <label>用户名称：</label><span class="detail-text">$!InquiryQueryResult.username</span>
+                      </div>
+                       <div class="span8">
+                        <label>工程名称：</label><span class="detail-text">$!InquiryQueryResult.title</span>
+                      </div>
+                      <div class="span6">
+                            <label>提交时间：</label><span class="detail-text">
+                            $InquiryQueryResult.createDate
+                             <!-- $dateUtil.formatDate($InquiryQueryResult.createDate,"yyyy-MM-dd HH:mm") -->
+                            </span>
+                      </div>
+                      <div class="span6">
+                      <label>询价截止时间：</label><span class="detail-text">
+                      $InquiryQueryResult.endDate
+                        <!-- $dateUtil.formatDate($InquiryQueryResult.endDate,"yyyy-MM-dd HH:mm") -->
+                             </span>
+                      </div>
+                      <div class="span3">
+                          #auth($request.getSession().getAttribute("session.user").getId(),"查看报价.继续其他报价")
+                            <a class="button button-primary span3" href="$request.getContextPath()/inquiry/queryOtherInquiryByCode.do?code=$!InquiryQueryResult.inquirySheetCode&isQproduct=true&isQbrands=true&viewType=3" >继续其他报价</a>
+                          #end
+                      </div>
+                    </div>  
+                
+                <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="50">选择</th>
+                  <th>报价单号</th>
+                  <th>供应商</th>
+                  <th>品牌</th>
+                  <th>合计金额(元)</th>
+                  <th>材料总类</th>
+                  <th>报价日期</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+               <tbody>
+                    #foreach($QuoteStatistic in $InquiryQueryResult.quoteList)
+                        <tr>
+                          <td>
+                           #if($!QuoteStatistic.status == '5')
+                               <input  disabled type="checkbox" name="oneCheckName$!InquiryQueryResult.inquirySheetCode" value="$!QuoteStatistic.quoteNo">
+                           #else
+                              <input  type="checkbox" name="oneCheckName$!InquiryQueryResult.inquirySheetCode" value="$!QuoteStatistic.quoteNo">
+                           #end
+                          </td>
+                          <td>$!QuoteStatistic.quoteNo</td>
+                          <td>$!QuoteStatistic.companyName</td>
+                          <td>$!QuoteStatistic.brandNames</td>
+                          <td>$!QuoteStatistic.totalCost</td>
+                          <td>$!QuoteStatistic.kinds</td>
+                          <td>$dateUtil.formatDate($!QuoteStatistic.quoteTime,"yyyy-MM-dd HH:mm")</td>
+                                #if($!QuoteStatistic.status == "1" || $!QuoteStatistic.status == "2" )
+                                        <td>待报价</td>
+                                #elseif($!QuoteStatistic.status == "3" || $!QuoteStatistic.status == "4" )
+                                        <td>已报价</td>
+                                #else
+                                      <td>已推送</td>
+                               #end
+                          <td>
+                             #if($!QuoteStatistic.status == "3" || $!QuoteStatistic.status == "4")
+                                   <a class="button button-primary" href="#" title="编辑" onClick="javascript:edit_quote('$!InquiryQueryResult.inquirySheetCode','$!QuoteStatistic.quoteNo');" tab="$!QuoteStatistic.quoteNo">编辑</a>
+                                   &nbsp;&nbsp;
+                                  <a class="button button-primary" href="#" title="推送" onClick="javascript:push_quote('$!QuoteStatistic.quoteNo','$!InquiryQueryResult.inquirySheetCode');" tab="$!QuoteStatistic.quoteNo">推送</a>
+                                  &nbsp;&nbsp;
+                                  <a class="button button-primary" href="#" title="删除" onClick="javascript:delete_quote('$!QuoteStatistic.quoteNo');" tab="$!QuoteStatistic.quoteNo">删除</a>
+                              #else
+                                 <a class="button button-primary" href="#" title="编辑" onClick="javascript:edit_quote('$!InquiryQueryResult.inquirySheetCode','$!QuoteStatistic.quoteNo');" tab="$!QuoteStatistic.quoteNo">编辑</a>
+                              #end
+                          </td>
+                        </tr>
+                    #end
+                  </tbody>
+                    </table>
+                    <div class="detail-row form-horizontal well span10">
+                        <div>
+                             <input type="checkbox" id="oneCheck$!InquiryQueryResult.inquirySheetCode" onclick="javaScript:batchCheck('$!InquiryQueryResult.inquirySheetCode')">全选</input>
+                             <button id="pushid" type="button" onclick="javaScript:allPush('$!InquiryQueryResult.inquirySheetCode','$!InquiryQueryResult.inquirySheetCode')" class="button button-primary">全部推送</button>
+                            </div>
+                            <span style="color:red">说明：已推送的不能再推送</span>                                            
+                     </div>
+                  #end
+              
+                 <!-- #parse("include/page_normal.vm") -->
+              </div>
+            </div>
+          </div>  
+      </div>
+      <script type="text/javascript" language="JavaScript">
+   $LAB
+   .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+   .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+   .script("$!{request.getContextPath()}/assets/js/config-min.js")
+   .wait(function(){
+    
+   });
+   
+    BUI.use('bui/calendar',function(Calendar){
+      var datepicker = new Calendar.DatePicker({
+        trigger:'.calendar',
+        autoRender : true
+      });
+    });
+    
+</script>  
+<script type="text/javascript" language="JavaScript">
+  function act(data){
+        $("#status").val(data);
+         $("#pageForm").submit();
+    }
+  //查看询价单信息
+ function auditing_inquiry(data){
+   location.href="$request.getContextPath()/inquiry/queryInquiryByCode.do?code="+data+"&isQproduct="+true+"&viewType=1";
+ }
+ function view_inquiry(data){
+   location.href="$request.getContextPath()/inquiry/queryInquiryByCode.do?code="+data+"&isQproduct="+true+"&viewType=2";
+ }
+    
+  function edit_quote(data,quoteNo){
+    location.href="$request.getContextPath()/inquiry/queryInquiryByCode.do?code="+data+"&isQproduct="+true+"&isQbrands="+true+"&viewType=3&quoteNo="+quoteNo;
+  }
+</script>
+
+    <script >
+       function batchCheck(data){
+            var ns = "oneCheck"+data;
+             var batchCheck = document.getElementById(ns);
+             var nsname = "oneCheckName"+data;
+            if(batchCheck.checked == true)
+            {
+                  $("input[name = "+nsname+"]").not(":disabled").attr("checked", true);
+            }else
+            {
+                $("input[name = "+nsname+"]").not(":disabled").attr("checked", false);
+            }
+       }
+       
+       
+       //推送报价
+       function push_quote(data,inquirySheetCode){
+                  $.ajax({
+                      type: 'get',
+                      url: "../quotedeal/pushQuto.do",
+                      data:{qutoCode:data,status:5},
+                       dataType: "json",
+                      success: function(data){
+                          if(data.code == '000000'){//返回成功
+                             BUI.Message.Alert('推送成功！','success'); 
+                             location.href="$request.getContextPath()/quotedeal/queryQuoteDealList.do?code="+inquirySheetCode;
+                          }
+                      },
+                      error : function() {    
+                          BUI.Message.Alert('推送失败！','error'); 
+                      }   
+                    });
+            return false;
+       }
+       
+       //全部推送
+      function allPush(data,inquirySheetCode){
+            var nsname = "oneCheckName"+data;
+            var ci = new Array();
+            //if($("input[name='+nsname+']").is(':checked')){
+                var cii = $("[name = "+nsname+"]:checked");
+            //}
+            cii.each(function(){
+                ci.push($(this).val());
+            });
+               var cijoin = ci.join(",");
+               $.ajax({
+                      type: 'post',
+                      url: "../quotedeal/pushQuto.do",
+                      data:{qutoCode:cijoin,status:5},
+                       dataType: "json",
+                      success: function(data){
+                          if(data.resultCode.code == '000000'){//返回成功
+                             BUI.Message.Alert('推送成功！','success'); 
+                             location.href="$request.getContextPath()/quotedeal/queryQuoteDealList.do?code="+inquirySheetCode;
+                          }
+                      },
+                      error : function() {    
+                          BUI.Message.Alert('推送失败！','error'); 
+                      }   
+                    });
+       }
+    </script>
+    
+    </body>
+    </html>

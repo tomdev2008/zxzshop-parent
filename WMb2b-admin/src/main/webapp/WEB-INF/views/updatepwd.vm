@@ -1,0 +1,32 @@
+  <div id="user_edit_content">
+      <form id="U_Edit_Form" class="form-horizontal" method="post">
+        <input type="hidden" id="userId" value="$user.id">
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">原密码:</label>
+            <div class="controls">
+              <input id="oldPwd" type="password"   class="input-normal control-text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">新密码:</label>
+            <div class="controls">
+              <input id="nPwd" type="password"   class="input-normal control-text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">确认密码:</label>
+            <div class="controls">
+              <input id="cPwd" type="password"   class="input-normal control-text">
+            </div>
+          </div>
+        </div>
+        <div class="row" id="errorContainer" style="color:red;display:block;margin-left:55px;">
+	                
+        </div>
+      </form>
+    </div> 

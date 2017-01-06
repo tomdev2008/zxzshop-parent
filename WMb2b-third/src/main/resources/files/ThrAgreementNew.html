@@ -1,0 +1,192 @@
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+	<html xmlns="http://www.w3.org/1999/xhtml">   
+	<head>     
+	<meta charset="UTF-8">  
+	<title>购销协议书</title>   
+	<style>           
+	.contentBox { width: 1038px;  
+				margin: 50px auto 50px auto;
+				font-size: 20px; 
+				font-family: 'microsoft yahei';    
+				color: #212121;       
+				padding:2px;      
+				position:relative; 
+				}        
+	.contentBox h1 {   
+				text-align: center;   
+				font-size: 26px;  
+				font-weight: bold; 
+				}   
+	.contentBox .text {  
+				text-indent: 2em;   
+				}       
+	.table{    
+			width:98%;
+			height:31px;  
+			border-collapse:collapse;  
+			border: 1px solid #212121;	
+			margin-top:2px;           
+			}  
+	.table caption{
+			text-align:left;  
+			font-weight: bold;  
+			}                
+	.table td,.table th{  
+			border:1px solid #212121; 
+			text-align: center;   
+			vertical-align:middle;  
+			padding:2px;          
+			}           
+	.table td.text-left{text-align:left;}      
+	.contentBox .title{              
+				text-align:left;  
+				font-weight: bold;  
+				}                
+	.text.em{        
+		font-weight: bold; 
+	}    
+	.contentBox .title.clearEm{   
+				font-weight: normal;  
+				}                 
+	.date{            
+		text-align: right;   
+		line-height: 24px;     
+		padding-bottom: 42px;   
+		margin-top:60px;      
+	} 
+	.nameText{        
+		display: inline-block;  
+		width: 8em;               
+		border-bottom: 1px solid #212121; 
+		text-align: left;             
+	}   
+	.IDCard{     
+		display: inline-block; 
+		width: 15em;            
+		border-bottom: 1px solid #212121; 
+		text-align: left;          
+	}  
+	.phone{         
+		display: inline-block;   
+		width: 10em;             
+		border-bottom: 1px solid #212121;  
+		text-align: left;                    
+	}     
+	.bank{   
+		display: inline-block;  
+		width:12em;               
+		text-align: left;          
+	}   
+	.bankUserName{ 
+		display: inline-block;  
+		width: 12em;             
+		text-align: left;     
+	}   
+	.bankNumber{ 
+		display: inline-block;
+		width: 12em;             
+		text-align: left;      
+	}      
+	.otherText{       
+		height:635px;    
+		line-height:39px;   
+		width:98%;           
+		text-align:left;     
+		margin-top:5px;      
+	}  
+	.autograph{     
+		display: inline-block;  
+		width: 10em;   
+	}     
+	.line-bg{      
+		background:url(black-line-bg.png);  
+	}   
+	.invoice1{       
+		border-bottom: 1px solid #212121;
+	}  
+	.line{border:none; border-bottom:1px #000 solid; height:24px; text-align:center; line-height:24px; font-size: 20px; font-family:"微软雅黑";width:50px;}
+	.line:focus{outline:none}
+	.line-area{border:none; 
+	line-height:2em; overflow:hidden; resize:none;}  
+	</style>	
+	</head>	
+	<body>
+	<div class="contentBox">
+    <h1>购销协议书</h1>
+    <p>合同编号：{AgreementNo}</p>
+    <p class="party">甲方（买受方）：{BuyerName}</p>
+	<p>乙方（出卖方）：{CompanyName}</p>
+    <p>丙方（平台）：网盟电子商务有限公司</p>  
+    <p class="text">甲方在丙方平台向乙方采购建材，丙方免费为双方提供服务，现就甲乙双方购买建材事宜，双方经友好协商达成协议如下：
+    </p>
+    <p class="title">一、甲方购买材料清单</p>   
+	<div class="contentBox">
+        
+		{productTableRows} 
+		  
+	</div>
+    <p class="title">二、开票信息：</p>
+	
+	<div style="{invoice1}">
+		<p class="text">发票类型：增值税普通发票 </p>
+		<p class="text">单位名称：{BuyerName}</p>
+        
+	</div>
+	
+	<div style="{invoice2}">
+		<p class="text">发票类型：增值税专用发票 </p>
+		<p class="text">单位名称：{BuyerName}</p>
+		<p class="text">统一社会信用代码证：{companycode}</p>
+		<p class="text">开户行：{BankName1}</p>
+		<p class="text">账号：{BankNumber1}</p>
+		<p class="text">单位电话：{companyphone}</p>
+		<p class="text">单位地址：{companyaddress}</p>
+	</div>					          
+    <p class="title">三、包装与物流：</p>
+    
+    <p class="text">1.甲方购买的建材按乙方出厂标准包装，货物由<span class="invoice1">{EMS1}</span>方负责运输，货物送达地
+   		  址为<span class="invoice1">中</span>国____省____市____区/县</p>
+    <p class="text">2.详细地址：{Address}</p>
+    
+    <p class="title">四、甲方授权收货人：（两人同时签收或一人签收均为有效签收）</p>
+    <p class="text">①姓名<span class="nameText">{Consignee1}</span>;身份证号:<span class="IDCard">{IDCard1}</span>;联系电话:<span class="phone">{Mobile1}</span></p>
+    <p class="text">②姓名<span class="nameText">{Consignee2}</span>;身份证号:<span class="IDCard">{IDCard2}</span>;联系电话:<span class="phone">{Mobile2}</span></p>
+    <p class="title">五、交付期限：</p>
+    <p class="text">1.双方确认为:<input class="line" style="width:150px" id="confirmdate" value=""></p>
+    <p class="text">
+   	2.货物交付地址及时间如变更：甲方应提前<input class="line" id="datenum" value="">天书面通知丙方，由丙方向乙方说明该情况并征求乙方意见。丙方须在收到甲方通知后2小时回复甲方可否调整交付地址。
+    </p>
+    
+    <p class="title">六、货物的验收</p>
+    <p class="text">  1.货物经乙方检验合格后出厂，根据双方合同约定进行运输，到达甲方所在地按甲乙双方在本合同中的约定验收并清点数量，由甲方或甲方委托的指定人员在乙方的送货单证上签字确认。如甲方签收人对货物的数量、产品规格、质量等有异议，甲方应立即将不符合约定的产品图片及说明上传至丙方，丙方根据甲方所上传的资料核对甲、乙双方合同中的采购清单并进行协商解决。</p>
+    <p class="text">  2.若乙方货物送达甲方指定地点2小时内，甲方未派指定收货人到现场收货，乙方可将货物送达现场的图片及情况说明上传至丙方，丙方在30分钟内协调甲方收货，甲方若无正当理由拒绝收货，乙方有权按双方合同约定地点卸货，并视为甲方认可本批货物全部验收合格。</p>
+    <p class="title">七、货款的支付</p>
+    <p class="text"> 1.甲方付款</p>
+    <p class="text"> 甲方应在本协议生效后<input class="line" id="paynum1" value="">个工作日内支付第一笔货款<input class="line" id="paynum2" value="">元；<input class="line" id="paynum3" value="">年  <input class="line" id="paynum4" value="">月<input class="line" id="paynum5" value="">日支付第二笔货款<input class="line" id="paynum6" value="">元；<input class="line" id="paynum7" value="">年<input class="line" id="paynum8" value="">月<input class="line" id="paynum9" value="">日支付第三笔货款<input class="line" id="paynum10" value="">元。</p>
+	<p class="text"> 2.各方银行账户信息：</p>
+	    <p><span class="text">甲方开户行：</span><span class="bank">{BankName1}</span>户名：<span class="bankUserName">{BankUserName1}</span>账户：<span class="bankNumber">{BankNumber1}</span></p>
+	    <p><span class="text">乙方开户行：</span><span class="bank">{BankName2}</span>户名：<span class="bankUserName">{BankUserName2}</span>账户：<span class="bankNumber">{BankNumber2}</span></p>
+	    <p><span class="text">丙方开户行：</span><span class="bank">招商银行杭州城东支行</span>户名：<span class="bankUserName">网盟电子商务有限公司</span>账户：<span class="bankNumber">571907924010206</span></p>
+	 <div><p class="text">3.双方其它付款约定：<textarea maxlength="200" class="line line-bg line-area" style="width:1030px; height:200px; text-align:left;" id="conventions"></textarea></p></div>
+	 
+	<p class="text"> 4.双方完成本次交易当天必须将收货单证上传至丙方，以便丙方确认本次交易完成，将本次交易的全部信息资料归档。
+	  </p>
+    <p class="title">八、违约责任</p>
+    <p class="text">
+        1.甲、乙双方应当按照本协议约定的时间支付货款和交付货物。双方如有一方违约，每逾期一日，应按合同所涉总金额的万分之五支付对方逾期履行违约金。</p>
+    <p class="text">2.乙方交付货物质量不符合约定的标准，由此给甲方造成的全部损失由乙方承担。</p>
+    <p class="title">九、免责条款</p>
+    <p class="text em">
+    	本合同履行期间，如发生战争、自然灾害、第三人造成的意外事故等甲乙双方不能预见、不能避免并不能克服的客观情况，导致一方不能正常履行合同，该行为不构成违约。但受不可抗力影响的一方应第一时间将不可抗力的发生情况实际通知对方，并采取有效措施减轻可能给对方造成的损失，同时需在合理期限内提供有关主管部门的证明。   
+    </p><p class="title">十、发生纠纷赔偿责任约定</p>
+    <p class="text">本合同如发生纠纷，由丙方负责协调解决，协商不成，甲，乙双方可根据本协议规定向法院诉讼解决。丙方提供双方真实的各类依据给相关部门做证据参考，甲，乙双方同意丙方不承担任何连带赔偿责任。</p>
+    <p class="title clearEm">十一、本合同自甲乙丙三方共同签字或盖章后生效。采用电子文本形式制成，并保存在平台以供备查。</p>
+    <p class="title">十二、其他约定
+	  </p><p style="height:{highsigin};line-height:31px;width:98%;text-align:left;margin-top:5px;">{extraAgree} </p>
+    <br>
+    <div style="position:absolute; bottom:-350px; right:120px;">
+		<p class="text">甲方（买家）:<span class="autograph"></span> 乙方（厂家）：<span class="autograph"></span>丙方（平台）：朱琳</p>
+	    <p class="date">
+	    <span>签合同日期：</span><span>{Date}</span></p>
+    </div>
+</div></body></html>

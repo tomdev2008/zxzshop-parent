@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+    <!--pool2中修改如下：-->
+    <!--maxActive  ==>  maxTotal-->
+    <!--maxWait ==> maxWaitMillis-->
+
+    <!-- redis pool配置 -->
+    <bean id="redisPoolConfiguration" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig">
+        <!--<property name="lifo" value="${redis.pool.lifo}" />-->
+        <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}" />
+        <!--<property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}" />-->
+        <!--<property name="softMinEvictableIdleTimeMillis" value="${redis.pool.softMinEvictableIdleTimeMillis}" />-->
+        <!--<property name="numTestsPerEvictionRun" value="${redis.pool.numTestsPerEvictionRun}" />-->
+        <!--<property name="testOnCreate" value="${redis.pool.testOnCreate}" />-->
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
+        <!--<property name="testOnReturn" value="${redis.pool.testOnReturn}" />-->
+        <!--<property name="testWhileIdle" value="${redis.pool.testWhileIdle}" />-->
+        <!--<property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}" />-->
+        <!--<property name="blockWhenExhausted" value="${redis.pool.blockWhenExhausted}" />-->
+        <!--<property name="minIdle" value="${redis.pool.minIdle}" />-->
+        <property name="maxIdle" value="${redis.pool.maxIdle}" />
+        <property name="maxTotal" value="${redis.pool.maxTotal}" />
+    </bean>
+
+    <!-- spring data redis -->  
+    <bean id="redisConnectionFactory" class="com.wangmeng.redis.XJedisConnectionFactory">
+        <property name="usePool" value="true"></property>
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <property name="password" value="${redis.pass}" />
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="database" value="${redis.default.db}"></property>
+        <constructor-arg index="0" ref="redisPoolConfiguration" />
+    </bean>
+     
+    <!-- RedisTemplate -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">  
+        <property name="connectionFactory" ref="redisConnectionFactory" />
+        <property name="keySerializer">  
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>  
+        </property>  
+        <property name="valueSerializer">  
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>  
+        </property>  
+    </bean>
+
+    <!-- RedisFacade -->
+	<bean id="redisFacade" class="com.wangmeng.redis.RedisFacade">
+        <property name="template" ref="redisTemplate"></property>
+    </bean> 
+      
+</beans>  

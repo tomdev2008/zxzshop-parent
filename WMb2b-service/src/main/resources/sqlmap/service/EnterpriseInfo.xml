@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="EnterpriseInfo">
+
+	<!-- 企业结果集 列表用 -->
+	<resultMap id="enterpriseResultMapLite" type="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId" />
+		<result property="companyName" column="CompanyName" />
+		<result property="companyAddress" column="CompanyAddress" />
+		<result property="legalPerson" column="LegalPerson" />
+		<result property="idCardNo" column="IdCardNo" />
+		<result property="cardType" column="CardType" />
+		<result property="enterpriseType" column="EnterpriseType" />
+		<result property="contactsName" column="ContactsName" />
+		<result property="contactsPhone" column="ContactsPhone" />
+		<result property="contactsEmail" column="ContactsEmail" />
+		<result property="contactsFix" column="ContactsFix" />
+		<result property="contactsTelPhone" column="ContactsTelPhone" />
+		<result property="status" column="Status" />
+		<result property="registeredCapital" column="RegisteredCapital"/>
+		<result property="isDefault" column="IsDefault" />
+		<result property="certifStatus" column="CertifStatus" />
+		<result property="PersonEmail" column="PersonEmail" />
+		<result property="PersonName" column="PersonName" />
+		<result property="PersonPhone" column="PersonPhone" />
+		<result property="categery" column="Categery" />
+		<result property="auditDate" column="AuditDate" />
+		<result property="commitDate" column="CommitDate" />
+		<result property="certifDate" column="CertifDate" />
+		<result property="regionId" column="RegionId" />
+		<result property="certifNo" column="CertifNo" />
+		<result property="sealStatus" column="SealStatus" />
+
+		<association property="user" javaType="com.wangmeng.service.bean.User" resultMap="userResultMap"/>
+	</resultMap>
+	
+	<!-- 企业结果集 CA -->
+	<resultMap id="enterpriseResultMapForCA" type="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId" />
+		<result property="companyName" column="CompanyName" />
+		<result property="companyAddress" column="CompanyAddress" />
+		<result property="legalPerson" column="LegalPerson" />
+		<result property="idCardNo" column="IdCardNo" />
+		<result property="cardType" column="CardType" />
+		<result property="enterpriseType" column="EnterpriseType" />
+		<result property="contactsName" column="ContactsName" />
+		<result property="contactsPhone" column="ContactsPhone" />
+		<result property="contactsEmail" column="ContactsEmail" />
+		<result property="contactsFix" column="ContactsFix" />
+		<result property="contactsTelPhone" column="ContactsTelPhone" />
+		<result property="status" column="Status" />
+		<result property="registeredCapital" column="RegisteredCapital"/>
+		<result property="isDefault" column="IsDefault" />
+		<result property="certifStatus" column="CertifStatus" />
+		<result property="PersonEmail" column="PersonEmail" />
+		<result property="PersonName" column="PersonName" />
+		<result property="PersonPhone" column="PersonPhone" />
+		<result property="categery" column="Categery" />
+		<result property="auditDate" column="AuditDate" />
+		<result property="commitDate" column="CommitDate" />
+		<result property="certifDate" column="CertifDate" />
+		<result property="regionId" column="RegionId" />
+		<result property="certifNo" column="CertifNo" />
+		<result property="sealStatus" column="SealStatus" />
+
+		<association property="user" javaType="com.wangmeng.service.bean.User" resultMap="userResultMap"/>
+		<collection property="enterprisephotoList" ofType="com.wangmeng.service.bean.Enterprisephoto" resultMap="photoResultMap" />
+	</resultMap>
+	
+	<!-- 企业结果集 详情 -->
+	<resultMap id="enterpriseResultMapForDetail" type="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId" />
+		<result property="companyName" column="CompanyName" />
+		<result property="companyAddress" column="CompanyAddress" />
+		<result property="legalPerson" column="LegalPerson" />
+		<result property="idCardNo" column="IdCardNo" />
+		<result property="cardType" column="CardType" />
+		<result property="enterpriseType" column="EnterpriseType" />
+		<result property="contactsName" column="ContactsName" />
+		<result property="contactsPhone" column="ContactsPhone" />
+		<result property="contactsEmail" column="ContactsEmail" />
+		<result property="contactsFix" column="ContactsFix" />
+		<result property="contactsTelPhone" column="ContactsTelPhone" />
+		<result property="status" column="Status" />
+		<result property="registeredCapital" column="RegisteredCapital"/>
+		<result property="isDefault" column="IsDefault" />
+		<result property="certifStatus" column="CertifStatus" />
+		<result property="PersonEmail" column="PersonEmail" />
+		<result property="PersonName" column="PersonName" />
+		<result property="PersonPhone" column="PersonPhone" />
+		<result property="categery" column="Categery" />
+		<result property="auditDate" column="AuditDate" />
+		<result property="commitDate" column="CommitDate" />
+		<result property="certifDate" column="CertifDate" />
+		<result property="regionId" column="RegionId" />
+		<result property="certifNo" column="CertifNo" />
+		<result property="sealStatus" column="SealStatus" />
+
+		<association property="user" javaType="com.wangmeng.service.bean.User" resultMap="userResultMap"/>
+		<collection property="visitVoList" ofType="com.wangmeng.service.bean.vo.VisitVo" resultMap="visitResultMap"/>
+		<collection property="enterprisephotoList" ofType="com.wangmeng.service.bean.Enterprisephoto" resultMap="photoResultMap" />
+	</resultMap>
+
+	<!-- 企业结果集 -->
+	<resultMap id="enterpriseResultMap" type="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId" />
+		<result property="companyName" column="CompanyName" />
+		<result property="companyAddress" column="CompanyAddress" />
+		<result property="legalPerson" column="LegalPerson" />
+		<result property="idCardNo" column="IdCardNo" />
+		<result property="cardType" column="CardType" />
+		<result property="enterpriseType" column="EnterpriseType" />
+		<result property="contactsName" column="ContactsName" />
+		<result property="contactsPhone" column="ContactsPhone" />
+		<result property="contactsEmail" column="ContactsEmail" />
+		<result property="contactsFix" column="ContactsFix" />
+		<result property="contactsTelPhone" column="ContactsTelPhone" />
+		<result property="status" column="Status" />
+		<result property="registeredCapital" column="RegisteredCapital"/>
+		<result property="isDefault" column="IsDefault" />
+		<result property="certifStatus" column="CertifStatus" />
+		<result property="PersonEmail" column="PersonEmail" />
+		<result property="PersonName" column="PersonName" />
+		<result property="PersonPhone" column="PersonPhone" />
+		<result property="categery" column="Categery" />
+		<result property="auditDate" column="AuditDate" />
+		<result property="commitDate" column="CommitDate" />
+		<result property="certifDate" column="CertifDate" />
+		<result property="regionId" column="RegionId" />
+		<result property="certifNo" column="CertifNo" />
+		<result property="sealStatus" column="SealStatus" />
+
+		<association property="user" javaType="com.wangmeng.service.bean.User" resultMap="userResultMap"/>
+		<association property="bankaccountinfo" javaType="com.wangmeng.service.bean.Bankaccountinfo" resultMap="bankAccountResultMap" />
+		<collection property="visitVoList" ofType="com.wangmeng.service.bean.vo.VisitVo" resultMap="visitResultMap"/>
+		<collection property="enterprisephotoList" ofType="com.wangmeng.service.bean.Enterprisephoto" resultMap="photoResultMap" />
+	</resultMap>
+
+	<!-- 企业关联账号结果集 -->
+	<resultMap id="userResultMap" type="com.wangmeng.service.bean.User">
+		<id property="id" column="u_id" />
+		<result property="userName" column="u_username"/>
+		<result property="nick" column="u_nick"/>
+		<result property="email" column="u_email"/>
+		<result property="realName" column="u_realname"/>
+		<result property="cellPhone" column="u_cellphone"/>
+		<result property="photo" column="u_photo"/>
+		<result property="registerWay" column="u_way"/>
+		<result property="telphone" column="u_telphone"/>
+		<result property="userType" column="u_usertype"/>
+		<result property="sex" column="u_sex"/>
+	</resultMap>
+
+	<!-- 企业关联回访结果集 -->
+	<resultMap id="visitResultMap" type="com.wangmeng.service.bean.vo.VisitVo">
+		<id property="id" column="visit_id" />
+		<result property="visitorName" column="visit_name"/>
+		<result property="enterpriseId" column="visit_enterp_id"/>
+		<result property="content" column="visit_content"/>
+		<result property="createdTime" column="visit_createdtime"/>
+	</resultMap>
+
+	<!-- 企业关联照片结果集 -->
+	<resultMap id="photoResultMap" type="com.wangmeng.service.bean.Enterprisephoto">
+		<id property="id" column="photo_id" />
+		<result property="enterpriseinfoId" column="photo_enterpid"/>
+		<result property="orgPath" column="photo_orgpath"/>
+		<result property="maxPath" column="photo_maxpath"/>
+		<result property="minPath" column="photo_minpath"/>
+		<result property="dictCode" column="photo_dictcode"/>
+		<result property="description" column="photo_desc"/>
+		<result property="category" column="photo_category"/>
+	</resultMap>
+
+	<!-- 企业关联开户行结果集 -->
+	<resultMap id="bankAccountResultMap" type="com.wangmeng.service.bean.Bankaccountinfo">
+		<id property="id" column="bank_id"/>
+		<result property="accountName" column="bank_accountname"/>
+		<result property="depositBank" column="bank_depositbank"/>
+		<result property="bankAccount" column="bank_bankaccount"/>
+		<result property="userId" column="bank_userid"/>
+		<result property="isDelete" column="bank_isdelete"/>
+		<result property="bankBranch" column="bank_branch"/>
+		<result property="userType" column="bank_usertype"/>
+		<result property="enterpriseId" column="bank_enterpid"/>
+	</resultMap>
+
+
+	<!-- 查询企业 -->
+	<select id="EnterpriseInfo.getEnterpriseById" parameterType="int" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select a.* ,
+			(select b.description from wm_enterprisephoto_t b where b.EnterpriseinfoId =a.id and dictcode =200004 limit 1 )companycode
+		 from wm_enterpriseinfo_t a where  a.Id=#{id}
+	</select>
+	
+	<select id="EnterpriseInfo.queryEnterpriseView" parameterType="int"  resultType="com.wangmeng.service.bean.EnterpriseView">
+		SELECT companyName ,
+			 cardType,
+			 certifStatus,
+			 status,
+			 enterpriseType,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200001 limit 1)businessimage,	
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200002 limit 1)organizationalimage,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200003 limit 1)taximage,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200004 limit 1)fitimage,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200005 limit 1)positiveimage,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200006 limit 1)flipimage,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200007 limit 1)proxyimage,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200008 limit 1)authCertificate
+			from wm_enterpriseinfo_t where id =#{id}
+	</select>
+
+	<!-- 查询用户关联的企业信息 -->
+	<select id="EnterpriseInfo.queryEnterpriselist" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select
+		b.Id              ,
+		b.UserId          ,
+		b.CompanyName     ,
+		b.CompanyAddress  ,
+		b.LegalPerson     ,
+		b.IdCardNo        ,
+		b.CardType        ,
+		b.EnterpriseType  ,
+		b.ContactsName    ,
+		b.ContactsPhone   ,
+		b.ContactsEmail   ,
+		b.ContactsFix     ,
+		b.ContactsTelPhone,
+		b.Status,
+		b.IsDefault,
+		(select a.Status from wm_certification_t a where a.EnterPriInfoid = b.id)caStatus
+		from wm_enterpriseinfo_t b
+		where UserId=#{userid}
+	</select>
+
+	<!-- 查询用户关联的企业信息 -->
+	<select id="EnterpriseInfo.queryEnterprise" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select
+		Id              ,
+		UserId          ,
+		CompanyName     ,
+		CompanyAddress  ,
+		LegalPerson     ,
+		IdCardNo        ,
+		CardType        ,
+		EnterpriseType  ,
+		ContactsName    ,
+		ContactsPhone   ,
+		ContactsEmail   ,
+		ContactsFix     ,
+		ContactsTelPhone,
+		Status,
+		IsDefault
+		from wm_enterpriseinfo_t
+		where UserId=#{userid} and IsDefault =1 limit 1
+	</select>
+
+	<insert id="EnterpriseInfo.insertEnterprise" useGeneratedKeys="true" keyProperty="id" parameterType="com.wangmeng.service.bean.Enterpriseinfo" >
+		insert into wm_enterpriseinfo_t(
+		UserId          ,
+		CompanyName     ,
+		CompanyAddress  ,
+		LegalPerson     ,
+		IdCardNo        ,
+		CardType        ,
+		EnterpriseType   ,
+		status,
+		contactsName,
+		contactsPhone,
+		isDefault
+		)values(
+		#{userId},
+		#{companyName},
+		#{companyAddress},
+		#{legalPerson},
+		#{idCardNo},
+		#{cardType},
+		#{enterpriseType},
+		#{status},
+		#{contactsName},
+		#{contactsPhone},
+		#{isDefault},
+		)
+	</insert>
+
+	<!-- 新建企业关联照片  -->
+	<insert id="EnterpriseInfo.insertEnterprisePhoto" useGeneratedKeys="true" keyProperty="id" parameterType="com.wangmeng.service.bean.Enterprisephoto">
+		insert into wm_enterprisephoto_t(
+		EnterpriseinfoId,
+		OrgPath,
+		DictCode,
+		Category
+		)values(
+		#{enterpriseinfoId},
+		#{orgPath},
+		#{dictCode},
+		#{category}
+		)
+
+	</insert>
+
+	<!-- 更改企业信息 -->
+	<update id="EnterpriseInfo.update" parameterType ="com.wangmeng.service.bean.Enterpriseinfo">
+		update wm_enterpriseinfo_t
+		<set>
+			<if test="companyName!=null and companyName!=''">CompanyName=#{companyName},</if>
+			<if test="companyAddress!=null and companyAddress!=''">CompanyAddress=#{companyAddress},</if>
+			<if test="legalPerson!=null and legalPerson!=''">LegalPerson=#{legalPerson},</if>
+			<if test="idCardNo!=null and idCardNo!=''">IdCardNo=#{idCardNo},</if>
+			<if test="cardType!=null and cardType!=''">CardType=#{cardType},</if>
+			<if test="enterpriseType!=null and enterpriseType!=''">EnterpriseType=#{enterpriseType},</if>
+			<if test="contactsName != null and contactsName != ''"> ContactsName = #{contactsName}, </if>
+			<if test="contactsEmail != null and contactsEmail != ''"> ContactsEmail = #{contactsEmail}, </if>
+			<if test="contactsPhone != null and contactsPhone != ''"> ContactsPhone = #{contactsPhone}, </if>
+			<if test="contactsTelPhone != null and contactsTelPhone != ''"> ContactsTelPhone = #{contactsTelPhone}, </if>
+			<if test="contactsFix != null and contactsFix != ''"> ContactsFix = #{contactsFix}, </if>
+			<if test="status>0"> Status = #{status}, </if>
+			<if test="auditDate!=null and auditDate!=''"> AuditDate = #{auditDate}, </if>
+			<if test="registeredCapital>0"> RegisteredCapital = #{registeredCapital}, </if>
+			<if test="regionId>0"> RegionId = #{regionId}, </if>
+			<if test="certifNo!=null and certifNo!=''"> CertifNo=#{certifNo}, </if>
+			<if test="certifStatus>0"> CertifStatus=#{certifStatus}, </if>
+			<if test="certifDate!=null and certifDate!=''"> CertifDate=#{certifDate} </if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 更新个人CA认证信息 -->
+	<update id="EnterpriseInfo.updateCA4Person" parameterType="com.wangmeng.service.bean.Enterpriseinfo">
+		update wm_enterpriseinfo_t
+		<set>
+			<if test="companyAddress!=null and companyAddress!=''">CompanyAddress=#{companyAddress},</if>
+			<if test="idCardNo!=null and idCardNo!=''">IdCardNo=#{idCardNo},</if>
+			<if test="personName!=null and personName!=''"> PersonName=#{personName}, </if>
+			<if test="personPhone!=null and personPhone!=''"> PersonPhone=#{personPhone}, </if>
+			<if test="personEmail!=null and personEmail!=''"> PersonEmail=#{personEmail} </if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 更新企业CA认证信息 -->
+	<update id="EnterpriseInfo.updateCA4Enterprise" parameterType="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		update wm_enterpriseinfo_t
+		<set>
+			<if test="companyName!=null and companyName!=''"> CompanyName=#{companyName}, </if>
+			<if test="companyAddress!=null and companyAddress!=''">CompanyAddress=#{companyAddress},</if>
+			<if test="idCardNo!=null and idCardNo!=''">IdCardNo=#{idCardNo},</if>
+			<if test="contactsName!=null and contactsName!=''"> ContactsName=#{contactsName}, </if>
+			<if test="contactsPhone!=null and contactsPhone!=''"> ContactsPhone=#{contactsPhone}, </if>
+			<if test="contactsEmail!=null and contactsEmail!=''"> ContactsEmail=#{contactsEmail} </if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 分页查询 -->
+	<select id="EnterpriseInfo.queryLiteByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.EnterpriseInfoVo"
+			resultMap="enterpriseResultMapLite" >
+		SELECT enterprise.*,
+			u.Id u_id, u.UserName u_username, u.CellPhone u_cellphone,u.RealName u_realname,u.UserType u_usertype,
+			u.Telphone u_telphone, u.Nick u_nick, u.RegisterWay u_way, u.Email u_email, u.Photo u_photo, u.Sex u_sex 
+		FROM wm_enterpriseinfo_t enterprise
+		LEFT JOIN wm_user_t u ON (enterprise.UserId=u.Id) 
+		WHERE 1=1
+		<if test="param.companyName!=null and param.companyName!=''" >
+			and ( enterprise.CompanyName like '%${param.companyName}%'
+			OR u.RealName like '%${param.companyName}%'
+			OR u.UserName like '%${param.companyName}%'
+			OR u.CellPhone like '%${param.companyName}%' )
+		</if>
+		<if test="param.user.userType>0">
+			and u.UserType = #{param.user.userType}
+		</if>
+		<if test="param.categery>-1">
+			and enterprise.Categery = #{param.categery}
+		</if>
+		<if test="param.status>0">
+			and enterprise.Status = #{param.status}
+		</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and enterprise.CommitDate >= #{param.beginTime} and enterprise.CommitDate <= #{param.endTime}
+			]]>
+		</if>
+		ORDER BY enterprise.CommitDate DESC
+	</select>
+	
+
+	<!-- 分页查询 -->
+	<select id="EnterpriseInfo.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.EnterpriseInfoVo"
+			resultMap="enterpriseResultMap" >
+		SELECT enterprise.*,
+			u.Id u_id, u.UserName u_username, u.CellPhone u_cellphone,u.RealName u_realname,u.UserType u_usertype,
+			u.Telphone u_telphone, u.Nick u_nick, u.RegisterWay u_way, u.Email u_email, u.Photo u_photo, u.Sex u_sex,
+			bank.Id bank_id, bank.EnterPrInfoId bank_enterpid, bank.AccountName bank_accountname, bank.DepositBank bank_depositbank,
+			bank.UserId bank_userid, bank.IsDelete bank_isdelete, bank.BankBranch bank_branch, bank.UserType bank_usertype,bank.BankAccount bank_bankaccount
+		FROM wm_enterpriseinfo_t enterprise
+		LEFT JOIN wm_user_t u ON (enterprise.UserId=u.Id)
+		LEFT JOIN wm_bankaccountinfo_t bank ON (enterprise.Id=bank.EnterPrInfoId AND enterprise.UserId=bank.UserId)
+		WHERE 1=1
+		<if test="param.companyName!=null and param.companyName!=''" >
+			and ( enterprise.CompanyName like '%${param.companyName}%'
+			OR u.RealName like '%${param.companyName}%'
+			OR u.UserName like '%${param.companyName}%'
+			OR u.CellPhone like '%${param.companyName}%' )
+		</if>
+		<if test="param.user.userType>0">
+			and u.UserType = #{param.user.userType}
+		</if>
+		<if test="param.categery>-1">
+			and enterprise.Categery = #{param.categery}
+		</if>
+		<if test="param.status>0">
+			and enterprise.Status = #{param.status}
+		</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and enterprise.CommitDate >= #{param.beginTime} and enterprise.CommitDate <= #{param.endTime}
+			]]>
+		</if>
+		ORDER BY enterprise.CommitDate DESC
+	</select>
+
+
+	<!-- 分页查询CA企业 -->
+	<select id="EnterpriseInfo.queryByPagination4CAListByPage" parameterType="com.wangmeng.service.bean.vo.EnterpriseInfoVo"
+			resultMap="enterpriseResultMapForCA" >
+		SELECT enterprise.*,
+		u.Id u_id, u.UserName u_username, u.CellPhone u_cellphone,u.RealName u_realname,u.UserType u_usertype,
+		u.Telphone u_telphone, u.Nick u_nick, u.RegisterWay u_way, u.Email u_email, u.Photo u_photo, u.Sex u_sex
+		FROM wm_enterpriseinfo_t enterprise
+		LEFT JOIN wm_user_t u ON (enterprise.UserId=u.Id)
+		WHERE 1=1
+		<if test="param.companyName!=null and param.companyName!=''" >
+			and ( enterprise.CompanyName like '%${param.companyName}%'
+			OR u.RealName like '%${param.companyName}%'
+			OR u.UserName like '%${param.companyName}%'
+			OR u.CellPhone like '%${param.companyName}%'
+			OR enterprise.CertifNo like '%${param.companyName}%')
+		</if>
+		<if test="param.certifStatus!=-1">
+			and enterprise.CertifStatus = #{param.certifStatus}
+		</if>
+		<if test="param.categery!=-1">
+			and enterprise.Categery = #{param.categery}
+		</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and enterprise.CommitDate >= #{param.beginTime} and enterprise.CommitDate <= #{param.endTime}
+			]]>
+		</if>
+		ORDER BY enterprise.CommitDate DESC
+	</select>
+
+
+	<!-- 详情查询 -->
+	<select id="EnterpriseInfo.showDetailById" parameterType="com.wangmeng.service.bean.vo.EnterpriseInfoVo"
+			resultMap="enterpriseResultMapForDetail" >
+		SELECT enterprise.*,
+			visit.id visit_id, visit.visitor_name visit_name, visit.enterprise_id visit_enterp_id, visit.content visit_content, visit.create_time visit_createdtime,
+			u.Id u_id, u.UserName u_username, u.CellPhone u_cellphone,u.RealName u_realname,u.UserType u_usertype,
+			u.Telphone u_telphone, u.Nick u_nick, u.RegisterWay u_way, u.Email u_email, u.Photo u_photo, u.Sex u_sex,
+			photo.Id photo_id, photo.EnterpriseinfoId photo_enterpid, photo.Category photo_category, photo.DictCode photo_dictcode,
+			photo.Description photo_desc, photo.OrgPath photo_orgpath, photo.MaxPath photo_maxpath, photo.MinPath photo_minpath
+		FROM wm_enterpriseinfo_t enterprise
+			LEFT JOIN wm_visit_t visit ON (enterprise.Id=visit.enterprise_id)
+			LEFT JOIN wm_user_t u ON (enterprise.UserId=u.Id)
+			LEFT JOIN wm_enterprisephoto_t photo ON (enterprise.Id=photo.EnterpriseinfoId)
+		WHERE enterprise.Id=#{id}
+	</select>
+	
+	<select id="queryEnterByBrands" parameterType="map" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+	<!-- select et.* from wm_enpriinfobrands_t eb  left JOIN wm_enterpriseinfo_t et
+        on eb.EnterPrInfoId = et.id where eb.brandId = #{brandId} -->
+        select DISTINCT wen.* from 
+			wm_enterpriseinfo_t wen 
+			INNER join wm_enpriinfobrands_t  wme on wen.id = wme.enterprinfoid
+			inner join  wm_brands_t wmb on wme.brandid = wmb.id
+			<where>
+			     <if test="brandname != '' and brandname != null"> and wmb.name like '%${brandname}%'</if>
+			     <if test="brandId != '' and brandId >0"> and wmb.id = #{brandId}</if>
+			</where> 
+	</select>
+	
+	<!-- 更新默认企业 -->
+	<update id="EnterpriseInfo.IsnotDefault" parameterType="map">
+		update wm_enterpriseinfo_t 
+		<set>
+			IsDefault=0
+		</set>
+		where UserId=#{userId} and Categery=1
+	</update>
+	<update id="EnterpriseInfo.IsDefault" parameterType="map">
+		update wm_enterpriseinfo_t 
+		<set>
+			IsDefault=1
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 查询所有企业简单信息 -->
+	<select id="EnterpriseInfo.queryAllEnterpriseinfoSimple" resultType="com.wangmeng.service.bean.vo.EnterpriseinfoSimple">
+		SELECT id,
+		       userid,
+		       CompanyName
+		FROM wm_enterpriseinfo_t
+	</select> 
+	
+	<!-- 查询和用户关联的已经审核过的企业 -->
+	<select id="EnterpriseInfo.queryAuditedEnterByUserId" parameterType="map" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select * from wm_enterpriseinfo_t where UserId=#{userId} AND Status=2
+	</select>
+	
+	<!-- 查询和用户关联的的企业 -->
+	<select id="EnterpriseInfo.queryEnterByUserId" parameterType="map" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select * from wm_enterpriseinfo_t where UserId=#{userId}
+	</select>
+	
+	
+	<!-- 更改公章信息 -->
+	<update id="EnterpriseInfo.updateSealStatus" parameterType ="map">
+		update wm_enterpriseinfo_t set SealStatus=#{sealStatus} where id=#{id}
+	</update>
+	
+	<!-- 分页查询 为品牌企业关联专用 -->
+	<select id="EnterpriseInfo.forBrandEnterpriseInfoAddqueryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.EnterpriseinfoSimple"
+		resultType="com.wangmeng.service.bean.vo.EnterpriseinfoSimple" >
+		select
+		   id,
+	       userId,
+	       companyName,
+	       companyAddress,
+	       contactsName
+		FROM wm_enterpriseinfo_t 
+		<where>
+		<if test="param.companyName!=null and param.companyName !=''">and companyName like '%${param.companyName}%'</if>
+		</where>
+		ORDER BY id desc
+	</select>
+	
+	<!-- 查询企业信息，供APP用 -->
+	<select id="EnterpriseInfo.queryEnterpriseinfoList" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+			select
+               (SELECT count(*) FROM wm_product_t p, wm_enterpriseinfo_t e where p.EnterpriseId = e.id and e.id=eb.EnterPrInfoId and p.status=2) as productCount,
+			   e.status,
+			   e.id,
+		       e.userId,           
+		       e.companyName,
+		       e.companyAddress,
+		       e.isDefault,
+		       e.categery,
+		       e.auditDate,
+		       e.commitDate,
+		       e.certifDate,
+		       e.regionId,
+		       b.logo photo, 
+	        group_concat(distinct b.Name Separator',') as brandNames from wm_enpriinfobrands_t eb 
+	           left join wm_brands_t b on b.Id=eb.BrandId
+	           left join wm_enterpriseinfo_t e on e.Id=eb.EnterPrInfoId
+               LEFT JOIN wm_region_t r on e.regionId = r.id
+            WHERE e.status = 2 and b.auditStatus = 1
+            <if test="queryKey!=null and queryKey !=''">and e.companyName like '%${queryKey}%'</if>
+            <if test="provinceId!=null">and r.provinceId = #{provinceId}</if>
+		    <if test="cityId!=null">and r.cityId = #{cityId}</if>
+            <if test="brandId!=null">and b.Id = #{brandId}</if>
+            <if test="ids != null">
+			  and b.Id in
+			  <foreach collection="ids" item="employeeId" index="index"
+	            open="(" close=")" separator=",">
+	            #{employeeId}
+	         </foreach>
+	        </if>
+            <if test="categoryId!=null">and e.id in (SELECT EnterpriseId FROM wm_enterprise_category_t WHERE CategoryId = #{categoryId})</if>
+               group by eb.EnterPrInfoId
+               ORDER BY productCount desc,CONVERT( e.companyname USING gbk ) COLLATE gbk_chinese_ci ASC
+		    <!--  分页 -->
+		    limit #{begin},#{end}
+	</select>
+	
+	<!-- 查出总数，供APP -->
+	<select id="EnterpriseInfo.queryEnterpriseinfolistnumb" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="java.lang.Long">
+	     SELECT count(*) FROM (
+			select
+               (SELECT count(*) FROM wm_product_t p, wm_enterpriseinfo_t e where p.EnterpriseId = e.id and e.id=eb.EnterPrInfoId and p.status=2) as productCount,
+			   e.status,
+			   e.id,
+		       e.userId,           
+		       e.companyName,
+		       e.companyAddress,
+		       e.isDefault,
+		       e.categery,
+		       e.auditDate,
+		       e.commitDate,
+		       e.certifDate,
+		       e.regionId,
+		       b.logo photo, 
+	        group_concat(distinct b.Name Separator',') as brandNames from wm_enpriinfobrands_t eb 
+	           left join wm_brands_t b on b.Id=eb.BrandId
+	           left join wm_enterpriseinfo_t e on e.Id=eb.EnterPrInfoId
+               LEFT JOIN wm_region_t r on e.regionId = r.id
+            WHERE e.status = 2 and b.auditStatus = 1
+            <if test="queryKey!=null and queryKey !=''">and e.companyName like '%${queryKey}%'</if>
+            <if test="provinceId!=null">and r.provinceId = #{provinceId}</if>
+		    <if test="cityId!=null">and r.cityId = #{cityId}</if>
+            <if test="brandId!=null">and b.Id = #{brandId}</if>
+            <if test="ids != null">
+			  and b.Id in
+			  <foreach collection="ids" item="employeeId" index="index"
+	            open="(" close=")" separator=",">
+	            #{employeeId}
+	         </foreach>
+	        </if>
+            <if test="categoryId!=null">and e.id in (SELECT EnterpriseId FROM wm_enterprise_category_t WHERE CategoryId = #{categoryId})</if>
+               group by eb.EnterPrInfoId
+		 )a
+	</select>
+</mapper>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="WMb2b-third:war">
+    <output-path>$PROJECT_DIR$/WMb2b-third/target</output-path>
+    <root id="archive" name="WMb2b-third.war">
+      <element id="artifact" artifact-name="WMb2b-third:war exploded" />
+    </root>
+  </artifact>
+</component>

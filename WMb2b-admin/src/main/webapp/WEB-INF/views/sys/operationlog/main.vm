@@ -1,0 +1,144 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>操作日志管理</title>
+      <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+	  <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+    </head>
+    <body>
+      <div class="demo-content">
+		  <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/sys/operationlog/page.do" class="form-horizontal well" id="pageForm">
+				<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+				<input type="hidden" name="pageNo" id="pageNo" value="$!page.pageNo"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">操作人：</label>
+                    <div class="controls">
+                      <input type="text" name="userName" value="$!qryForm.userName" class="control-text">
+                    </div>
+                  </div>
+                  <div class="control-group span8">
+                    <label class="control-label">页面名称：</label>
+                    <div class="controls">
+                      <input type="text" name="pageName" value="$!qryForm.pageName" class="control-text">
+                    </div>
+                  </div>
+               
+                  <div class="control-group span8">
+                    <label class="control-label">接口名称：</label>
+                    <div class="controls">
+                      <input type="text" name="action" value="$!qryForm.action" class="control-text">
+                    </div>
+                  </div>
+                  
+                   <div class="control-group span8">
+                    <label class="control-label">内容：</label>
+                    <div class="controls">
+                      <input type="text" name="contents" value="$!qryForm.contents" class="control-text">
+                    </div>
+                  </div>
+                  
+                  <div class="form-actions span5 offset3">
+                    <button type="submit" class="button button-primary">搜索</button>
+                  </div>
+                </div>
+              </form>
+			
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr><th colspan="9">
+                <ul class="toolbar">
+                  <li><label class="checkbox"><input type="checkbox" id="batchCheck"><a href="#">全选</a></label></li>
+                </ul>
+                </th></tr>
+                <tr>
+                  <th width="15"></th>
+                  <th>用户id</th>
+                  <th>操作人名称</th>
+                  <th>页面名称</th>
+				  <th>操作的接口名称</th>
+				  <th>action的中文描述</th>
+				  <th>日志记录</th>
+				  <th>操作时间</th>
+                  <th>ip地址</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+				#foreach($entity in $page.getDataList())
+                    <tr>
+                      <td><input type="checkbox" name="oneCheck" value="${entity.id}"></td>
+                      <td>$!{entity.userId}</td>
+                      <td>$!{entity.userName}</td>
+                      <td>$!{entity.pageName}</td>
+                      <td>$!{entity.action}</td>
+                      <td>$!{entity.actionDescript}</td>
+                      <td>$!{entity.contents}</td>
+                      <td>$!{entity.opereadate}</td>
+                      <td>$!{entity.iPAddress}</td>
+                      <td>
+                        #auth($request.getSession().getAttribute("session.user").getId(),"操作日志.查看")
+                            <a class="button button-primary" href="#" title="查看信息" onClick="javascript:edit_form(${entity.id});" tab="${entity.id}">查看</a>
+					    #end
+                      </td>
+                    </tr>
+				#end
+              </tbody>
+            </table>
+			
+			#parse("include/page.vm")
+			
+          </div>
+        </div> 
+      </div>
+    </body>
+	<script >
+	   //全选
+	   $("#batchCheck").change(function() {
+	      var batchCheck = document.getElementById('batchCheck');
+		  if(batchCheck.checked==true){
+		    $("[name = oneCheck]:checkbox").attr("checked", true);
+		  }else{
+		     $("[name = oneCheck]:checkbox").attr("checked", false);
+		  }
+         
+        });
+		
+    </script>
+	
+	<script type="text/javascript" language="JavaScript">
+		 //查看信息
+		 var dialog_view
+		 BUI.use('bui/overlay',function(Overlay){
+    	    dialog_view = new Overlay.Dialog({
+                    title:'添加信息',
+                    width:500,
+                    height:620,
+                    loader : {
+                      url : '$request.getContextPath()/sys/operationlog/detail.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    mask:false,
+					success:function () {
+                          this.close();
+                    }
+                  });
+    	 });
+		 
+		 //查看信息
+		 function edit_form(entityId){
+            dialog_view.show();
+            dialog_view.get('loader').load({id:entityId});
+		 }
+	  
+    </script>
+    </html>       

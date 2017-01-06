@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="visit">
+
+	<!-- 增加 -->
+	<insert id="visit.add" useGeneratedKeys="true" keyProperty="id" parameterType="com.wangmeng.service.bean.vo.VisitVo">
+		INSERT INTO wm_visit_t (visitor_name,enterprise_id,content,create_time)
+				VALUES (#{visitorName},#{enterpriseId},#{content},#{createdTime})
+	</insert>
+
+	<!-- 查询企业的回访记录列表 -->
+	<select id="visit.queryByEnterpriseId" resultType="com.wangmeng.service.bean.vo.VisitVo">
+		SELECT * FROM wm_visit_t WHERE enterprise_id=#{enterpriseId}
+	</select>
+
+</mapper>

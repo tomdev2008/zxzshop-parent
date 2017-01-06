@@ -1,0 +1,249 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>权限管理</title>
+      <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+	  <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+    </head>
+    <body>
+		
+      <div class="demo-content">
+		  <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/sys/power/page.do" class="form-horizontal well" id="pageForm">
+				<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+				<input type="hidden" name="pageNo" id="pageNo" value="$!page.pageNo"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">权限名称：</label>
+                    <div class="controls">
+                      <input type="text" name="powerName" value="$!powerForm.powerName" class="control-text">
+                    </div>
+                  </div>
+                  <div class="control-group span8">
+                    <label class="control-label">状态：</label>
+                    <div class="controls">
+                      <input type="text" name="sta" value="$!powerForm.sta" class="control-text">
+                    </div>
+                  </div>
+               
+                  <div class="form-actions span5 offset3">
+                    <button type="submit" class="button button-primary">搜索</button>
+                  </div>
+                </div>
+              </form>
+			
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr><th colspan="9">
+                <ul class="toolbar">
+                  <li><label class="checkbox"><input type="checkbox" id="batchCheck"><a href="#">全选</a></label></li>
+                    #auth($request.getSession().getAttribute("session.user").getId(),"权限管理.批量删除")
+                        <li><button class="button button-danger" id="userBatchDelete"><i class="icon-white icon-trash"></i>批量删除</button></li>
+                    #end
+                    #auth($request.getSession().getAttribute("session.user").getId(),"权限管理.添加")
+                        <li><button class="button button-primary" id="addBtnShow">添加</button></li>
+                    #end
+                </ul>
+                </th></tr>
+                <tr>
+                  <th width="15"></th>
+                  <th>编码</th>
+                  <th>名称</th>
+                  <th>链接</th>
+                    <th>类型</th>
+                  <th>父级资源</th>
+                    <th>所属应用系统</th>
+##				  <th>排序</th>
+				  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+				#foreach($power in $page.getDataList())
+                    <tr>
+                      <td><input type="checkbox" name="oneCheck" value="$power.id"></td>
+                      <td>$!power.id</td>
+                      <td>$!power.powerName</td>
+                      <td>$!power.redirectUrl</td>
+                        <td>
+                            #if($!power.sourceType==0)
+                                功能菜单
+                            #elseif($!power.sourceType==1)
+                                页面按钮
+                            #elseif($!power.sourceType==2)
+                                数据资源
+                            #end
+                        </td>
+                      <td>
+						#if($!power.superid=='-1')
+							父级权限
+						#else
+							$!power.sysPower.powerName	
+						#end
+					  </td>
+                        <td>$!power.owner</td>
+##					  <td>$!power.display</td>
+                      <td>
+						  #if($!power.sta=="1")
+						     <span class="label label-success">正常</span>
+						  #else
+							 <span class="label label-important">注销</span>
+						  #end
+					  </td>
+                      <td>$!power.createTime</td>
+                      <td>
+                        #auth($request.getSession().getAttribute("session.user").getId(),"权限管理.编辑")
+                            <a class="button button-primary" href="#" title="编辑权限信息" onClick="javascript:edit_user($power.id);" tab="$power.id">编辑</a>
+						#end
+                          &nbsp;&nbsp;
+                        #auth($request.getSession().getAttribute("session.user").getId(),"权限管理.删除")
+					        <a class="button button-primary" href="#" title="删除权限信息" onclick="javascript:delUser($power.id);">删除</a>
+					    #end
+                        </td>
+                    </tr>
+				#end
+              </tbody>
+            </table>
+			
+            #parse("include/page.vm")
+			
+          </div>
+        </div> 
+    <!-- script end -->
+      </div>
+    </body>
+	
+	<script >
+	   //全选
+	   $("#batchCheck").change(function() {
+	      var batchCheck = document.getElementById('batchCheck');
+		  if(batchCheck.checked==true){
+		    $("[name = oneCheck]:checkbox").attr("checked", true);
+		  }else{
+		     $("[name = oneCheck]:checkbox").attr("checked", false);
+		  }
+        });
+    </script>
+	
+	<script type="text/javascript" language="JavaScript">
+	    //添加权限信息
+    	BUI.use('bui/overlay',function(Overlay){
+    	  var  dialog_add = new Overlay.Dialog({
+                    title:'添加权限信息',
+                    width:500,
+                    height:460,
+                    loader : {
+                      url : '$request.getContextPath()/sys/power/to_add.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'   //加载的数据类型
+                    },
+                    mask:false,
+					success:function () {
+						  $("#U_Add_Form").submit();
+                          this.close();
+                    }
+                  });
+              $('#addBtnShow').on('click',function () {
+                dialog_add.show();
+                dialog_add.get('loader').load();
+              });
+    	 });
+		 
+		 //修改权限信息
+		 var dialog_edit
+		 BUI.use('bui/overlay',function(Overlay){
+    	    dialog_edit = new Overlay.Dialog({
+                    title:'修改权限信息',
+                    width:500,
+                    height:520,
+                    loader : {
+                      url : '$request.getContextPath()/sys/power/to_edit.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    mask:false,
+					success:function () {
+						  $("#U_Edit_Form").submit();
+                          this.close();
+                    }
+                  });
+    	 });
+		 
+		 //修改权限信息
+		 function edit_user(userId){
+            dialog_edit.show();
+            dialog_edit.get('loader').load({id:userId});
+		 }
+		 
+		//删除权限信息
+		function delUser(id) {
+            BUI.Message.Confirm('确认要删除么？',function(){
+			   $.ajax({
+                  type: 'post',
+                  url: '$request.getContextPath()/sys/power/delete.do',
+				  data:{id:id},
+				  dataType:'json', 
+				  success: function(data){
+				      
+				      if(data==1){
+					     location.reload();
+					    //BUI.Message.Alert('修改成功！','success');
+					  }
+				  },
+				  error : function() {    
+                      BUI.Message.Alert('删除出错！','error'); 
+                  }   
+                });
+				
+            },'question');
+        }
+	   
+	   //批量删除权限信息
+	   $("#userBatchDelete").click(function() {
+	        var idStr="";
+            $("input[name='oneCheck']:checkbox").each(function(){ 
+                if($(this).attr("checked")){
+                    idStr += $(this).val()+","
+                }
+            })
+			
+			if(!isNaN(idStr)){
+			    BUI.Message.Alert('请选中您要删除的选项！','warning');
+				return;
+			}
+			
+			BUI.Message.Confirm('确认要删除么？',function(){
+			   $.ajax({
+                  type: 'post',
+                  url: '$request.getContextPath()/sys/power/batchDelete.do',
+				  data:{idStr:idStr},
+				  dataType:'json', 
+				  success: function(data){
+				      if(data==1){
+					     //$("[name = oneCheck]:checkbox").attr("checked", false);
+					     location.reload();
+					  }
+				  },
+				  error : function() {    
+                      BUI.Message.Alert('批量删除出错！','error'); 
+                  }   
+                });
+				
+            },'question');
+        });
+		
+	
+	  
+    </script>
+	
+    </html>       

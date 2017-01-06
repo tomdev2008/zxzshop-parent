@@ -1,0 +1,12 @@
+## 上传公章
+<form id="uploadSealForm" method="post" action="$request.getContextPath()/Ssq/uploadSeal.do" class="form-horizontal well" ENCTYPE="multipart/form-data">
+
+<div class="row">
+    <div class="span8">
+     <input type="file" name="seal" class="text">
+    </div>
+</div>
+	<input type="hidden" name="userMobile" value="$!result.obj.contactsPhone">
+	<input type="hidden" name="userName" value="$!result.obj.companyName">
+	<input type="hidden" name="id" value="$!result.obj.id">
+</form>

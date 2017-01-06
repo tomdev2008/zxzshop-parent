@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>第三方服务中心</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+	<link href="../../assets/css/admin/third-home.css" rel="stylesheet">
+    <script type="text/javascript" src="../../assets/js/LAB.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+		<div class="home_title">
+			<span id="vDataDefaultEntName"></span> 
+			<span id="vDataefaultEntAuditStatus">
+			</span>
+			<span class="uname"><span id="vDataUserName"></span></span>
+			<span class="tel"><span id="vDataUserCellPhone"></span></span>
+			<span id="vDataFixInfoTodo" style="display:none">
+			<span class="f12">您的信息未完善，完善后商业伙伴将更容易找到您，</span><a class="f12" href="Account.html?nav=Account">去完善</a>
+			</span>
+		</div>
+		<div class="box mt20">
+			<div class="box_title">
+				配套服务入驻 <span class="highlight f12">按下方流程轻松完成配套服务入驻</span>
+			</div>
+			<div class="steps">
+				<div class="step">
+					<span class="highlight number">1</span>
+					<div class="desc">上传三证或社会机构信用代码证</div>
+					<a href="AccountCa.html?nav=Account"><div class="text">提交企业基本资料</div></a>
+
+				</div>
+				<div class="step">
+					<span class="highlight number">2</span>
+					<div class="desc">5分钟快速反馈</div><div class="text">平台自动完成审核</div>
+				</div>
+				<div class="step">
+					<span class="highlight number">3</span>
+					<div class="desc">完善企业展示信息，有机会获得更多买家服务需求</div>
+					<a href="Company.html?nav=Company"><div class="text">完善企业展示</div></a>
+				</div>
+			</div>
+		</div>
+    </div>    
+    <script type="text/javascript">
+   $LAB
+   .script("../../assets/js/jquery-1.12.0.min.js").wait()
+   .script("../../assets/js/admin/bootstrap.min.js")
+   .script("../../assets/js/jquery.cookie.js")
+   .script("../../assets/js/admin/jquery.artDialog.js")
+   .script("../../assets/js/admin/artDialog.iframeTools.js")
+   .script("../../assets/js/admin/jquery.linkage.nocreate.js")
+   .script("../../assets/js/admin/CommonJS.js")
+   .script("../../assets/js/admin/custom.js")
+   .script("../../assets/js/admin/inner-custom.js")
+   .script("../../assets/js/wm-common.js")
+   .script("../../assets/js/third/third-common.js")
+   .script("../../assets/js/third/third-home.js")
+	.wait(function(){
+		try{
+			WM.third.home.initUI();
+			WM.third.home.loadAccountInfo();
+		}catch(ex){
+			//alert(ex.message);
+		}
+	   });
+   </script>
+    
+</body>
+</html>

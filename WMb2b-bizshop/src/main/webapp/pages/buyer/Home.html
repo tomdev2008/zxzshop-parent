@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>买家中心</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+</head>
+<body onload="buyerHomeLoad()">
+    <div class="container">
+        <div class="module-box">
+            <div class="company">
+                <h2 id="EnterpriseName"></h2>
+                <span class="verified" id="VerifiedStatus" style="display:none">已认证</span>
+                <span class="user"><img src="../../assets/img/admin/icon_center_touxiang.png"></span>
+                <span class="mobile"></span>
+                <span>您的信息不完善，完善后商业伙伴将更容易找到您，<a id="APerfectInformation" href="Contact.html?nav=Contact">去完善</a></span>
+            </div>
+            <div class="buyer-links">
+                <ul>
+                    <li><a class="parent-url info" href="Account.html">企业信息</a></li>
+                    <li><a class="parent-url invoice" href="Invoice.html">发票管理</a></li>
+                    <li><a class="parent-url address" href="Address.html">收货地址管理</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-box">
+            <ul class="buyer-btns">
+                <li>
+                    <a class="parent-url inquiry" href="AddInquiry.html" target="iframe">我要询价<b>get quotations</b></a>
+                </li>
+                <li>
+                    <a class="parent-url buy" href="Publish-Purchase.html" target="iframe">我要采购<b>Purchase Now</b></a>
+                </li>
+            </ul>
+        </div>
+        <div class="module-box">
+            <div class="steps">
+            	<h3>询价管理</h3>
+                <ul id="InquiryStatistic">
+                </ul>
+            </div>
+            <div class="steps">
+            	<h3>订单管理</h3>
+                <ul id="OrderStatisitc">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/buyer/buyer_base.js"></script>
+    <script src="../../assets/js/buyer/buyer-home.js"></script>
+</body>
+</html>

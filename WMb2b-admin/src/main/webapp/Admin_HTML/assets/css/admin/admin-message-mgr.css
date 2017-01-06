@@ -1,0 +1,197 @@
+/*beautiful_checkbox start*/
+.beautiful_checkbox{
+    display: none;
+}
+.beautiful_checkbox_wrap{
+    display: inline-block;
+    border:2px solid #ccc;
+    border-radius: 17px;
+    width: 100px;
+    height: 34px;
+    color: #888;
+    font-size: 14px;
+    position: relative;
+    cursor: pointer;
+    transition: all .6s;
+}
+.beautiful_checkbox_wrap.on{
+    border-color: #4bd865;
+}
+.beautiful_checkbox_wrap.on .beautiful_checkbox_btn{
+    background-color: #4bd865;
+    left: 68px;
+}
+.beautiful_checkbox_wrap.on .beautiful_checkbox_text{
+    left: 8px;
+}
+.beautiful_checkbox_wrap .beautiful_checkbox_btn{
+    z-index: 1;
+    transition: all .6s;
+    height: 24px;
+    width: 24px;
+    background-color: #ccc;
+    border-radius: 50%;
+    position: absolute;
+    left: 3px;
+    top:3px;
+}
+.beautiful_checkbox_wrap .beautiful_checkbox_text{
+    position: absolute;
+    right: 10px;
+    top: 4px;
+    width: 30px;
+    transition: all .6s;
+}
+/*beautiful_checkbox end*/
+
+.account_mgr_nav{
+    padding-right: 10px;
+    background-color:#fff;
+    height: 60px;
+}
+.account_mgr_nav a{
+    height: 60px;
+    display: block;
+    float: left;
+    line-height: 60px;
+    font-size: 16px;
+    /*width:120px;*/
+    text-align: center;
+    color:#333;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.account_mgr_nav a:hover,.account_mgr_nav a.active{
+    border-bottom:2px solid #b39a5a;
+    color: #b39a5a;
+}
+.account_mgr_nav .back{
+    float: right;
+    color:#888;
+    padding-left: 20px;
+    width: 130px;
+    background-image: url(../../img/admin/icon_center_return.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+.account_mgr_nav .back:hover{
+    color: inherit;
+    border: none;
+}
+.content_title{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+.content_title .info{
+    float: right;
+}
+.content_title .info .buy{
+    border-radius: 2px;
+    padding:4px 15px;
+    color: white;
+    margin-left: 20px;
+    background-color: #b39a5a;
+}
+#message_table {
+    margin-top: 20px;
+}
+#message_table th{
+    background-color: #f1f1f1;
+    font-size: 14px;
+}
+#message_table th,#message_table td{
+    text-align: center;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.field_list{
+
+}
+.field_list li{
+    /*height: 30px;
+    line-height: 30px;*/
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.field_list li>label{
+    line-height: 34px;
+}
+.field_list .field_name{
+    width:110px;
+    text-align: right;
+    float: left;
+    padding-right: 5px;
+}
+.field_list input[type="text"]{
+    width: 300px;
+    padding-left: 10px;
+}
+.field_list .field_value{
+    height: 34px;
+    float: left;
+    border:1px solid #ccc;
+}
+.field_list .uploadpic{
+    height: 30px;
+    line-height: 20px;
+    background-color: #ddd;
+    color:#000;
+    border:none;
+}
+.field_list .info{
+    display: block;
+    padding-left: 80px;
+    padding-bottom:0px;
+    padding-top: 0px;
+    color: #aaa;
+}
+.field_list .labels{
+    width:300px;
+    display: inline-block;
+}
+.field_list .labels button{
+    height: 30px;
+    line-height: 22px;
+    color:#000;
+    background-color: #fff;
+    border:1px solid #ccc;
+    width:94px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    position: relative;
+}
+.field_list .labels button:nth-child(3n){
+    margin-right: 0px;
+}
+
+.submit{
+    width: 300px;
+    height: 34px;
+    line-height: 34px;
+    background: #4f5562;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
+    color: #f5f5f5;
+    border-radius: 3px;
+    border:none;
+    margin-bottom:12px;
+    margin-top: 5px;
+}
+
+.test{
+    width: 120px;
+    height: 34px;
+    line-height: 28px;
+    background: #4f5562;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
+    color: #f5f5f5;
+    border-radius: 3px;
+    border:none;
+    margin-bottom: 20px;
+    margin-left: 20px;
+}

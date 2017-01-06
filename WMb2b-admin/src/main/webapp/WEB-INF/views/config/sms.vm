@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title></title>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+     <script type="text/javascript">
+         function switchChannel(){
+             var channel = $('input[name=channel]:checked').val();
+             $.ajax({
+                 type: 'post',
+                 url: "$request.getContextPath()/config/change_channel.do?channel="+channel,
+                 data:null,
+                 dataType: "json",
+                 success: function(data){
+                     if(data.code == '000000'){//返回成功
+                         if(data.obj==true){
+                             BUI.Message.Alert('已经成功切换了短信发送通道！','success');
+                         }else{
+                             BUI.Message.Alert('切换短信通道失败！','error');
+                         }
+                     }else{
+                         BUI.Message.Alert('切换短信通道失败！','error');
+                     }
+                 },
+                 error : function() {
+                     BUI.Message.Alert('切换短信通道失败！','error');
+                 }
+             });
+         }
+     </script>
+ </head>
+
+<div class="row">
+		<div class="span24 doc-content" style="width:90%">
+        <form class="form-horizontal well" method="post" action="$request.getContextPath()/config/sms_config_save.do">
+         <div class="row">
+            #foreach($configItem in $configItemList)
+             <div class="control-group">
+                <label class="control-label">$!{configItem.itemName}：</label>
+                <div class="controls">
+
+                 #if($!configItem.itemInputs == 'checkbox')
+                  <input name="$!{configItem.itemCode}" type="checkbox" value="1"  #if($configItem.itemValue=="1") checked="checked" #end >
+                 #else
+                  <input class="input-normal control-text" name="$!{configItem.itemCode}" type="text" value="$!{configItem.itemValue}">
+                 #end
+
+                $!{configItem.itemTip}
+                </div>
+             </div>
+            #end
+            </div>
+            <div class="row">
+            <div class="form-actions offset3">
+              <button type="submit" class="button button-primary">保存</button>
+              <button type="reset" class="button">重置</button>
+            </div>
+          </div>
+        </form>
+          <div class="form-horizontal well">
+              <label class="radio" for=""><input name="channel"
+                  #if($channel == 1)
+                    checked="checked"
+                  #end
+                type="radio" value="1">发财鱼平台</label>&nbsp;&nbsp;&nbsp;
+              <label class="radio" for="">
+                  <input name="channel"
+                      #if($channel == 2)
+                         checked="checked"
+                      #end
+                         type="radio" value="2">253平台</label>
+              <div class="row">
+                  <div class="form-actions offset3">
+                      <button type="btn" class="button button-primary" onclick="javascript:switchChannel()">保存</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>   

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../assets/css/artdilog.css" rel="stylesheet">
+    <link href="../assets/css/inner-custom.css" rel="stylesheet">
+    <link href="../assets/css/admin-purchase-check.css" rel="stylesheet">
+    <link href="../assets/css/admin-prise-style.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<body>
+<div style="margin-top: 300px;margin-left: 700px;">
+    <div class="no fl-left" style="position: absolute;"></div>
+    <span class="fs-xxxlg fw-ber" style="position:relative;width:170px;top: 120px;left: 40px;">审核未通过！</span>
+</div>
+</body>
+</html>

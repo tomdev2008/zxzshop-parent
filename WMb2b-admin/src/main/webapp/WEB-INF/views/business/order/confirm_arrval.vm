@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+     <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/admin-deliver-check.css" rel="stylesheet">
+
+       <!--[if lt IE 9]>
+    <script src="$!{request.getContextPath()}/assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav_title">
+           确认到账
+            <a class="back" href="$request.getContextPath()/orderInfo/queryOrderInfo.do">返回订单管理</a>
+        </div>
+
+         <div class="module-box">
+            <div class="left-box fl">
+                <div class="entry row">
+                    温馨提示：请联系财务人员，确认买家货款已按照合同的付款方式要求，已到平台账户！
+                </div>
+                <div class="entry row">
+                    <label class="field_label">订单编号：</label>
+                    <input type="hidden" name="orderNo"  id="orderNo" value="$!orderNo">
+                    <span>$!orderNo</span>
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">订单合计金额：</label>
+                    <input type="hidden" name="priceTotal" id="priceTotal" value="$!totalCost">
+                    <div class="field_value">
+                       <span>$!totalCost</span>元
+                    </div>
+                    <div class="btn">
+                       <a id="view_ssq" target="_blank" href="#" class="btn" >查看协议</a> 
+                    </div>
+                    
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">收款日期：</label>
+                    <div class="field_value">
+                         <!-- <input name="gatheringTime" class="input-small calendar" type="text"> -->
+                         <input type="text" class="date" name="gatheringDate" id="gatheringDate"  value="$dateUtil.formatDate($!gathering.GatheringTime,'yyyy-MM-dd HH:mm:ss')">
+                    </div>
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">收款金额：</label>
+                    <div class="field_value">
+                        <input type="text" name="gatheringTotal" id="gatheringTotal" value="$!gathering.gatheringTotal">
+                    </div>
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">收款账户：</label>
+                    <div class="field_value">
+                        <input type="text" name="gatheringAccount" id="gatheringAccount" value="$!gathering.gatheringAccount">
+                    </div>
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">收款开户银行：</label>
+                    <div class="field_value">
+                        <input type="text" name="depositBank" id="depositBank" value="$!gathering.depositBank">
+                    </div>
+                </div>
+            </div>
+            <div class="right-box fr">
+                <div class="entry row">
+
+                    <div class="field_value">
+                        <div>
+                                <div class="pic" style="width:200px;height:200px">
+                                    #if($gathering.path)
+                                        <a id="imgPreview" href="#" onclick="preview();return false;" target="_blank"><img id="provImg" src="${mediaPath}${gathering.path}" alt="点击查看详情" width="200px" height="200px"></a>
+                                    #else
+                                        <img id="provImg"  src="" width="200" height="200" alt="">
+                                    #end
+                                    <i></i>
+                                </div>
+                           
+                            <span id="uploadpic" class="btn btn-info">
+                                上传银行打款凭证
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="action">
+            	#if(!$gathering.id)
+	                #auth($request.getSession().getAttribute("session.user").getId(),"订单确认到账.提交")
+	                 <button class="submit" id="strSubmit">提交</button>
+	                #end
+	                #auth($request.getSession().getAttribute("session.user").getId(),"订单确认到账.取消")
+	                    <button class="cancel">取消</button>
+	                #end
+                #else
+                	 #auth($request.getSession().getAttribute("session.user").getId(),"订单确认到账.取消")
+	                    <button class="cancel">取消</button>
+	                #end
+	            #end         
+            </div>
+        </div>
+        <input type="hidden" name="path" id="sendProv" value="$!gathering.path">
+            <input type='file' id="provPicFile" name="_file" style="display:none">
+
+    </div>
+       
+      
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/wm-common.js?v=1"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bui-min.js"></script>
+
+
+<script type="text/javascript">
+
+        $.ajax({
+          type: 'get',
+          url: "../Ssq/viewContract.do",
+          data:{protocolNo:'',orderNo:$("#orderNo").val()},
+           dataType: "json",
+          success: function(data){
+              if(data.code == '000000'){//返回成功
+                
+                if (data.obj) {
+                    $('#view_ssq').attr('href', data.obj);
+                }else{
+                     $('#view_ssq').attr('href', 'javascript:;');
+                     $('#view_ssq').removeAttr('target');
+                     $('#view_ssq').click(function(){
+                        BUI.Message.Alert('协议暂未生成！','error'); 
+                     });
+                }
+            }
+            },
+          error : function() {    
+              BUI.Message.Alert('查看协议失败！','error'); 
+          }   
+        });
+
+    //确认到账
+    $("#strSubmit").click(function(){
+        var orderNo = $("#orderNo").val();
+        var priceTotal = $("#priceTotal").val();
+        var gatheringDate = $("#gatheringDate").val();
+        var gatheringTotal = $("#gatheringTotal").val();
+        var gatheringAccount = $("#gatheringAccount").val();
+        var depositBank = $("#depositBank").val();
+        var path = $("#sendProv").val();
+        $.ajax({
+            url:"$request.getContextPath()/orderInfo/confirmToAccountGathering.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "orderNo":orderNo,
+                "priceTotal":priceTotal,
+                "gatheringDate":gatheringDate,
+                "gatheringTotal":gatheringTotal,
+                "gatheringAccount":gatheringAccount,
+                "depositBank":depositBank,
+                "path":path,
+            },
+            success:function(data){
+                if (data) {
+                    BUI.Message.Alert('操作成功！','success');
+                } else {
+                    BUI.Message.Alert('操作失败！','success');
+                }
+            },
+            error:function(){
+                BUI.Message.Alert('操作失败！','success');
+            }
+        });
+        setTimeout(function(){
+            location.href = "$request.getContextPath()/orderInfo/queryOrderInfo.do";
+        },2000);
+    });
+
+
+    function preview(){
+            $("#imgPreview").attr("href", "#");
+            if($("#provImg").attr("src") == ""){
+                $.dialog.errorTips("未上传凭证");
+            }else{
+                $("#imgPreview").attr("href", $("#provImg").attr("src"));
+                $("#imgPreview").click();
+            }
+        }
+    
+        $(function() {
+            $('.date').datetimepicker();
+            
+            $("#uploadpic").click(function(){
+                $("#provPicFile").click();
+            });
+            //_callbackImgId, _hiddenImgFileId, _uploadImgFileName, _uploadImgFileId, _filePath, _callbackBefore, _callbackAfter, _callbackImgDelId, _callbackDelete
+            $('#provPicFile').change(function(){
+                WM.uploadPic("provImg", "sendProv", "path", "provPicFile", "common"
+                    , function(){}
+                    , function(){}
+                    , ''
+                    , function(){
+                        $("#provImg").attr("src", "");
+                        $("#provImg").hide();
+                        $("#provPicFile").val('');
+                        $("#sendProv").val('');
+                    }
+                );
+            });
+        });
+
+    $('button.cancel').click(function(){
+        location.href = "$request.getContextPath()/orderInfo/queryOrderInfo.do";
+        return false;
+    });
+</script>
+</body>
+</html>

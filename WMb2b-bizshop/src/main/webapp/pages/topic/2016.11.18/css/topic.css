@@ -1,0 +1,58 @@
+body{font-size: 14px;}
+.img-slide{width:633px; margin:30px; height:310px; position: relative; float: left; border-bottom: 1px #e2e2e2 solid;}
+.img-slide.web-news{height: 380px;}
+.service-popup, #side-toolbar{display: none!important;}
+.flex-control-nav{text-align: right;}
+.heading{background: url("../images/dashed-bg.jpg") 0 57px repeat-x; padding: 20px 0px;}
+.flex-control-paging li a{height: 20px; width: 20px; opacity: 1; text-indent: 0px; background: #d4d4d4; color: #fff; text-align: center;}
+.flex-control-paging li.active a{background: #001661;}
+.headline .article{width: 450px; float: left; padding: 30px; }
+.article p, .news-list p{line-height: 2; text-indent: 28px;}
+.slides h3{font-size: 16px; font-weight: normal; padding-top: 10px;}
+a:hover{color:#022e86}
+.more{color:#0539ba;}
+.row-item{width: 100%; float: left; padding-bottom: 20px;}
+.row-item .img{margin: 30px 50px;}
+.row-item .img h3{font-size: 14px; font-weight: normal; text-align: center; padding-top: 10px;}
+.row-item .news-list{width: 100%; float: left; }
+.row-item .news-list li{width: 588px; float: left; background: #f1f1f1; margin:0px 20px 20px 0px; padding:20px 30px;}
+.row-item .news-list li:nth-child(2n){margin-right: 0px;}
+.row-item .news-list li img{float: left; margin-right: 20px;}
+.row-item .news-list li .title{font-weight:bold; padding-bottom: 30px; line-height: 1.5;}
+ul.people-list{width: 100%; float: left;}
+ul.people-list li{margin: 30px 33px; width: 331px; float: left; text-align: center;}
+ul.people-list li img{margin-bottom: 5px;}
+.row-item .img-app{padding: 30px 60px; width: 556px; text-align: center; float: left;}
+.row-item .img-app img{margin-bottom: 10px;}
+.row-item .video{float: left; padding: 30px 0 0 30px; text-align: center;}
+.row-item .video h3{font-weight: normal; font-size: 14px; padding-top: 10px;}
+.row-item .img-list{width: 100%; float: left; padding:30px 0 30px 20px;}
+.row-item .img-list > a{display: block; margin:0px 15px; width: 255px; float: left; text-align: center;}
+.row-item .img-list > a img{margin-bottom: 5px;}
+.row-item .media{padding:20px 0px 30px 30px; width: 100%; float: left;}
+.footer{padding-top: 0; font-size: 12px;}
+.us .article{width: 818px; float: left; padding:30px 120px 30px 80px;}
+.us .contact{border-left: 1px solid #e5e5e5; float: left; padding-left: 45px; margin-top: 30px;}
+.us .contact p{padding-bottom: 10px;}
+.us .contact img{margin-top: 10px;}
+.adv-news{width: 524px; margin: 30px 80px; float: left;}
+.adv-news h3{font-weight: normal; font-size: 16px; padding:5px 0 10px 0}
+.img-slide.forum-news{height: 340px; margin: 30px 50px;}
+
+.text-list{width: 100%; float: left; padding:20px 0px;}
+.text-list li{padding:0px 50px 0px 30px;height: 50px; background: url("../images/li-dot.jpg") 25px 8px no-repeat; width: 50%; float: left;}
+.people-list{width: 100%; float: left; border-top: 2px #e2e2e2 solid; padding-top: 2px;}
+.people-list .tab li{ width: 380px; height: 48px; line-height: 48px; text-align: center; background: #d4d4d4; float: left; margin-right: 30px; font-size: 16px;}
+.people-list .tab li.active{color: #fff; background: #022e86;}
+.people-list .tab li:last-child{margin-right: 0;}
+.people-list .tab li.last{margin-right: 0;}
+.people-list .tab-content li{display: none;}
+.people-list .tab-content li.active{display: block;}
+.people-list .tab-content li a{padding:20px 0px; width: 100%; float: left;}
+.people-list .tab-content li a img{float: left;}
+.people-list .tab-content li a .text{ width: 380px; height: 250px; float: left; background: #f1f1f1; margin-left: 30px; padding:25px;}
+.people-list .tab-content li a .text h4{font-size: 14px; padding-bottom: 20px;}
+.people-list .tab-content li a .text p{line-height: 1.8; }
+.people-list .tab-content li a .text p.sign{padding-top: 20px; text-align: right;}
+.people-list .imgs li{width: 380px; margin: 20px 30px 20px 0px; float: left;}
+.people-list .imgs li:last-child{margin-right: 0px;}

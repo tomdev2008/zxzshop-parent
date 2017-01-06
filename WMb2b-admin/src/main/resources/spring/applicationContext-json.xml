@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<description>公共JSON服务模块</description>
+	
+	<!-- 日期格式配置 configuration -->
+	<bean id="dateTimeFormatConfiguration"
+		class="com.wangmeng.parser.DateTimeFormatConfiguration">
+		<!-- JSON中日期序列化格式 -->
+		<!-- JSON中日期序列化格式：时间戳 -->
+		<property name="timestampPrimaryFormatS" value="yyyy-MM-dd HH:mm:ss"></property>
+		<!-- JSON中日期序列化格式：日期 -->
+		<property name="datePrimaryFormatS" value="yyyy-MM-dd"></property>
+		<!-- JSON中日期序列化格式：时间 -->
+		<property name="timePrimaryFormatS" value="HH:mm:ss"></property>
+		<!-- JSON中日期反序列化格式 -->
+		<!-- JSON中日期反序列化格式：时间戳 -->
+		<property name="timestampPrimaryFormatD" value="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"></property>
+		<!-- JSON中日期反序列化格式：日期 -->
+		<property name="datePrimaryFormatD" value="yyyy-MM-dd"></property>
+		<!-- JSON中日期反序列化格式：时间 -->
+		<property name="timePrimaryFormatD" value="HH:mm:ss.SSSZ"></property>
+	</bean>
+	
+	<!-- 自定义JSON反序列化：时间戳 -->
+	<bean id="timestampJsonDeserializer"
+		class="com.wangmeng.parser.json.TimestampJsonDeserializer">
+		<property name="dateTimeFormatConfiguration" ref="dateTimeFormatConfiguration"/>
+	</bean>
+	
+	<!-- 自定义JSON反序列化：日期 -->
+	<bean id="dateJsonDeserializer"
+		class="com.wangmeng.parser.json.DateJsonDeserializer">
+		<property name="dateTimeFormatConfiguration" ref="dateTimeFormatConfiguration"/>
+	</bean>
+	
+	<!-- 自定义JSON反序列化：时间 -->
+	<bean id="timeJsonDeserializer"
+		class="com.wangmeng.parser.json.TimeJsonDeserializer">
+		<property name="dateTimeFormatConfiguration" ref="dateTimeFormatConfiguration"/>
+	</bean>
+	
+	<!-- 自定义JSON序列化：时间戳 -->
+	<bean id="timestampJsonSerializer"
+		class="com.wangmeng.parser.json.TimestampJsonSerializer">
+		<property name="dateTimeFormatConfiguration" ref="dateTimeFormatConfiguration"/>
+	</bean>
+	
+	<!-- 自定义JSON序列化：日期 -->
+	<bean id="dateJsonSerializer"
+		class="com.wangmeng.parser.json.DateJsonSerializer">
+		<property name="dateTimeFormatConfiguration" ref="dateTimeFormatConfiguration"/>
+	</bean>
+	
+	<!-- 自定义JSON序列化：时间 -->
+	<bean id="timeJsonSerializer"
+		class="com.wangmeng.parser.json.TimeJsonSerializer">
+		<property name="dateTimeFormatConfiguration" ref="dateTimeFormatConfiguration"/>
+	</bean>
+	
+ 	 <!-- 支持jsonp对象的序列化  -->
+ 	 <bean id="smartDefaultSerializerProvider" class="com.fasterxml.jackson.databind.SmartDefaultSerializerProvider">
+	 </bean>
+	 
+ 	 <!-- 配置支持jsonp对象的序列化的objectmapper -->
+	 <bean id="objectMapperRaw" class="com.fasterxml.jackson.databind.ObjectMapper">
+		<property name="serializerProvider" ref="smartDefaultSerializerProvider"/>
+	 </bean>
+ 
+	<!-- objectMapper by Jackson2ObjectMapperFactoryBean -->
+	<bean id="objectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+		<property name="objectMapper" ref="objectMapperRaw"/>
+		
+	 	<!-- 自定义序列化 -->
+	 	<property name="serializers">
+	         <array>
+	         	<ref bean="timestampJsonSerializer" />
+				<ref bean="dateJsonSerializer" />
+				<ref bean="timeJsonSerializer" />
+	         </array>
+	    </property>
+	    
+		<!-- 自定义反序列化  -->
+<!-- 		<property name="deserializers"> -->
+<!-- 			 <array> -->
+<!-- 	           	<ref local="timestampJsonDeserializer" /> -->
+<!-- 				<ref local="dateJsonDeserializer" /> -->
+<!-- 				<ref local="timeJsonDeserializer" /> -->
+<!-- 	         </array> -->
+<!-- 	    </property> -->
+
+		<property name="deserializersByType"> 
+			<map>
+				<entry key="java.sql.Timestamp" value-ref="timestampJsonDeserializer"></entry>
+				<entry key="java.util.Date" value-ref="dateJsonDeserializer"></entry>
+				<entry key="java.sql.Time" value-ref="timeJsonDeserializer"></entry>
+			</map>
+		</property>
+		
+		<!-- 启用feature -->
+		<property name="featuresToEnable">
+	        <list>
+	            <value type="com.fasterxml.jackson.core.JsonParser.Feature">ALLOW_SINGLE_QUOTES</value>
+	            <value type="com.fasterxml.jackson.core.JsonParser.Feature">ALLOW_UNQUOTED_FIELD_NAMES</value>
+	            <value type="com.fasterxml.jackson.databind.DeserializationFeature">ACCEPT_SINGLE_VALUE_AS_ARRAY</value>
+	        </list>
+	    </property>
+	    <!-- 禁用feature -->
+	    <property name="featuresToDisable">
+	        <list>
+<!--  	            <value type="com.fasterxml.jackson.databind.SerializationFeature">WRITE_EMPTY_JSON_ARRAYS</value> -->
+				<value type="com.fasterxml.jackson.databind.SerializationFeature">WRITE_NULL_MAP_VALUES</value>
+	            <value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</value>
+	        </list>
+	    </property>
+<!-- 	    <lookup-method /> -->
+<!-- 	    <replaced-method></replaced-method> -->
+
+		<property name="serializationInclusion">
+                <value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+        </property>
+	</bean>
+</beans>

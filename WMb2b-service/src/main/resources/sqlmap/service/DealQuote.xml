@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DealQuote">
+	<!-- 提交报价 -->
+	<insert id="DealQuote.publishQuote" parameterType="com.wangmeng.service.bean.QuoteInfo"
+		useGeneratedKeys="true" keyProperty="Id">
+		insert into wm_quoteinfo_t(
+		QuoteNo,Type,DealCode,InquiryId,CompanyId,Role,UserId,BrandId,
+		Price,Quantity,TotalCost,TotalCostLong,QuoteTime)
+		values(#{quoteNo},#{type},#{dealCode},#{inquiryId},#{companyId},#{role},
+		#{userId},#{brandId},#{price},#{quantity},#{totalCost},#{totalCostLong},NOW())
+	</insert>
+	
+	<!-- 查询一个订单对应的报价 -->
+	<select id="DealQuote.getDealQuotes" parameterType="com.wangmeng.service.bean.QuoteInfo"
+		resultType="com.wangmeng.service.bean.QuoteInfo">
+		select * from wm_quoteinfo_t
+		where 1=1
+		<if test="type != 0">
+		and Type = #{type} 
+		</if>
+		<if test="dealCode != null and dealCode != ''">
+		and DealCode = #{dealCode}
+		</if>
+	</select>
+	
+	<!-- 查询报价列表 -->
+	<select id="DealQuote.queryQuoteList" 
+		parameterType="com.wangmeng.service.bean.QuoteInfo"
+		resultType="com.wangmeng.service.bean.QuoteInfo">
+		select * from wm_quoteinfo_t
+		where 1=1
+		<if test="type != 0">
+		and Type = #{type}
+		</if>
+		<if test="quoteNo != null and quoteNo != ''">
+		and QuoteNo = #{quoteNo}
+		</if>
+		<if test="dealCode != null and dealCode != ''">
+		and DealCode = #{dealCode}
+		</if>
+		<if test="role != 0">
+		and Role = #{role}
+		</if>
+	</select>
+	
+	<update id="DealQuote.updateQuoteStatistic" parameterType="com.wangmeng.service.bean.QuoteStatistic">
+		update wm_quotestatistic_t
+		<set>
+		QuoteNo=#{quoteNo}
+		<if test="invoiceType != 0">
+		,InvoiceType = #{invoiceType}
+		</if>
+		<if test="feeRate != 0">
+			<choose>
+			<when test="feeRate > 0">
+			,FeeRate = #{feeRate}
+			</when>
+			<otherwise>
+			,FeeRate = 0
+			</otherwise>
+			</choose>
+		</if>
+		<if test="fee != 0">
+			<choose>
+			<when test="fee > 0">
+			,Fee = #{fee}
+			</when>
+			<otherwise>
+			,Fee = 0
+			</otherwise>
+			</choose>
+		</if>
+		<if test="isView">
+			,IsView = 1
+		</if>
+		<where>
+		QuoteNo=#{quoteNo}
+		</where>
+		</set>
+	</update>
+	<update id="DealQuote.updateViewStatus" parameterType="com.wangmeng.service.bean.QuoteStatistic">
+		update wm_quotestatistic_t
+		<set>
+			<if test="isView!=null">
+				IsView = 1
+			</if>
+			<where>
+				DealNo=#{dealNo}
+			</where>
+		</set>
+	</update>
+	<!-- 更新报价单信息 -->
+	<update id="DealQuote.updateQuote" parameterType="com.wangmeng.service.bean.QuoteInfo">
+		update wm_quoteinfo_t
+		<set>
+		Id = #{id}
+		<if test="role != 0">
+		,Role=#{role}
+		</if>
+		<if test="userId != 0">
+		,UserId = #{userId}
+		</if>
+		<if test="brandId != 0">
+		,BrandId=#{brandId}
+		</if>
+		<if test="price != 0">
+		,Price = #{price}
+		</if>
+		<if test="totalCost != 0">
+		,TotalCost = #{totalCost}
+		</if>
+		<if test="totalCostLong != 0">
+		,TotalCostLong = #{totalCostLong}
+		</if>
+		<if test="quoteTime != null">
+		,QuoteTime = #{quoteTime}
+		</if>
+		</set>
+		<where>
+		Id = #{id}
+		</where>
+	</update>
+	
+	<!-- 查询报价次数 -->
+	<select id="DealQuote.getQuoteTimes" parameterType="com.wangmeng.service.bean.QuoteInfo" resultType="int">
+		select COALESCE(max(times), 0) as times
+		from wm_quotestatistic_t
+		where DealNo = #{dealCode} and QuoteType = #{type}
+	</select>
+	
+	<!-- 查询采购的报价单详情 -->
+	<select id="DealQuote.getPurchaseDealQuoteDetail" 
+		parameterType="com.wangmeng.service.bean.QuoteInfo"
+		resultType="com.wangmeng.service.bean.SheetProduct">
+		select 
+			b.ProductName,
+			b.Model,
+			b.Sku,
+			b.Quantity,
+			b.Unit,
+			a.Price,
+			a.TotalCost,
+			a.TotalCostLong,
+			a.BrandId as BrandIds,
+			(case when c.Name is null then t.brandnames end)  as BrandNames,
+			a.InquiryId as id
+		from wm_quoteinfo_t a 
+		left join wm_quotestatistic_t t on a.quoteno = t.quoteno
+		left join wm_brands_t c on a.BrandId = c.Id,
+			wm_purchaseproduct_t b
+		WHERE
+		a.InquiryId = b.Id
+		<if test="type != 0">
+		and a.Type = #{type}
+		</if>
+		<if test="quoteNo != null and quoteNo != ''">
+		and a.QuoteNo = #{quoteNo}
+		</if>
+		<if test="dealCode != null and dealCode != ''">
+		and a.DealCode = #{dealCode}
+		</if>
+	</select>
+	
+	<!-- 查询询价的报价单详情 -->
+	<select id="DealQuote.getInquiryDealQuoteDetail" 
+		parameterType="com.wangmeng.service.bean.QuoteInfo"
+		resultType="com.wangmeng.service.bean.SheetProduct">
+		select 
+			b.ProductName,
+			b.Sku,
+			b.Model,
+			b.Quantity,
+			b.Unit,
+			a.Price,
+			a.TotalCost,
+			a.TotalCostLong,
+			a.BrandId as BrandIds,
+			(case when c.Name is null then t.brandnames end) as BrandNames,
+			a.InquiryId as id
+		from wm_quoteinfo_t a 
+		 left join wm_quotestatistic_t t on a.quoteno = t.quoteno
+		 left join wm_brands_t c on a.BrandId = c.Id,
+			wm_inquirysheetproduct_t b
+		WHERE
+		a.InquiryId = b.Id
+		<if test="type != 0">
+		and a.Type = #{type}
+		</if>
+		<if test="quoteNo != null and quoteNo != ''">
+		and a.QuoteNo = #{quoteNo}
+		</if>
+		<if test="dealCode != null and dealCode != ''">
+		and a.DealCode = #{dealCode}
+		</if>
+	</select>
+	
+	<!-- 添加报价汇总数据 -->
+	<insert id="DealQuote.addQuoteStatistic" 
+		parameterType="com.wangmeng.service.bean.QuoteStatistic">
+		insert into wm_quotestatistic_t
+		(QuoteNo,DealNo,CompanyId,QuoteTime,ExpressFee,Kinds,TotalCost,TotalCostLong,
+		Remark,BrandNames,Status,times,InvoiceType,FeeRate,Fee,IsView,QuoteEndTime,QuoteType)
+		values(#{quoteNo},#{dealNo},#{companyId},now(),#{expressFee},#{kinds},
+		#{totalCost},#{totalCostLong},#{remark},#{brandNames},#{status},#{times},
+		#{invoiceType},#{feeRate},#{fee},#{isView},#{quoteEndTime},#{quoteType})
+	</insert>
+	<!-- 查询报价汇总数据 -->
+	<select id="DealQuote.getQuoteStatisticByCode" parameterType="com.wangmeng.service.bean.QuoteStatistic"
+			resultType="com.wangmeng.service.bean.QuoteStatistic">
+		select a.*,b.CompanyName,d.ProtocolNo,d.`Status` as ProtocolStatus,
+		case when a.DealNo like CONCAT('','cg','%') then 2 when a.DealNo like CONCAT('','xj','%') then 1 end as type,
+		case when a.DealNo like CONCAT('','cg','%') then e.Address when a.DealNo like CONCAT('','xj','%') then f.Address end as receiveAddr,
+		case when a.DealNo like CONCAT('','cg','%') then e.Name when a.DealNo like CONCAT('','xj','%') then f.Title end as projectName,
+		case when a.DealNo like CONCAT('','cg','%') then e.ExpressWay when a.DealNo like CONCAT('','xj','%') then f.Receiving end as expressType,
+		CASE WHEN 0>TIMESTAMPDIFF(DAY,NOW(),a.`QuoteEndTime`) THEN 0 ELSE TIMESTAMPDIFF(DAY,NOW(),a.`QuoteEndTime`) END `endTime`
+		from wm_quotestatistic_t a left join wm_enterpriseinfo_t b on a.CompanyId = b.Id
+		left join wm_orderinfo_t c on a.QuoteNo=c.QuoteNo
+		LEFT JOIN wm_purchaseprotocol_t d on c.OrderNo = d.OrderNo
+		LEFT JOIN wm_purchaseinfo_t e on a.DealNo=e.PurchaseNo
+		left join wm_inquirysheet_t f on a.DealNo = f.InquirySheetCode
+		where 1=1
+		<if test="quoteNo != null and quoteNo != ''">
+			and a.QuoteNo = #{quoteNo}
+		</if>
+		<if test="dealNo != null and dealNo != ''">
+			and a.DealNo = #{dealNo}
+		</if>
+		order by QuoteTime desc
+	</select>
+
+	<!-- 查询报价汇总数据 手机端-->
+	<select id="DealQuote.getQuoteStatisticByCodeOnMobile" parameterType="com.wangmeng.service.bean.QuoteStatistic"
+		resultType="com.wangmeng.service.bean.QuoteStatistic">
+		select a.*,b.CompanyName,d.ProtocolNo,d.`Status` as ProtocolStatus,
+		case when a.DealNo like CONCAT('','cg','%') then 2 when a.DealNo like CONCAT('','xj','%') then 1 end as type,
+		case when a.DealNo like CONCAT('','cg','%') then e.Address when a.DealNo like CONCAT('','xj','%') then f.Address end as receiveAddr,
+		case when a.DealNo like CONCAT('','cg','%') then e.Name when a.DealNo like CONCAT('','xj','%') then f.Title end as projectName,
+		case when a.DealNo like CONCAT('','cg','%') then e.ExpressWay when a.DealNo like CONCAT('','xj','%') then f.Receiving end as expressType,
+		CASE WHEN 0>TIMESTAMPDIFF(DAY,NOW(),a.`QuoteEndTime`) THEN 0 ELSE TIMESTAMPDIFF(DAY,NOW(),a.`QuoteEndTime`) END `endTime`
+		from wm_quotestatistic_t a left join wm_enterpriseinfo_t b on a.CompanyId = b.Id 
+		left join wm_orderinfo_t c on a.QuoteNo=c.QuoteNo 
+		LEFT JOIN wm_purchaseprotocol_t d on c.OrderNo = d.OrderNo
+		LEFT JOIN wm_purchaseinfo_t e on a.DealNo=e.PurchaseNo
+		left join wm_inquirysheet_t f on a.DealNo = f.InquirySheetCode
+		where 1=1
+		<if test="quoteNo != null and quoteNo != ''">
+			and a.QuoteNo = #{quoteNo}
+		</if>
+		<if test="dealNo != null and dealNo != ''">
+			and a.DealNo = #{dealNo}
+		</if>
+		order by QuoteTime desc
+	</select>
+	
+	<!-- 查询报价的企业列表 -->
+	<select id="DealQuote.getQuoteEnterprise" parameterType="map"
+		resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select * 
+		from wm_enterpriseinfo_t 
+		where Id in 
+		(select companyId 
+			from wm_quotestatistic_t 
+			where dealNO = #{param})
+		limit #{page.offSet},#{page.pageSize}
+	</select>
+	
+	<select id="DealQuote.getHistoryQuoteListByPage" parameterType="com.wangmeng.service.bean.QuoteHistoryParam" 
+		resultType="com.wangmeng.service.bean.QuoteHistoryParam">
+		select * from (
+			SELECT a.QuoteNo,a.Type,a.Quantity,et.CompanyName,a.DealCode,bt.`Name` as BrandNames,
+			a.Price,a.TotalCost,a.TotalCostLong,b.ProductName,b.Model,b.Sku,b.Unit,c.CompanyId,a.QuoteTime
+			from wm_quoteinfo_t a LEFT JOIN wm_brands_t bt on a.BrandId = bt.Id 
+			LEFT JOIN wm_enterpriseinfo_t et on a.CompanyId = et.Id,
+			wm_purchaseproduct_t b,
+			wm_purchaseinfo_t c
+			where a.InquiryId = b.Id
+			and b.PurchaseNo = c.PurchaseNo
+			UNION
+			select d.QuoteNo,d.Type,e.Quantity,ft.CompanyName,d.DealCode,ct.`Name` as BrandNames,
+			d.Price,d.TotalCost,d.TotalCostLong,e.ProductName,e.Model,e.Sku,e.Unit,f.CompanyId,d.QuoteTime
+			from wm_quoteinfo_t d LEFT JOIN wm_brands_t ct on d.BrandId = ct.Id
+			LEFT JOIN wm_enterpriseinfo_t ft on d.CompanyId = ft.Id,
+			wm_inquirysheetproduct_t e,
+			wm_inquirysheet_t f
+			where d.InquiryId = e.Id and e.SheetCode = f.InquirySheetCode
+			) hist
+			where 1=1
+			<if test="param.productName != null and param.productName != ''">
+				and hist.ProductName like CONCAT('%', #{param.productName},'%')
+			</if>
+			<if test="param.startTime != null and param.startTime != ''">
+				and hist.QuoteTime > #{param.startTime}
+			</if>
+			<if test="param.endTime != null and param.endTime != ''">
+				and #{param.endTime} > hist.QuoteTime
+			</if>
+			<if test="param.beginQt != 0">
+				and hist.Quantity >= #{param.beginQt}
+			</if>
+			<if test="param.endQt != 0">
+				and #{param.endQt} >= hist.Quantity
+			</if>
+			and hist.CompanyId = #{param.companyId}
+			<choose>
+			<when test="param.symbol == 1">
+			order by hist.Quantify asc
+			</when>
+			<otherwise>
+			order by hist.QuoteTime desc
+			</otherwise>
+			</choose>
+	</select>
+	
+	<!-- 报价推送 -->
+	<update id="pushQuto" parameterType="map">
+		update wm_quotestatistic_t
+        <set>
+	    	<if test="status != 0">
+	        	Status = #{status},
+	        </if>
+			<if test="times != 0">
+				Times = #{times},
+			</if>
+			quoteNo = #{qutoCode}
+		</set>
+		<where>
+			quoteNo = #{qutoCode}
+		</where>
+	</update>
+
+	<select id="DealQuote.getQuoteProductCounts" parameterType="String" resultType="int">
+		SELECT SUM(Quantity) as counts from wm_quoteinfo_t
+		where DealCode = #{dealCode}
+		GROUP BY DealCode
+	</select>
+	
+ <!-- 统计用户的报价相关信息 -->
+    <select id="DealQuote.getPresonalQuoteStatistic" parameterType="map" resultType="map">
+    	Select * from (SELECT count(a.id) as counts,a.quoteType ,a.isView,
+		case QuoteType when 1 then b.UserId when 2 then c.UserId end as userId 
+		from wm_quotestatistic_t a
+		left join wm_inquirysheet_t b on a.DealNo = b.InquirySheetCode and a.QuoteType = 1
+		LEFT JOIN wm_purchaseinfo_t c on a.DealNo = c.PurchaseNo and a.QuoteType=2
+		where a.Status > 4
+		GROUP BY UserId,QuoteType,IsView
+		) statistic
+		where 1=1
+		<if test="userId != 0">
+			and statistic.userId = #{userId}
+		</if>
+		<if test="quoteType != 0">
+			and statistic.quoteType = #{quoteType}
+		</if>
+		<if test="isView != 0">
+			<if test=" 0 > isView">
+				and statistic.isView = 0
+			</if>
+			<if test="isView > 0">
+				and statistic.isView = 1
+			</if>
+		</if>
+    </select>
+</mapper>

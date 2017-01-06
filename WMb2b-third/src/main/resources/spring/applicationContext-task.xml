@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	 <!-- ALL -->
+	 <!-- motan export after -->
+	<bean id="motanExportAfterJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+         <!-- 调用的类 -->
+         <property name="targetObject">
+             <ref bean="motanFeaturedContextFirer"/>
+         </property>
+         <!-- 调用类中的方法 -->
+         <property name="targetMethod">
+             <value>fire</value>
+         </property>
+     </bean>
+     
+     <bean id="motanExportAfterTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+         <property name="jobDetail">
+             <ref bean="motanExportAfterJob"/>
+         </property>
+         <!-- 10秒后执行，检查5次 -->
+ 		<property name="startDelay" value="10000" />
+ 		<property name="repeatInterval" value="10000" />
+ 		<property name="repeatCount" value="5" />
+     </bean>
+     
+      <bean id="motanExportAfterQuartz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+         <property name="triggers">
+             <list>
+                 <ref bean="motanExportAfterTrigger"/>
+             </list>
+         </property>
+     </bean>
+	 
+     <!-- SSQ主动扫描服务JOB -->
+     <bean id="ssqCallbackVolunteerJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+         <!-- 调用的类 -->
+         <property name="targetObject">
+             <ref bean="ssqCallbackVolunteerService"/>
+         </property>
+         <!-- 调用类中的方法 -->
+         <property name="targetMethod">
+             <value>scanCallbackTask</value>
+         </property>
+     </bean>
+     
+     <!-- SSQ主动扫描TRIGGER -->
+     <bean id="ssqCallbackVolunteerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+         <property name="jobDetail">
+             <ref bean="ssqCallbackVolunteerJob"/>
+         </property>
+         <!-- 后台每隔24小时检查一次 -->
+ 		<property name="startDelay" value="600000" />
+ 		<property name="repeatInterval" value="86400000" />
+     </bean>
+     
+     <!-- SSQ主动扫描Scheduler -->	
+     <bean id="ssqCallbackVolunteerQuartz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+         <property name="triggers">
+             <list>
+                 <ref bean="ssqCallbackVolunteerTrigger"/>
+             </list>
+         </property>
+     </bean>
+     
+     <!-- DAY -->
+     <!-- SSQ主动扫描服务JOB -->
+     <bean id="ssqCallbackVolunteerJobDay" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+         <!-- 调用的类 -->
+         <property name="targetObject">
+             <ref bean="ssqCallbackVolunteerService"/>
+         </property>
+         <!-- 调用类中的方法 -->
+         <property name="targetMethod">
+             <value>scanCallbackTaskDay</value>
+         </property>
+     </bean>
+     
+     <!-- SSQ主动扫描TRIGGER -->
+     <bean id="ssqCallbackVolunteerTriggerDay" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+         <property name="jobDetail">
+             <ref bean="ssqCallbackVolunteerJobDay"/>
+         </property>
+         <!-- 后台每隔12小时检查一次 -->
+ 		<property name="startDelay" value="300000" />
+ 		<property name="repeatInterval" value="43200000" />
+     </bean>
+     
+     <!-- SSQ主动扫描Scheduler -->	
+     <bean id="ssqCallbackVolunteerQuartzDay" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+         <property name="triggers">
+             <list>
+                 <ref bean="ssqCallbackVolunteerTriggerDay"/>
+             </list>
+         </property>
+     </bean>
+     
+          
+     <!-- 15Min -->
+     <!-- SSQ主动扫描服务JOB -->
+     <bean id="ssqCallbackVolunteerJob15Min" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+         <!-- 调用的类 -->
+         <property name="targetObject">
+             <ref bean="ssqCallbackVolunteerService"/>
+         </property>
+         <!-- 调用类中的方法 -->
+         <property name="targetMethod">
+             <value>scanCallbackTask15Min</value>
+         </property>
+     </bean>
+     
+     <!-- SSQ主动扫描TRIGGER -->
+     <bean id="ssqCallbackVolunteerTrigger15Min" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+         <property name="jobDetail">
+             <ref bean="ssqCallbackVolunteerJob15Min"/>
+         </property>
+         <!-- 后台每隔15分钟检查一次 -->
+ 		<property name="startDelay" value="60000" />
+ 		<property name="repeatInterval" value="900000" />
+     </bean>
+     
+     <!-- SSQ主动扫描Scheduler -->	
+     <bean id="ssqCallbackVolunteerQuartz15Min" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+         <property name="triggers">
+             <list>
+                 <ref bean="ssqCallbackVolunteerTrigger15Min"/>
+             </list>
+         </property>
+     </bean>
+     
+          
+     <!-- RealTime -->
+     <!-- SSQ主动扫描服务JOB -->
+     <bean id="ssqCallbackVolunteerJobRealTime" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+         <!-- 调用的类 -->
+         <property name="targetObject">
+             <ref bean="ssqCallbackVolunteerService"/>
+         </property>
+         <!-- 调用类中的方法 -->
+         <property name="targetMethod">
+             <value>scanCallbackTaskRealTime</value>
+         </property>
+     </bean>
+     
+     <!-- SSQ主动扫描TRIGGER -->
+     <bean id="ssqCallbackVolunteerTriggerRealTime" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+         <property name="jobDetail">
+             <ref bean="ssqCallbackVolunteerJobRealTime"/>
+         </property>
+         <!-- 后台每隔3分钟检查一次 -->
+ 		<property name="startDelay" value="30000" />
+ 		<property name="repeatInterval" value="180000" />
+     </bean>
+     
+     <!-- SSQ主动扫描Scheduler -->	
+     <bean id="ssqCallbackVolunteerQuartzRealTime" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+         <property name="triggers">
+             <list>
+                 <ref bean="ssqCallbackVolunteerTriggerRealTime"/>
+             </list>
+         </property>
+     </bean>
+     
+     
+</beans>

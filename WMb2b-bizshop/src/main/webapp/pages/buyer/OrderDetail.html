@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>订单详情</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-order-detail.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div id="buyer-header"></div>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="index.html">买家服务中心</a>
+            <i></i>
+            <a href="index.html?to=Order">订单管理</a>
+        </div>
+        <div class="box">
+            <div class="order_title">
+                订单编号：<span class="orderNO"></span> &nbsp;&nbsp;&nbsp;&nbsp;下单日期：<span class="orderDate"></span>
+            </div>
+            <div class="progressbar">
+                <ul class="bar">
+                    <li id="ordered" class="done current">已下单</li>
+                    <li id="platform-checked">协议生效</li>
+                    <li id="seller-signed">买家已付款</li>
+                    <li id="seller-reached">货已签收</li>
+                    <li id="finished">交易完成</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="box2 mt10 clearfix">
+            <div class="deliverway">
+                <p class="title">配送方式</p>
+                <p class="sendType"></p>
+                <p>物流运费：<span class="highlight expressFee"></span>元</p>
+
+                <div id="send-element" style="display: none;">
+                    <p>发货时间：<span class="sendTime"></span></p>
+                    <p>物流：<span class="transfcom"></span></p>
+                    <p>货运单号：<span class="transfcode"></span></p>
+                    <p>
+                        附件：<span class="glyphicon glyphicon-picture sendProv active"></span>
+                    </p>
+                </div>
+
+                <div id="reached-element" style="display: none;">
+                    <p>签收时间：<span class="reachTime"></span></p>
+                    <p>
+                        附件：<span class="glyphicon glyphicon-picture reachProv active"></span>
+                    </p>
+                </div>
+
+
+
+            </div>
+            <div class="deliverlist">
+                <div class="delivertitle">
+                    <ul class="clearfix">
+                        <li class="bold">货品清单</li>
+                        <li>采购商：<span class="purchaser"></span></li>
+                        <li>材料种类：<span class="highlight bold productKind"></span>种</li>
+                        <li>材料总价：<span class="highlight bold product-totalcost"></span>元</li>
+                    </ul>
+                </div>
+                <div class="tablewrap">
+                    <table class="table">
+                    	<thead>
+                        <tr>
+                            <th>材料名称</th>
+                            <th>材料品牌</th>
+                            <th>规格</th>
+                            <th>型号</th>
+                            <th>数量</th>
+                            <th>单位</th>
+                            <th>单价(元)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="purchaseProductListBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="desc">备注说明：价格10天有效</div>
+            </div>
+        </div>
+        <div class="box2 mt10 clearfix">
+            <div class="htinfo">
+                <p class="title">
+                    合同协议
+                </p>
+                <i></i>
+                <a href='#' onclick='javascript:viewContract();'><button>查看协议</button></a>
+                <a href='#' onclick='javascript:download_entity();'><button style="margin-top:10px;">下载协议</button></a>
+            </div>
+            <div class="shinfo">
+                <p class="title">收货人信息</p>
+                <div class="shentry clearfix">
+                    <div class="dt">第一收货人：</div>
+                    <div class="dd" id="first_address"></div>
+                </div>
+                <div class="shentry clearfix">
+                    <div class="dt">第二收货人：</div>
+                    <div class="dd" id="second_address">无</div>
+                </div>
+
+            </div>
+            <div class="invoiceinfo">
+                <p class="title">发票信息</p>
+                <div class="invoiceentry clearfix">
+                    <div class="dt">发票类型：</div>
+                    <div class="dd invoice-type"></div>
+                </div>
+                <div class="invoiceentry clearfix">
+                    <div class="dt">发票税点：</div>
+                    <div class="dd fee-rate"></div>
+                </div>
+            </div>
+            <div class="payinfo">
+                <p class="title">付款信息</p>
+                <div class="payentry clearfix">
+                    <div class="dt">付款日期：</div>
+                    <div class="dd pay-date"></div>
+                </div>
+                <div class="payentry clearfix">
+                    <div class="dt">已付款金额：</div>
+                    <div class="dd paid-total"></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="box2 mt10 clearfix">
+            <div class="total">
+                订单合计金额：<span class="highlight totalCost"></span> 元
+            </div>
+        </div>
+
+
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/buyer/buyer_base.js"></script>
+    <script src="../../assets/js/admin/custom.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/admin/inquiry-management.js"></script>
+    <script src="../../assets/js/seller/common.js"></script>
+    <script src="../../assets/js/common-date.js"></script>
+    <script type="text/javascript">
+
+        //订单id
+        var globalOrderId;
+        //订单状态
+        var globalOrderStatus;
+        //图片服务器地址
+        var globalPicServerAddress = 'http://wmb2b-bucket.oss.aliyuncs.com/upload';
+
+        $(function () {
+            globalOrderId = $.cookie("OrderListOrderNo");
+            initial();
+        });
+
+        /**
+         * 初始化
+         */
+        function initial(){
+            loadOrderDetail();
+            initialPageByOrderStatus();
+        }
+
+        /**
+         * 查询订单详情
+         */
+        function loadOrderDetail(){
+            if (globalOrderId==null || globalOrderId==undefined){
+                globalOrderId = 0; //order id invalid
+            }
+            $.ajax({
+                type:"GET",
+                url:"/orderInfo/showOrderDetail.do?id=" + globalOrderId,
+                dataType:"json",
+                async:false,
+                contentType : "application/json; charset=utf-8",
+                success : function(data){
+                    if (data!=null && data!=undefined && data.code=='000000') {
+                        globalOrderStatus = data.obj.status;
+                        $('.orderDate').html(milliDate2Str(data.obj.sendTime,'yyyy-MM-dd'));
+                        $('.orderNO').html(data.obj.orderNo);
+                        $('.purchaser').html(data.obj.enterpriseinfo.companyName);
+                        $('.totalCost').html(data.obj.totalCost);
+                        $('.productKind').html(data.obj.productKind);
+                        $('.product-totalcost').html(data.obj.quoteStatistic.totalCost);
+                        $('.expressFee').html(data.obj.quoteStatistic.expressFee);
+
+                        var transfersList = data.obj.orderTransferList;
+                        //对于多条物流信息的情况，先取第一条
+                        if (transfersList!=null && transfersList!=undefined && transfersList.length>0){
+                            var sendTypeStr = '';
+                            var _sendType = transfersList[0].sendType;
+                            if (_sendType==1){
+                                sendTypeStr = "物流承运";
+                            }
+                            if (_sendType==2){
+                                sendTypeStr = "厂家配送";
+                            }
+                            $('.sendType').html(sendTypeStr);
+
+                            if (transfersList[0].sendTime!=null && transfersList[0].sendTime!=undefined && transfersList[0].sendTime!=''){
+                                document.getElementById('send-element').style.display = 'block';
+                                $('.sendTime').html(milliDate2Str(transfersList[0].sendTime,'yyyy-MM-dd hh:mm:ss'));
+                                $('.transfcom').html(transfersList[0].transferCom);
+                                $('.transfcode').html(transfersList[0].transCode);
+                                
+                                var  _src= transfersList[0].sendProv;
+                                if(_src.indexOf('http://') == -1 && _src.indexOf('https://') == -1){
+                                    _src = globalPicServerAddress + _src;
+                                }
+                                $('.sendProv').html('<img src="'+ _src +'" width="300">');
+                            }
+                            if (transfersList[0].reachTime!=null && transfersList[0].reachTime!=undefined && transfersList[0].reachTime!=''){
+                                document.getElementById('reached-element').style.display = 'block';
+                                $('.reachTime').html(milliDate2Str(transfersList[0].reachTime,'yyyy-MM-dd hh:mm:ss'));
+                                
+                                if(_src.indexOf('http://') == -1 && _src.indexOf('https://') == -1){
+                                    _src = globalPicServerAddress + _src;
+                                }
+                                $('.reachProv').html('<img src="'+_src+'" width="300">');
+                            }
+                        }
+
+                        var purchaseProductList = data.obj.purchaseProductList;
+                        if (purchaseProductList!=null && purchaseProductList!=undefined && purchaseProductList.length>0){
+                            drawPurchProductList(purchaseProductList);
+                        }
+                        $('#first_address').html(data.obj.address);
+
+                        var _invoiceType = data.obj.quoteStatistic.invoiceType;
+                        var _invoiceTypeStr;
+                        if (_invoiceType==1){
+                            _invoiceTypeStr='普通发票';
+                        }
+                        if (_invoiceType==2){
+                            _invoiceTypeStr='增值税发票';
+                        }
+                        $('.invoice-type').html(_invoiceTypeStr);
+                        $('.fee-rate').html(data.obj.quoteStatistic.feeRate);
+
+                        var _payDate = data.obj.payTime;
+                        var _payDateStr='无';
+                        if (_payDate!=null && _payDate!=undefined && _payDate!=''){
+                            _payDateStr = milliDate2Str(_payDate,'yyyy-MM-dd');
+                        }
+                        $('.pay-date').html(_payDateStr);
+                        var _payTotal=data.obj.totalCost;;
+                        if (_payTotal!='' && _payTotal!='无'){
+                            $('.paid-total').html(_payTotal+'元');
+                        }else {
+                            $('.paid-total').html('无');
+                        }
+                    }
+                },
+                error : function () {
+                    console.log("error!" + data)
+                }
+            });
+        }
+
+        /**
+         * 根据订单状态初始化页面元素
+         */
+        function initialPageByOrderStatus(){
+            if (globalOrderStatus==null || globalOrderStatus==undefined || globalOrderStatus==''){
+                return;
+            }
+            //协议生效
+            if (globalOrderStatus >= 40 && globalOrderStatus < 50){
+                $('#ordered').removeClass('current');
+                $('#platform-checked').addClass('done current');
+            }else if (globalOrderStatus >= 50 && globalOrderStatus < 80){ //买家已付款
+                $('#ordered').removeClass('current');
+                $('#platform-checked').addClass('done');
+                $('#seller-signed').addClass('done current');
+            }else if (globalOrderStatus == 80){ //货已签收
+                $('#ordered').removeClass('current');
+                $('#platform-checked').addClass('done');
+                $('#seller-signed').addClass('done');
+                $('#seller-reached').addClass('done current');
+            }else if (globalOrderStatus==90){ //交易完成后
+                $('#ordered').removeClass('current');
+                $('#platform-checked').addClass('done');
+                $('#seller-signed').addClass('done');
+                $('#seller-reached').addClass('done');
+                $('#finished').addClass('done current');
+            }
+        }
+
+        /**
+         * 重绘列表页面
+         *
+         * @param purchaseProductList
+         */
+        function drawPurchProductList(purchaseProductList){
+            var purchaseProductListBodyObj = $("#purchaseProductListBody");
+            var tableContent = "";
+            for(var i=0;i<purchaseProductList.length;i++){
+                var purchProduct = purchaseProductList[i];
+            	tableContent += "<tr>";
+            	tableContent += "<td>"+purchProduct.productName+"</td>";
+            	tableContent += "<td>"+purchProduct.brandName+"</td>";
+            	tableContent += "<td>"+purchProduct.sku+"</td>";
+            	tableContent += "<td>"+purchProduct.model+"</td>";
+            	tableContent += "<td>"+purchProduct.quantity+"</td>";
+            	tableContent += "<td>"+purchProduct.unit+"</td>";
+            	tableContent += "<td>"+purchProduct.price+"</td>";
+            	tableContent += "</tr>";
+            }
+            purchaseProductListBodyObj.append(tableContent);
+        }
+
+        //下载协议
+        function download_entity() {
+            var orderNo = $("#orderNo").text();
+            if((orderNo && orderNo!="")){
+                self.location.href = "/Ssq/downloadContractDirect.do?protocolNo=&orderNo="+orderNo;
+            }else{
+                $.dialog.errorTips('协议编号无效','error');
+            }
+        }
+
+        //查看协议
+        function viewContract(){
+
+            var orderNo = $("#orderNo").text();
+            if((orderNo != null && orderNo!="")){
+                var url = "/Ssq/viewContractDirect.do?protocolNo=&orderNo="+orderNo;
+                $.dialog({
+                    title: "查看协议",
+                    lock: true,
+                    id: 'addAddress',
+                    width: '1080px',
+                    height: '690px',
+                    content: ['<div class="dialog-form">',
+                        '<div class="form-group">',
+                        '<iframe src=' + url + ' frameborder="0" width="100%" height="700"></iframe></div>',
+                        '</div>'].join(''),
+                    padding: '0px',
+                    top: '100px'
+                });
+
+
+            }else{
+                $.dialog.errorTips('协议编号无效','error');
+            }
+        }
+
+    </script>
+</body>
+</html>

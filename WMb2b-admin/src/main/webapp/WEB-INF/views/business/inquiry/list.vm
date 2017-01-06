@@ -1,0 +1,224 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>询价管理</title>
+        <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+    </head>
+    <body>
+        #parse("include/page_normal_detect.vm")
+      <div class="demo-content">
+          <div class="doc-content">
+            <ul class="nav-tabs">
+              <li class="active"><a href="#">普通询价</a></li><!-- 
+              <li><a href="$request.getContextPath()/quotedeal/queryQuoteDealList.do">报价管理</a></li> -->
+            </ul>
+             <div class="row">
+             <div class="span24 doc-content" style="width:90%">
+              
+              <form method="get" action="$request.getContextPath()/inquiry/queryInquerySheet.do" class="form-horizontal well" name="page" id="pageForm">
+                <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+                <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">用户名/手机号：</label>
+                    <div class="controls">
+                      <input type="text" name="name" value="$!query.name" placeholder="用户名/项目名称/手机号码" class="control-text">
+                    </div>
+                  </div>
+                </div>
+
+                   <div class="row">
+                    <div class="control-group span10">
+                      <label class="control-label">提交日期：</label>
+                      <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                        <input placeholder="起始日期" name="startDate" data-tip="{text : '起始日期'}" data-rules="{required:true}" data-messages="{required:'起始日期不能为空'}" class="input-small calendar" type="text" value="$!query.startDate"><label>&nbsp;-&nbsp;</label>
+                        <input placeholder="截止日期" name="endDate" data-rules="{required:true}" data-messages="{required:'截止日期不能为空'}" class="input-small calendar" type="text" value="$!query.endDate">
+                      </div>
+                    </div>
+                    <div class="form-actions span5">
+                    <input type="button" id="btnSearch" class="button button-primary" value="搜索"/>
+                    </div>
+                  </div>
+                  
+                    <div class="row">
+                      <div class="control-group span24">
+                        <label class="control-label">询价状态：</label>
+                        <div class="controls">
+                            <input type="hidden" name="status" id="status" value="$!query.status"/>
+                             <a href="#" title="全部" onClick="javascript:act('');" class="button button-primary">全部</a>
+                             #set($waitaudit = 0)
+                             #set($quoteprice = 0)
+                             #set($Integer = 0)
+                             #set($comment = 0)
+                             #set($end = 0)
+                            #foreach($!MapEntity in $!statusCount)
+                             #if($!MapEntity.key == 1 || $!MapEntity.key == 2)
+                               #set($waitaudit =  $waitaudit + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #if($!MapEntity.key == 3 || $!MapEntity.key == 4)
+                                #set($quoteprice = $quoteprice + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #if($!MapEntity.key == 6)
+                                #set($comment = $comment + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #if($!MapEntity.key == 7 || $!MapEntity.key == 20 || $!MapEntity.key == 21)
+                                #set($end = $end + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #end
+                             <a href="#" title="待审核" onClick="javascript:act('1,2');" class="button button-primary">待审核($!{waitaudit})</a>
+                             <a href="#" title="待报价" onClick="javascript:act('3,4');" class="button button-primary">待报价($!{quoteprice})</a>
+                             <a href="#" title="待评价" onClick="javascript:act('5,6');" class="button button-primary">待评价($comment)</a>
+                             <a href="#" title="询价结束" onClick="javascript:act('7,20,21');" class="button button-primary">询价结束($end)</a>
+                            
+                        </div>
+                      </div>
+                    </div>
+              </form>
+              
+              <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="30">选择</th>
+                  <th width="80">询价单号</th>
+                  <th>工程名称</th>
+                  <th width="80">用户名</th>
+                  <th width="80">手机号码</th>
+                  <th width="80">提交日期</th>
+                  <th width="80">截止日期</th>
+                  <th width="100">是否支付服务费</th>
+                  <th width="80">状态</th>
+                  #if($roleid != 4)
+                  <th width="80">客服</th>
+                  #end
+                  <th width="100">操作</th>
+                </tr>
+              </thead>
+               <tbody>
+                #foreach($InquiryQueryResult in $result.obj.data)
+                    <tr>
+                      <td><input type="checkbox" name="oneCheck" value="$InquiryQueryResult.inquirySheetCode"></td>
+                      <td>$!InquiryQueryResult.inquirySheetCode</td>
+                      <td>$!InquiryQueryResult.title</td>
+                      <td>$!InquiryQueryResult.username</td>
+                      <td>$!InquiryQueryResult.phone</td>
+                      <td>$!InquiryQueryResult.createDate</td>
+                      <td>$!InquiryQueryResult.endDate</td>
+                      <td>
+                          #if($!InquiryQueryResult.isService)
+                             <span class="label label-success">是</span>
+                          #else
+                             <span class="label label-important">否</span>
+                          #end
+                      </td>
+                            #if($!InquiryQueryResult.state == "1" || $!InquiryQueryResult.state == "2")
+                                    <td>待审核</td>
+                            #elseif($!InquiryQueryResult.state == "3" || $!InquiryQueryResult.state == "4")
+                                  <td>待报价</td>
+                            #elseif($!InquiryQueryResult.state == "5" || $!InquiryQueryResult.state == "6")
+                                  <td>待评价</td>
+                            #elseif($!InquiryQueryResult.state == "7" || $!InquiryQueryResult.state == "8" )
+                                  <td>询价结束</td>
+                            #elseif($!InquiryQueryResult.state == "20")
+                                  <td>询价关闭</td>
+                             #elseif($!InquiryQueryResult.state == "21")
+                                  <td>询价逾期关闭</td>
+                           #end
+
+                            #if($roleid != 4)
+                            <td>$!InquiryQueryResult.customerName</td>
+                            #end
+                      <td nowrap>
+                         #if($!InquiryQueryResult.state=="1")
+                             #auth($request.getSession().getAttribute("session.user").getId(),"询价管理.审核")
+                                <a class="button button-primary" href="#" title="审核" onClick="javascript:auditing_inquiry('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">审核</a>
+                             #end
+                              &nbsp;&nbsp;
+                             #auth($request.getSession().getAttribute("session.user").getId(),"询价管理.删除")
+                                <a class="button button-primary" href="#" title="删除" onClick="javascript:delete_inquiry('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">删除</a>
+                             #end
+                         #elseif($!InquiryQueryResult.state == "3" || $!InquiryQueryResult.state == "4")
+                             #auth($request.getSession().getAttribute("session.user").getId(),"询价管理.报价")
+                                <a class="button button-primary" href="#" title="报价" onClick="javascript:quto_inquiry('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">报价</a>
+                             #end
+                             <a class="button button-primary" href="#" title="查看" onClick="javascript:view_inquiry('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">查看</a>
+
+                        #elseif($!InquiryQueryResult.state == "20" || $!InquiryQueryResult.state == "21" )
+                              <a class="button button-primary" href="#" title="查看" onClick="javascript:view_inquiry('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">查看</a>
+                          #else
+                             #auth($request.getSession().getAttribute("session.user").getId(),"询价管理.查看询价")
+                                <a class="button button-primary" href="#" title="查看询价" onClick="javascript:view_inquiry('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">查看询价</a>
+                             #end
+                             #auth($request.getSession().getAttribute("session.user").getId(),"询价管理.查看报价")
+                                <a class="button button-primary" href="#" title="查看报价" onClick="javascript:view_inquiryquote('$InquiryQueryResult.inquirySheetCode');" tab="$InquiryQueryResult.inquirySheetCode">查看报价</a>
+                             #end
+                         #end
+                      </td>
+                    </tr>
+                #end
+              </tbody>
+                    </table>
+                 #parse("include/page_normal.vm")
+              </div>
+            </div>
+          </div>  
+      </div>
+      <script type="text/javascript" language="JavaScript">
+   $LAB
+   .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+   .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+   .script("$!{request.getContextPath()}/assets/js/config-min.js")
+   .wait(function(){
+    
+   });
+   
+    BUI.use('bui/calendar',function(Calendar){
+      var datepicker = new Calendar.DatePicker({
+        trigger:'.calendar',
+        autoRender : true
+      });
+    });
+    
+</script>  
+<script type="text/javascript" language="JavaScript">
+    //条件搜索
+    $("#btnSearch").click(function () {
+        $("#currentPage").val(1);
+        $("#pageForm").submit();
+    });
+
+  function act(data){
+        $("#status").val(data);
+         $("#pageForm").submit();
+    }
+ //审核
+ function auditing_inquiry(data){
+   location.href="$request.getContextPath()/inquiry/queryInquiryByCode.do?code="+data+"&isQproduct="+true+"&viewType=1";
+ }
+  //查看询价单信息
+ function view_inquiry(data){
+   location.href="$request.getContextPath()/inquiry/queryInquiryByCode.do?code="+data+"&isQproduct="+true+"&viewType=2";
+ }
+
+ //报价
+ function quto_inquiry(data){
+  location.href="$request.getContextPath()/inquiry/queryInquiryByCode.do?code="+data+"&isQproduct="+true+"&isQbrands="+true+"&viewType=3";
+ }
+
+ function view_inquiryquote(data){
+  location.href="$request.getContextPath()/quotedeal/queryQuoteDealList.do?code="+data;
+}
+//删除
+function delete_inquiry(data){
+  location.href="$request.getContextPath()/inquiry/deleteInquiry.do?inquiryCode="+data+"&status="+20;
+}
+    
+</script>
+    </body>
+    </html>

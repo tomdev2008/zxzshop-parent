@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CA编辑</title>
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="../assets/css/admin-prise-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="demo-content">
+    <!-- 详情页 ================================================== -->
+    <div>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+                <ul class="nav-tabs">
+                    <li class="active"><a href="$request.getContextPath()/enterprise/showCADetail.do?id=$!result.obj.id&viewType=3">CA编辑</a></li>
+                </ul>
+                    <div class="mt-30 ml-60" style="display:inline-block;width: 80%;height:50px;line-height:50px;border-bottom: 2px solid #eee;">
+                        <span class="fl-left fs-lg" style="display: block;">企业认证</span>
+                        <span class="fl-right fs-xxxlg fw-ber closehtml" style="display: block;" >X</span>
+                    </div>
+
+
+                <form  name="enterp_form" method="get" action="$request.getContextPath()/enterprise/updateCA4Enterprise.do">
+                    <input type="hidden" name="id" value="$!result.obj.id" />
+
+                <div class="ml-60 pt-20" style="width: 80%;height:680px;border: 1px solid #000000;">
+                    <div style="height: 640px;">
+                        <table class="catetable" style="width: 50%;">
+                            <thead>
+                            <tr>
+                                <th>认证类型</th>
+                                <th class="ft-gray">企业</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tl-center">
+                            <tr>
+                                <td>企业名称：</td>
+                                <td><input class="ft-gray" name="companyName" value="$!result.obj.companyName"></td>
+                            </tr>
+                                #if($!result.obj.enterpriseType=="1")
+                                    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                                        #if($enterpphoto.dictCode=='200001')
+                                        <tr>
+                                            <td>营业执照号码：</td>
+                                            <td>
+                                                <input name="enterprisephotoList[0].id" type="hidden" value="$!enterpphoto.id" />
+                                                <input class="ft-gray" name="enterprisephotoList[0].description" value="$!enterpphoto.description">
+                                            </td>
+                                        </tr>
+                                        #end
+                                        #if($enterpphoto.dictCode=='200002')
+                                        <tr>
+                                            <td>组织机构代码证：</td>
+                                            <td>
+                                                <input name="enterprisephotoList[1].id" type="hidden" value="$!enterpphoto.id" />
+                                                <input class="ft-gray" name="enterprisephotoList[1].description" value="$!enterpphoto.description">
+                                            </td>
+                                        </tr>
+                                        #end
+                                        #if($enterpphoto.dictCode=='200003')
+                                        <tr>
+                                            <td>税务登记证：</td>
+                                            <td>
+                                                <input name="enterprisephotoList[2].id" type="hidden" value="$!enterpphoto.id" />
+                                                <input class="ft-gray" name="enterprisephotoList[2].description" value="$!enterpphoto.description">
+                                            </td>
+                                        </tr>
+                                        #end
+                                    #end
+                                #else
+                                    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                                        #if($enterpphoto.dictCode=='200004')
+                                        <tr>
+                                            <td>社会信用代码证号：</td>
+                                            <td>
+                                                <input name="enterprisephotoList[0].id" type="hidden" value="$!enterpphoto.id" />
+                                                <input class="ft-gray" name="enterprisephotoList[0].description" value="$!enterpphoto.description">
+                                            </td>
+                                        </tr>
+                                        #end
+                                    #end
+                                #end
+                            <tr>
+                                <td>企业地址：</td>
+                                <td><input class="ft-gray" name="companyAddress" value="$!result.obj.companyAddress"></td>
+                            </tr>
+                            <tr>
+                                <td>企业法人身份证：</td>
+                                <td><input class="ft-gray" name="idCardNo" value="$!result.obj.idCardNo"></td>
+                            </tr>
+                            <tr>
+                                <td>联系人姓名：</td>
+                                <td><input class="ft-gray" name="contactsName" value="$!result.obj.contactsName"></td>
+                            </tr>
+                            <tr>
+                                <td>联系人手机：</td>
+                                <td><input class="ft-gray" name="contactsPhone" value="$!result.obj.contactsPhone"></td>
+                            </tr>
+                            <tr>
+                                <td>联系人Email：</td>
+                                <td><input class="ft-gray" name="contactsEmail" value="$!result.obj.contactsEmail"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="fl-right" style="width:40%;margin-right: -65px;">
+                            #if($!result.obj.enterpriseType=="1")
+                                <div class="">
+                                    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                                        #if($enterpphoto.dictCode=='200001')
+                                            <img src="$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)" alt="企业营业执照" style="width: 200px;height: 110px;display: block;"/>
+                                            <span class="ft-orange">企业营业执照</span>
+                                        #end
+                                    #end
+                                </div>
+                                <div class="">
+                                    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                                        #if($enterpphoto.dictCode=='200002')
+                                            <img src="$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)" alt="组织机构代码" style="width: 200px;height: 120px;display: block;"/>
+                                            <span class="ft-orange">组织机构代码</span>
+                                        #end
+                                    #end
+                                </div>
+                                <div class="">
+                                    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                                        #if($enterpphoto.dictCode=='200003')
+                                            <img src="$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)" alt="税务登记证" style="width: 200px;height: 120px;display: block;"/>
+                                            <span class="ft-orange">税务登记证</span>
+                                        #end
+                                    #end
+                                </div>
+                            #else
+                                <div class="">
+                                    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                                        #if($enterpphoto.dictCode=='200004')
+                                            <img src="$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)" alt="社会机构信用代码证" style="width: 200px;height: 120px;display: block;"/>
+                                            <span class="ft-orange">社会机构信用代码证</span>
+                                        #end
+                                    #end
+                                </div>
+                            #end
+                        </div>
+                    </div>
+
+                    <div class="tl-center">
+                        <span class="submit-btn ft-orange" id="saveInfo">保存信息</span>
+                    </div>
+                </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <script src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        $(".closehtml").click(function(){
+            window.history.back();
+        });
+
+        $("#saveInfo").click(function(){
+
+            document.forms[0].submit();
+
+
+##            var personName = $("#personName").val(),
+##                    personPhone = $("#personPhone").val(),
+##                    idCardno = $("#idCardno").val(),
+##                    personEmail = $("#personEmail").val(),
+##                    companyAddress = $("#companyAddress").val();
+##
+##            var data = "personName="+encodeURIComponent(personName)+"&personPhone="+personPhone+"&idCardNo="+idCardno+"&personEmail="+personEmail+"&companyAddress="+encodeURIComponent(companyAddress);
+##
+##            $.ajax({
+##                url:'$request.getContextPath()/enterprise/updateCA4Enterprise.do?id=',
+##                type:'get',
+##                dataType:'json',
+##                data:data,
+##                success:function(data){
+##                    if(data.code=="000000"){
+##                        BUI.Message.Alert("保存成功!","success");
+##                    }else{
+##                        BUI.Message.Alert("保存失败!","error")
+##                    }
+##                },
+##                error:function(){
+##
+##                }
+##            });
+
+
+        });
+
+    </script>
+
+</body>
+</html>         

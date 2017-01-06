@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <!-- Druid 数据库连接池 -->
+    <bean id="dataSource"
+    	class="com.alibaba.druid.pool.DruidDataSource"
+    	destroy-method="close">
+    	<!-- 数据库基本信息配置 -->
+    	<property name="url" value="${datasource.url}" />
+    	<property name="username" value="${datasource.username}" />
+    	<property name="password" value="${datasource.password}" />
+    	<!-- 自动配置驱动 -->
+    	<property name="driverClassName" value="${datasource.driver}" />
+    	<!-- 最大并发连接数 -->
+    	<property name="maxActive" value="${datasource.maxActive}" />
+    	<!-- 初始化连接数量 -->
+    	<property name="initialSize" value="${datasource.initialSize}" />
+    	<!-- 配置获取连接等待超时的时间 -->
+    	<property name="maxWait" value="${datasource.maxWait}" />
+    	<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+    	<property name="timeBetweenEvictionRunsMillis"
+    		value="${datasource.timeBetweenEvictionRunsMillis}" />
+    	<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+    	<property name="minEvictableIdleTimeMillis"
+    		value="${datasource.minEvictableIdleTimeMillis}" />
+    	<property name="filters" value="stat,wall" />
+    </bean>
+
+    <!-- 数据源配置,使用spring的lazy数据库连接池选择器 -->
+	<bean id="wareDataSourceDialectInitor" class="com.wangmeng.mybatis.WareDataSourceDialectInitor"
+		init-method="init" depends-on="dataSource">
+		<property name="targetDataSource">
+ 			<ref bean="dataSource" />
+		</property>
+		<property name="dialectClassCand" value="com.wangmeng.mybatis.dialect.MySQLDialect" />
+	</bean>
+	
+    <!-- 用注解来实现事务管理 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+    </bean>
+	
+	<!-- SessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+    </bean>
+     
+	<!-- MapperScannerConfigurer
+		用于原生mapper自动DAO
+	 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- basePackage 需要增加mapper路径 -->
+		<property name="basePackage" value="
+		com.wangmeng.sys.legacy.mapping
+		com.wangmeng.sys.mapping
+		com.wangmeng.agreement.mapping
+		com.wangmeng.fav.mapping
+		com.wangmeng.payway.mapping
+		com.wangmeng.protocols.mapping
+		com.wangmeng.product.mapping
+		com.wangmeng.brands.mapping
+		com.wangmeng.news.mapping
+		com.wangmeng.sys.authority.mapping
+		" />
+		<property name="markerInterface" value="com.wangmeng.mybatis.SqlMapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>	 
+	
+	<!-- SqlSessionTemplate -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+	  	<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- MybatisUtil -->
+	<bean id="mybatisUtil" class="com.wangmeng.mybatis.MybatisUtil" >
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+
+</beans>

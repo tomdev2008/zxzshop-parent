@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>账户信息</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-account.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="content clearfix">
+        <div class="box clearfix">
+        <div id="account-info"></div>
+        <div class="ca-status">
+			<label>个人CA认证：</label>
+			<span class="status"><a id="isrecod">未认证</a></span>
+			<a class="event btn-apply" id="caText" href="AccountCaPersonal.html">申请</a>
+		</div>
+        </div>
+        <div class="box mt20">
+            <div class="panel_title">
+               企业信息&nbsp;<span class="highlight">一账户可以绑定多个企业</span>
+            </div>
+            <div class="companys">
+                <ul class="clearfix" id="panel_title_id">
+                    <!-- <li class="comp_box comp_type1">
+                        <a href="#">
+                            <i></i>
+                            添加企业
+                        </a>
+                    </li>
+                    <li class="comp_box comp_type2">
+                        <span class="default">
+                            默认账户
+                        </span>
+                        <h3>东方建材网</h3>
+                        <div class="comp"><i></i><span class="highlight">CA已认证</span></div>
+                        <div class="priv">
+                            <span>企业资料：</span>
+                            <span class="highlight">已认证</span>
+                            <a href="#">查看资料</a>
+                        </div>
+                    </li>
+                    <li class="comp_box comp_type2 unauthorized">
+                        <span class="default">
+                            默认账户
+                        </span>
+                        <h3>东方建材网</h3>
+                        <div class="comp"><i></i><span>CA未认证</span></div>
+                        <div class="priv">
+                            <span>企业资料：</span>
+                            <span class="highlight">未认证</span>
+                            <a href="#">查看资料</a>
+                        </div>
+                    </li>
+                    <li class="comp_box">
+                        即将开通
+                    </li> -->
+
+                </ul>
+               
+            </div>
+        </div>
+
+        <div style="display: none">
+            <div id="change-mobile">
+                <div class="field">
+                    <label for="checkCode"><em>*</em>原手机验证码：</label>
+                    <input class="text" type="text" placeholder="请输入验证码" id="checkCode" name="authcode" >
+                     <a class="btn code-btn" href="javascript:sendPhoneValidCode('');" id="sendMobileCode" codetype="sms">
+                           <span id="dyMobileButton">获取验证码</span>
+                     </a>
+                      <label id="checkCode_error" class="error" style="display:none">请输入验证码</label>
+                      <label id="checkCode_succeed" class="blank" style="padding:0px;"></label>
+                </div>
+                 <div class="field">
+                    <label for="new-mobile"><em>*</em>新手机号码：</label>
+                    <input class="text" type="text" placeholder="请输入11位新手机号" id="cellPhoneNew" name="phone">
+                    <label id="cellPhone_succeed" class="blank invisible succeed"></label>
+	                <label id="cellPhone_error" class="error" style="display:none;">请输入正确的手机号码 该手机号码已被注册</label>
+                </div>
+                <div class="field">
+                    <label for="checkCodeNew"><em>*</em>新手机验证码：</label>
+                    <input class="text" type="text" placeholder="请输入验证码" id="checkCodeNew" name="authcodeNew" >
+                    <a class="btn code-btn" href="javascript:sendPhoneValidCode('New');" id="sendMobileCodeNew" codetype="sms">
+                           <span id="dyMobileButtonNew">获取验证码</span>
+                     </a>
+                      <label id="checkCodeNew_error" class="error" style="display:none">请输入验证码</label>
+                      <label id="checkCodeNew_succeed" class="blank" style="padding:0px;"></label>
+                </div>
+            </div>
+        </div>   
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/wm-common.js"></script>
+    <script src="../../assets/js/jquery.form.js"></script>
+    <script src="../../assets/js/third/third-common.js"></script>
+    <script src="../../assets/js/third/third-account.js"></script>
+    <script src="../../assets/js/buyer/account.js"></script>
+    <script>
+        WM.third.account.initUI();
+        WM.third.account.loadAccountInfo();
+    </script>
+</body>
+</html>

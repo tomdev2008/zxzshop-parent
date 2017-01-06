@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+  </head>
+  
+  <body>
+    <table>
+    	<tr>
+			<td><input type="text" id="tel"/></td><td><input type="submit" id="telsubmit"/></td> 
+			<td><span id="sp"></span></td>   	
+    	</tr>
+    </table>
+  </body>
+  <script src="../assets/js/jquery-1.12.0.min.js"></script>
+  <script>
+  	$(function(){
+  		$('#telsubmit').click(function(){
+  			$.ajax({
+				url:'/user/getVelidateCode.do?t='+Math.random(),
+				type:'post', //数据发送方式
+				dataType:'json', //接受数据格式 (这里有很多,常用的有html,xml,js,json)
+				data:{cellPhone:$('#tel').val()},
+				success: function(msg){ //成功
+					if(msg.code=="000000"){
+						$('#sp').text(msg.value);
+					}else{
+						$('#sp').text(msg.value);
+					}
+				},error: function(){ //失败
+					$.dialog.errorTips("请求失败！");
+				}
+			});
+  		});
+  	});
+  </script>
+</html>

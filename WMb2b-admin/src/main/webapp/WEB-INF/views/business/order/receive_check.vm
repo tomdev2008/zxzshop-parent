@@ -1,0 +1,182 @@
+## 货到审核
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+    <link href="$!{request.getContextPath()}/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/artdilog.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/inner-custom.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-receive-check.css?v=1" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="$!{request.getContextPath()}/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+     <form name="editForm" method="post" id="editForm">
+    <div class="container">
+        <div class="nav_title">
+            到货审核
+            <a class="back" href="./queryOrderInfo.do">返回订单管理</a>
+        </div>
+
+        <div class="module-box mt20">
+            <div class="left-box fl">
+                <div class="entry row">
+                    <label for="" class="field_label"><span class="highlight"></span>签收日期：</label>
+                    <div class="field_value">
+                         <input type="text" name="reachTime" value="$dateUtil.formatDate($!orderTransfer.reachTime,"yyyy-MM-dd HH:mm:ss")" class="datetime">
+                    </div>
+                </div>
+
+                <div class="entry row">
+                    <label for="" class="field_label">签收人：</label>
+                    <div class="field_value">
+                        <input type="text" name="reachUser" value="$!{orderTransfer.reachUser}">
+                    </div>
+                </div>
+            </div>
+            <div class="right-box fr">
+                <div class="entry row">
+                    <div class="field_value">
+                         <div>
+                                <div class="pic" style="width:200px;height:200px">
+                                	#if(${orderTransfer.reachProv})
+                                		<a id="imgPreview" href="${mediaPath}${orderTransfer.reachProv}" target="_blank"><img id="provImg" src="${mediaPath}${orderTransfer.reachProv}" alt="点击查看详情" width="200px" height="200px"></a>
+                                	#else
+                                		<img id="provImg" src="" alt="" width="200px" height="200px">
+                                	#end
+                                    <i></i>
+                                </div>
+                            <span id="uploadpic" class="btn btn-info">
+                                点击上传／重新上传
+                            </span>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="module-box mt20">
+            <div class="entry row">
+                <label for="" class="field_label">订单编号：</label>
+                <div class="field_value">
+                   <a href='$!{request.getContextPath()}/orderInfo/getOrderDetail.do?orderNo=$!orderInfo.orderNo'>$!{orderInfo.orderNo}</a> &nbsp;&nbsp;&nbsp;采购商：$!{buyInfo.companyName} 姓名：$!{buyInfo.contactsName} 联系电话: $!{buyInfo.contactsPhone}
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label">确认结果：</label>
+                <div class="field_value">
+                    <textarea name="reachAuditedDesc" class="textarea">$!{orderTransfer.reachAuditedDesc}</textarea>
+                </div>
+            </div>
+            <div class="action">
+            	<input type="hidden" name="id" id="id" value="$!{orderTransfer.id}">
+            	<input type="hidden" name="reachProv" id="reachProv" value="$!{orderTransfer.reachProv}">
+                #auth($request.getSession().getAttribute("session.user").getId(),"订单到货审核.取消")
+                    <button class="cancel">取消</button>
+                #end
+                 #if($orderTransfer && $orderTransfer.status == 3)
+                 #auth($request.getSession().getAttribute("session.user").getId(),"订单到货审核.确认")
+                  <button class="submit">货到审核</button>
+                 #end
+                 #elseif($orderTransfer && $orderTransfer.status == 4)
+                  <button class="cancel" disabled >货到审核已通过</button>
+                 #else 
+                  <button class="cancel" disabled >当前不能操作</button>
+                 #end
+            </div>
+        </div>
+    </div>
+    </form>
+     <input type='file' id="provPicFile" name="_file" style="display:none">
+	<script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+	<script src="$!{request.getContextPath()}/assets/js/wm-common.js?v=1"></script>
+	<script type="text/javascript" language="JavaScript">
+		
+		function preview(){
+			$("#imgPreview").attr("href", "#");
+			if($("#provImg").attr("src") == ""){
+				$.dialog.errorTips("未上传凭证");
+			}else{
+				$("#imgPreview").attr("href", $("#provImg").attr("src"));
+				$("#imgPreview").click();
+			}
+		}
+		
+		$(function() {
+		
+   		 	$(".datetime").datetimepicker({
+        		language: 'zh-CN',
+        		format: 'yyyy-mm-dd hh:ii',
+        		autoclose: true,
+       			 weekStart: 1
+   			 });
+
+			$("#uploadpic").click(function(){
+				$("#provPicFile").click();
+			});
+			//_callbackImgId, _hiddenImgFileId, _uploadImgFileName, _uploadImgFileId, _filePath, _callbackBefore, _callbackAfter, _callbackImgDelId, _callbackDelete
+			$('#provPicFile').change(function(){
+				WM.uploadPic("provImg", "reachProv", "_file", "provPicFile", "common"
+					, function(){}
+					, function(){}
+					, ''
+					, function(){
+						$("#provImg").attr("src", "");
+						$("#provImg").hide();
+						$("#provPicFile").val('');
+						$("#reachProv").val('');
+					}
+				);
+			});
+		});
+		function save(){
+			 var _url = "$!{request.getContextPath()}/orderInfo/receiveCheckPost.do?t="+Math.random();
+			 try{ 
+				 $.post(
+			     	_url
+			     	, $("#editForm").serialize()
+			     	, function (result) { 
+			     		if (result!=null && result!=undefined && result.code == '000000') {
+			 				//提交
+			         		$.dialog.succeedTips("货到审核成功！");
+			         		self.location.href= "$!{request.getContextPath()}/orderInfo/queryOrderInfo.do";
+			 			}else{
+			 			    if(result.value){
+			 			    	$.dialog.errorTips("货到审核失败！"+result.value);
+			 			    }else{
+			 			    	$.dialog.errorTips("货到审核失败！");
+			 			    }
+			 			}
+			         },
+			     	"json");	
+			 }catch(ex2){
+				 //--
+			 } 
+		}
+		$(function(){
+			 $(document).on('click', '.submit', function(){
+				save();
+			    return false;//防止表单自动提交
+			 });
+		});
+
+        $('button.cancel').click(function(){
+         location.href = "$request.getContextPath()/orderInfo/queryOrderInfo.do";
+        return false;
+    });
+	</script>
+</body>
+</html>

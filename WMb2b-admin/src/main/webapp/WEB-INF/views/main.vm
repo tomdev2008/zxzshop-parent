@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>平台管理中心</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+     <script type="text/javascript">
+         var _wsIntervalValue = $!{webscoketInterval};
+         var _wsIntervalHandler;
+         var sock;
+         function keepWSOpen(){
+             ## 注意： 设置无效或小于三秒，设置为30秒
+             if(!_wsIntervalValue || _wsIntervalValue<=3000){
+                 _wsIntervalValue = 30000;
+             }
+             try {
+                 if((!sock || sock == null || sock==undefined) && SockJS){
+                     var wsUrl = window.document.location.protocol+'//'+window.document.location.host+'$wmStringUtils.getUrlBaseWithoutProtocol($!{request.getContextPath()})/wsa/online';
+                     sock = new SockJS(wsUrl);
+                     sock.onopen = function() {
+                         if(console){
+                             console.log('open');
+                         }
+                         if(sock && "$!{user.token}"!="") {
+                             setTimeout(function () {
+                                 if(sock && sock != null && sock != undefined) {
+                                     sock.send('ready?token');
+                                 }
+                             }, 3000);
+                         }
+                     };
+                     sock.onmessage = function(e) {
+                         if(console){
+                             console.log('on message');
+                         }
+                         if(e.data && e.data == "push-token"){
+                             if(console){
+                                 console.log('receive message push-token, start tick');
+                             }
+                             setTimeout(function () {
+                                 if(_wsIntervalHandler){
+                                     window.clearInterval(_wsIntervalHandler);
+                                 }
+                                 _wsIntervalHandler = window.setInterval(onlineInternal, _wsIntervalValue);
+                             }, 3000);
+                         }
+                     };
+                     sock.onclose = function() {
+                         if(console){
+                             console.log('close');
+                         }
+                         sock = null;
+                     };
+                 }
+             }catch(ex){
+                 if(console) {
+                     console.log("ws error:" + ex.message);
+                 }
+             }
+         }
+
+         function setOffline() {
+             if(sock && sock!=null && sock!=undefined  && "$!{user.token}"!=""){
+                 if (sock.readyState == SockJS.OPEN) {
+                     sock.send('offline?${user.token}:${user.id}');
+                     //
+                     try{
+                         sock.close();
+                     }catch(exx){}
+                     //
+                     if(console) {
+                         console.log('setOffline... sended');
+                     }
+                 }else{
+                     if(console){
+                         console.log('setOffline... skipped');
+                     }
+                 }
+             }
+         }
+         function setOnline() {
+             if(sock && sock!=null && sock!=undefined  && "$!{user.token}"!=""){
+                 if (sock.readyState == SockJS.OPEN) {
+                     sock.send('push?${user.token}:${user.id}');
+                     if(console) {
+                         console.log('setOnline... sended');
+                     }
+                 }else{
+                     if(console){
+                         console.log('setOnline... skipped');
+                     }
+                 }
+             }
+         }
+
+         function onlineInternal() {
+             //checking websocket client
+             keepWSOpen();
+             //when the websocket client ready for pushing token
+             setOnline();
+         }
+         </script>
+ </head>
+ <body onunload="setOffline()">
+  <div class="header">
+	  <form action="$!{request.getContextPath()}/home/logout.do" method="post" id="U_Logout_Form" >
+	     <input type="hidden" name="userId" id="userId" value="${user.id}">
+	  </form>
+        
+      <div class="dl-title"> 
+         <span class="dl-title-text">平台管理中心</span>
+      </div>
+
+    <div class="dl-log">
+		欢迎您，<span class="dl-log-user">$!{user.userNick} -- $!{user.userName}</span>
+		<a href="javascript:void(0);" title="修改密码" onclick="updatePwd();" class="dl-log-quit">修改密码</a>
+		<a href="javascript:void(0);" title="退出系统" onclick="javascript:logout();" id="logoutId" class="dl-log-quit">退出</a>
+		<!--
+		<a href="javascript:void(0);" title="帮助" class="dl-log-quit">帮助</a>
+		-->
+    </div>
+  </div>
+   <div class="content">
+    <div class="dl-main-nav">
+      <div class="dl-inform"><div class="dl-inform-title">贴心小秘书<s class="dl-inform-icon dl-up"></s></div></div>
+      <ul id="J_Nav"  class="nav-list ks-clear">
+		#foreach($data in $powerMapList.entrySet())
+			#if(${velocityCount}==1)
+				<li class="nav-item dl-selected"><div class="nav-item-inner nav-order">$!{data.value.rootPower.powerName}</div></li>
+			#else
+				<li class="nav-item"><div class="nav-item-inner nav-order">$!{data.value.rootPower.powerName}</div></li>
+			#end
+        #end
+      </ul>
+    </div>
+    <ul id="J_NavContent" class="dl-tab-content">
+
+    </ul>
+   </div>
+  <script type="text/javascript">
+   $LAB
+    .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+    .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+    .script("$!{request.getContextPath()}/assets/js/config-min.js")
+    .script("$!{request.getContextPath()}/assets/js/sockjs.js")
+    .wait(function(){
+	   BUI.use('common/main',function(){
+	      var config = $config;
+	      new PageUtil.MainPage({
+	        modulesConfig : config
+	      });
+	      $(".bui-menu-item.menu-leaf").find("a:first").click();
+	    });
+        //ws
+        keepWSOpen();
+   });
+
+  function logout(){
+        BUI.Message.Confirm('确认要退出吗？',function(){
+            setOffline();
+		  $("#U_Logout_Form").submit();
+        },'question'); 
+   };
+   
+   var  updatePwdDialog;
+   BUI.use('bui/overlay',function(Overlay){
+    	    updatePwdDialog = new Overlay.Dialog({
+                    title:'修改密码',
+                    width:500,
+                    height:200,
+                    loader : {
+                      url : 'updatePwd.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text',   //加载的数据类型
+                      callback : function(text){
+                      
+                      }
+                    }, 
+                    mask:true,
+                    success:function () {
+                       var id=$('#userId').val();
+                       var oldPwd=$('#oldPwd').val();
+                       var nPwd=$('#nPwd').val();
+                       var cPwd=$('#cPwd').val();
+                       if(oldPwd==''){
+                           $('#errorContainer').show().empty().html("错误提示:原密码不允许为空!");
+                           return;
+                       }else if(nPwd==''){
+                           $('#errorContainer').show().empty().html("错误提示:新密码不允许为空!");
+                           return;
+                       }else if(cPwd==''){
+                           $('#errorContainer').show().empty().html("错误提示:确认密码不允许为空!");
+                           return;
+                       }else if(nPwd!=cPwd){
+                           $('#errorContainer').show().empty().html("错误提示:两次密码输入不一致!");
+                       }else{
+                           $.ajax({
+                               url:'updatePwd.do',
+                               type:'post',
+                               data:{
+                                  userId:id,
+                                  oldPwd:oldPwd,
+                                  nPwd:nPwd
+                               },
+                               success:function(result){
+                                  if(result=='false'){
+                                      $('#errorContainer').show().empty().html("错误提示:原密码错误，请重新输入!");
+                                  }else{
+                                      updatePwdDialog.hide();
+                                      BUI.Message.Alert('修改密码成功！','success');
+                                  }
+                               }
+                           });
+                       }
+                    }
+                  });
+    	 });
+	 
+	 function updatePwd(videoId){
+	    updatePwdDialog.show();
+        updatePwdDialog.get('loader').load();
+	 }
+</script>    
+   
+ </body>
+</html>

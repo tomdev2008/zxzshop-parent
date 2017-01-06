@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>订单管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/seller-order.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="order_title">
+            订单管理
+        </div>
+
+        <div class="search-box" id="search-box">
+            <form role="form">
+                <div class="submit">
+                    <label for="txtTitle">订单编号：</label>
+                    <input class="form-control input-ssm wide" type="text" id="orderNo" placeholder="请输入订单编号">
+                    <label for="txtTitle">工程名称：</label>
+                    <input class="form-control input-ssm wide" type="text" id="projectname" placeholder="请输入工程/项目名称">
+                    <div class="row">
+                        <label for="inputStartDate">下单日期：</label>
+                        <input id="inputStartDate" placeholder="请选择" class="form-control input-ssm date start_datetime" type="text">
+                        -
+                        <input id="inputEndDate" placeholder="请选择" class="form-control input-ssm date end_datetime" type="text">
+                        <button type="button" class="btn btn-warning btn-ssm" id="searchButton">查询</button>
+                        <input type="hidden" id="hidStatus" value="0">
+                    </div>
+                </div>
+                <div class="list wide status">
+                    <span class="title">订单状态：</span>
+                    <ul>
+                        <li class="active" data-id="-100">全部</li>
+                        <li data-id="20" id="">买家已签约(<span id="buyer-signed-count">0</span>)</li>
+                        <li data-id="50">买家已付款(<span id="buyer-paid-count">0</span>)</li>
+                        <li data-id="90">交易完成(<span id="finish-count">0</span>)</li>
+                        <li data-id="99">已关闭(<span id="closed-count">0</span>)</li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="box">
+            <table id="list" class="table"></table>
+            <div class="tabel-operate" id="batchOperate"></div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/common-date.js"></script>
+    <script src="../../assets/js/jquery.form.js"></script>
+    <script src="../../assets/js/seller/seller-order.js"></script>
+    <script src="../../assets/js/seller/seller-upload.js"></script>
+
+<div style="display:none">
+    <div id="deliver_content">
+        <div class="diliver_entry clearfix">
+            <label class="field_name" for="sendDate"><em>*</em>发货日期：</label>
+            <input id="sendDate" placeholder="请选择" class="form-control input-ssm date" type="text" value="" />
+        </div>
+        <div class="diliver_entry clearfix">
+            <label class="field_name" for=""><em>*</em>选择配送方式：</label>
+            <label class="sub"><input name="sendType" type="radio" value="1" checked>物流配送</label>
+            <label class="sub"><input name="sendType" type="radio" value="2">厂家配送</label>
+            <label class="sub"><input name="sendType" type="radio" value="3">买家自取</label>
+        </div>
+        <div class="diliver_entry clearfix logistics-item">
+            <label class="field_name" for=""><em>*</em>物流名称：</label>
+            <input type="text" name="transferCom" id="transferCom" class="form-control input-ssm" placeholder="填写物流名称" />
+        </div>
+        <div class="diliver_entry clearfix logistics-item">
+            <label class="field_name" for=""><em>*</em>货运单号：</label>
+            <input type="text" name="transCode" id="transCode" class="form-control input-ssm" placeholder="填写货运单号" />
+        </div>
+       <div class="clearfix">
+            <label class="field_name"><em>*</em>附件：</label>
+            <div id="transferProvPic" class="form-group upload-img"></div>
+            <div class="gray dialog-tips">
+                <p>说明：1.请上传的发货单/物流单据等</p>
+                <p class="pl36">2.如果是拍照图片请保证图片清晰</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:none">
+    <div id="reached_content">
+        <div class="diliver_entry clearfix">
+            <label class="field_name" for="reachedDate"><em>*</em>收货日期：</label>
+            <input id="reachedDate" placeholder="请选择" class="form-control input-ssm date" type="text" value="" />
+        </div>
+        <div class="clearfix">
+            <label class="field_name"><em>*</em>附件：</label>
+            <div id="reachedProvPic" class="form-group upload-img"></div>
+            <div class="gray dialog-tips">
+                <p>说明：1.请上传收货/买家签收单据等</p>
+                <p class="pl36">2.如果是拍照图片请保证图片清晰</p>
+            </div>
+        </div>
+        <div class="diliver_entry height-auto clearfix">
+            <label class="field_name" for="">备注说明：</label>
+            <textarea id="reachDescr" class="form-control input-ssm" placeholder="买方收货情况"></textarea>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

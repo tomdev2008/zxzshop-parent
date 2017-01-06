@@ -1,0 +1,182 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>商品管理</title>
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-brand-add.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin-purchase-check.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet" type="text/css" />
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/inner-custom.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-categoryBrand-add.js"></script>
+    <script type="text/javascript" language="JavaScript">
+     function saveCategoryBrands(){
+     		var _checked =  $('.brand-group .selected input[type=checkbox]:checked');
+			var _checkedIds = [];
+			_checked.each(function(){
+				_checkedIds.push($(this).val());
+			});
+	    	$("#brandIds").val(_checkedIds);
+	    	var enterPrInfoId = $("#enterPrInfoId").val();
+	    	var brandIds = $("#brandIds").val();
+	    	$.ajax({
+    				type:"POST",
+    				url:'saveEnpriinfoBrands.do',
+    				data:"enterPrInfoId=" + enterPrInfoId + "&brandIds=" + brandIds,
+    				success:function(data){
+    					window.location.href="../Brands/toBrandsapplyList.do"; 
+    			    }
+    				
+    		});
+	    	
+    }
+    	
+     function search(){
+        var name =  trimStr($("#searchCompanyName").val());
+    	$("#searchCompanyName").val(name);
+	    pageForm.submit();
+     }
+    	
+     function binding(obj){
+    	var id = $(obj).attr('tab');
+    	var name = $(obj).attr('rel');
+		var userId = $(obj).attr('data-id');
+	    $("#enterPrInfoId").val(id);
+	    $("#companyName").val(name);
+	    $("#userId").val(userId);
+     }
+    	
+    function trimStr(str){
+    	return str.replace(/(^\s*)|(\s*$)/g,"");
+    }
+    </script>
+    </head>
+    <body>
+     #parse("include/page_normal_detect.vm")
+      <div class="container">
+    
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+
+                <form method="post" action="$request.getContextPath()/Brands/toEnpriinfoBrandsAdd.do" class="form-horizontal well" name="pageForm" id="pageForm">
+                    <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+                    <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+                    <input type="hidden" name="nullFlag" id="nullFlag" value="$!nullFlag"/>
+                    <div class="row">
+                        <div class="control-group span8">
+                            <label class="control-label">企业名称：</label>
+                            <div class="controls">
+                                <input type="text" id="searchCompanyName" name="companyName" value="$!enterpriseinfo.companyName" class="control-text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-actions span5">
+                            <button class="button button-primary" onclick="search()" >搜索</button>
+                        </div>
+                    </div>
+                </form>
+
+                <table cellspacing="0" class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户ID</th>
+                        <th>企业名称</th>
+                        <th>企业地址</th>
+                        <th>企业联系人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($enterpriseQueryResult in $result.obj.data)
+                        <tr>
+                            <td>$!enterpriseQueryResult.id</td>
+                            <td>$!enterpriseQueryResult.userId</td>
+                            <td>$!enterpriseQueryResult.companyName</td>
+                            <td>$!enterpriseQueryResult.companyAddress</td>
+                            <td>$!enterpriseQueryResult.contactsName</td>
+                            <td><a href="javascript:;" onclick="binding(this)" tab="$!{enterpriseQueryResult.id}" rel="$!{enterpriseQueryResult.companyName}" data-id="$!enterpriseQueryResult.userId">绑定</a></td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>
+                #parse("include/page_normal.vm")
+            </div>
+        </div>
+    
+		
+		<input id="userId" name="userId"  type="hidden">
+		<input id="brandIds" name="brandIds" type="hidden">
+		<input id="enterPrInfoId" name="enterPrInfoId" type="hidden">
+        <div class="module-box mt20">
+            <div class="entry row">
+                <label for="" class="field_label"><span class="highlight">*</span>
+                    企业名称：
+                </label>
+                <div class="field_value">
+                    <input type="text" id="companyName" readonly="readonly" class="text">
+                </div>
+            </div>
+            
+            <div id="divNew" class="entry row">
+             	<label for="" class="field_label">
+                   <span class="highlight">*</span>
+                   关联品牌：
+                </label>
+                <div class="form-group">
+                    <div class="col-sm-10 brand-letter select-list">
+
+                    </div>
+                    <div class="col-sm-10 brand-group">
+                        <div class="checkbox-group">
+                        </div>
+                        <div class="choose-category selected">
+                            <span>已选择：</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="entry row">
+                <label for="" class="field_label">
+                </label>
+                <div class="field_value action">
+                    <button class="submit" onclick="saveCategoryBrands()">提交</button>
+                    <button>取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+      <script type="text/javascript" language="JavaScript">
+    	$(function(){
+    		var nullFlag = $('#nullFlag').val();
+    		if(nullFlag==1){
+    			$('#pageSize').removeAttr('value');
+    			$('#currentPage').removeAttr('value');
+    			$('#pageSize').val("10");
+    			$('#currentPage').val("1");
+    		}
+    	})
+    </script>
+    
+    </body>
+    </html>       

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Bankinfo">
+	<!-- 查询开户行信息 -->
+	<select id="Bankinfo.queryinfo" resultType="com.wangmeng.service.bean.Bankaccountinfo" parameterType="java.lang.Integer">
+	     select
+			a.Id,
+			a.AccountName,
+			a.DepositBank,
+			a.BankAccount,
+			a.UserId,
+			a.IsDelete,
+			a.BankBranch,
+			a.UserType,
+			a.EnterPrInfoId enterpriseId
+		from wm_bankaccountinfo_t a 
+	   where a.UserId=#{userId} 
+     and EnterPrInfoId=
+     (select b.id from wm_enterpriseinfo_t b where b.IsDefault=1 and b.userid=#{userId} and b.categery=1)
+     limit 1
+	</select>
+	
+	<update id="Bankinfo.updateinfo" parameterType="com.wangmeng.service.bean.Bankaccountinfo">
+		update wm_bankaccountinfo_t 
+		<set>
+			<if test="accountName!=null and accountName!=''">
+				AccountName=#{accountName},
+			</if>
+			<if test="depositBank!=null and depositBank!=''">
+				DepositBank=#{depositBank},
+			</if>
+			<if test="bankAccount!=null and bankAccount!=''">
+				BankAccount=#{bankAccount},
+			</if>
+			<if test="bankBranch!=null and bankBranch!=''">
+				BankBranch=#{bankBranch},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	
+	<!-- 新增开户行信息 -->
+	<insert id="Bankinfo.insertbankinfo" parameterType="com.wangmeng.service.bean.Bankaccountinfo" >
+		 insert into wm_bankaccountinfo_t (
+			AccountName,
+			DepositBank,
+			BankAccount,
+			UserId,
+			BankBranch,
+			UserType,
+			EnterPrInfoId
+		 )values(
+		 	#{accountName},
+		 	#{depositBank},
+		 	#{bankAccount},
+		 	#{userId},
+		 	#{bankBranch},
+		 	#{userType},
+		 	IFNULL((select id  from wm_enterpriseinfo_t where userid=#{userId} and isdefault =1  and categery=1 limit 1 ),0)
+		 )
+	</insert>
+
+	<!-- 新增开户行信息.通用型 -->
+	<insert id="Bankinfo.insert" useGeneratedKeys="true" keyProperty="id"  parameterType="com.wangmeng.service.bean.Bankaccountinfo" >
+		insert into wm_bankaccountinfo_t (AccountName,DepositBank,BankAccount,IsDelete,UserId,BankBranch,UserType,EnterPrInfoId)
+		values(#{accountName},#{depositBank},#{bankAccount},#{isDelete},#{userId},#{bankBranch},#{userType},#{enterpriseId})
+	</insert>
+
+	<!-- 更新开户行信息.通用型 -->
+	<update id="Bankinfo.update" parameterType="com.wangmeng.service.bean.Bankaccountinfo">
+		UPDATE wm_bankaccountinfo_t
+		<set>
+			<if test="accountName!=null and accountName!=''">AccountName=#{accountName},</if>
+			<if test="depositBank!=null and depositBank!=''">DepositBank=#{depositBank},</if>
+			<if test="bankAccount!=null and bankAccount!=''">BankAccount=#{bankAccount},</if>
+			<if test="bankBranch!=null and bankBranch!=''">BankBranch=#{bankBranch}</if>
+		</set>
+		WHERE Id=#{id} AND EnterPrInfoId=#{enterpriseId}
+	</update>
+
+</mapper>

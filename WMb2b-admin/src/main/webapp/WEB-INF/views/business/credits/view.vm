@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>详情页</title>
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet" type="text/css" />
+    <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+</head>
+<body>
+<div class="demo-content">
+    <!-- 详情页 ================================================== -->
+    <div>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+                <ul class="nav-tabs">
+                    <li class=""><a href="$request.getContextPath()/user/showDetail.do?id=$!userId">账户信息</a></li>
+                    <li class=""><a href="$request.getContextPath()/address/list.do?userId=$!userId">收货地址</a></li>
+                    <li class=""><a href="$request.getContextPath()/invoice/queryByType.do?userId=$!userId&invoiceType=1">开票信息</a></li>
+                    <li class="active"><a href="$request.getContextPath()/credits/queryByUserId.do?userId=$!userId">积分管理</a></li>
+                </ul>
+
+                <form name="" action="" method="post" id="detailForm">
+                    <div class="pd-15 border-gray" style="height: 660px;">
+                        <div class="mt-20 mb-15 pd-20-40 border-gray-2" style="height: 130px;">
+                            <div class="fl-left" style="display: inline;width: 30%;">
+                                <p>当前可用积分</p>
+                                <p style="visibility: hidden;">435678</p>
+                                <p class="ft-orange fs-xxxlg fw-ber">$!result.obj.availableCredits</p>
+
+                            </div>
+                            <div class="fl-left"  style="display: inline;width: 30%;">
+                                <p class="ft-gray">即将过期</p>
+                                <p class="ft-gray">截止 <span>$dateUtil.formatDate($!result.obj.expiration,"yyyy-MM-dd")</span></p>
+                                <p class="ft-gray fs-xxxlg fw-ber">50000</p>
+                            </div>
+                            <div class="fl-right tl-right" style="width:40%;">
+                                #auth($request.getSession().getAttribute("session.user").getId(),"积分管理.调整积分")
+                                    <span class="rectanglebtn mr-15" id="setrecord">调整积分</span>
+                                #end
+                                #auth($request.getSession().getAttribute("session.user").getId(),"积分管理.调整截止日期")
+                                    <span class="rectanglebtn" id="setdate">调整截止日期</span>
+                                #end
+                            </div>
+                        </div>
+
+                        <div class="mt-10 fs-md">
+                            <span class="tab border-active" id="list">积分清单</span>
+                            <span class="tab ml-43" id="record">积分兑换记录</span>
+                        </div>
+
+                        <div class="border-gray-2 mt-10" id="listSize" style="height: 345px;">
+                            <div class="mt-30 tl-center">
+                                <span class="rectangle-btn">所有记录（100）</span>
+                                <span class="rectangle-btn ml-43">获取记录（70）</span>
+                                <span class="rectanglebtn ml-43">使用记录（20）</span>
+                                <span class="rectanglebtn ml-43">过期记录（7）</span>
+                            </div>
+                            <div class="mt-30">
+                                <table class="gridtable" style="margin: 0 auto;">
+                                    <tr>
+                                        <th>日期</th>
+                                        <th>操作</th>
+                                        <th>积分</th>
+                                        <th>备注</th>
+                                    </tr>
+
+                                    <tr>
+                                        <td>2016/06/27 09:24</td>
+                                        <td>采购订单</td>
+                                        <td>+5000</td>
+                                        <td>小南瓜采购订单250000.00元，积分奖励5000个</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2016/06/27 09:24</td>
+                                        <td>兑换礼品</td>
+                                        <td>-700</td>
+                                        <td>小南瓜兑换礼品卡西欧手表，积分消耗700个</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2016/06/27 09:24</td>
+                                        <td>兑换礼品</td>
+                                        <td>-700</td>
+                                        <td>小南瓜兑换礼品卡西欧手表，积分消耗700个</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="margin: 60px 366px;">#parse("include/page_normal.vm")</div>
+                        </div>
+                        <div class="border-gray-2 mt-10" id="recordSize" style="display:none;height: 345px;">
+                            <div class="mt-30">
+                                <table class="gridtable" style="margin: 0 auto;">
+                                    <tr>
+                                        <th>订单编号</th>
+                                        <th>商品</th>
+                                        <th>收货人</th>
+                                        <th>积分兑换</th>
+                                        <th>兑换日期</th>
+                                    </tr>
+                                    <tr>
+                                        <td>2016032798111</td>
+                                        <td>卡西欧手表</td>
+                                        <td>小南瓜</td>
+                                        <td>500</td>
+                                        <td>2016/06/27 09:24</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2016032798112</td>
+                                        <td>50元话费充值</td>
+                                        <td>小南瓜</td>
+                                        <td>500</td>
+                                        <td>2016/06/27 09:24</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2016032798112</td>
+                                        <td>50元话费充值</td>
+                                        <td>小南瓜</td>
+                                        <td>500</td>
+                                        <td>2016/06/27 09:24</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="margin: 60px 366px;">#parse("include/page_normal.vm")</div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" language="JavaScript">
+    $("#list").click(function(){
+        if($(this).hasClass('border-active')) return;
+        $(this).addClass("border-active");
+        $("#record").removeClass("border-active");
+        $("#listSize").animate({width:"toggle",opacity:"toggle"},"slow");
+        $("#recordSize").animate({width:"toggle",opacity:"toggle"},"slow");
+    });
+    $("#record").click(function(){
+        if($(this).hasClass('border-active')) return;
+        $(this).addClass("border-active");
+        $("#list").removeClass("border-active");
+        $("#recordSize").animate({width:"toggle",opacity:"toggle"},"slow");
+        $("#listSize").animate({width:"toggle",opacity:"toggle"},"slow");
+    })
+    $("#setrecord").click(function(){
+
+    });
+
+
+
+    Date.prototype.format = function(format){
+        var o = {
+            "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(), //day
+            "h+" : this.getHours(), //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+            "S" : this.getMilliseconds() //millisecond
+        }
+        if(/(y+)/.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+        }
+        for(var k in o) {
+            if(new RegExp("("+ k +")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+            }
+        }
+        return format;
+    }
+    var now = new Date();
+    var nowStr = now.format("yyyy-MM-dd hh:mm:ss");
+    console.log("标准时间格式："+now,"转换时间格式："+nowStr);
+
+
+</script>
+</body>
+</html>

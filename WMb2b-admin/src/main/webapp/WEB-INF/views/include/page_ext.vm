@@ -1,0 +1,52 @@
+##------------------------------------------------------------------------
+##  分页工具
+##
+##  Author: 衣奎德
+##  Created: 2016-11-11
+##------------------------------------------------------------------------
+#parse("include/page_normal_detect.vm")
+#if($page)
+<div>
+    <div class="pagination pull-right">
+        <ul>
+            #if($page.getCurrentPage()!=1 && $page.getCurrentPage()!= 0)
+                <li><a href="#" onClick="javascript:pageNav(1);">首页</a></li>
+                <li><a href="#" onClick="javascript:pageNav($page.getCurrentPage()-1);">« 上一页</a></li>
+            #else
+                #if($page.getCurrentPage()==1 || $page.getCurrentPage()==0)
+                    <li class="disabled"><a href="#">首页</a></li>
+                    <li class="disabled"><a href="#">« 上一页</a></li>
+                #else
+                    <li ><a href="#">首页</a></li>
+                    <li ><a href="#">« 上一页</a></li>
+                #end
+            #end
+            <li class="active"><a href="#">当前第($page.getCurrentPage())页共($page.getTotalPage())页</a></li>
+            #if($page.getCurrentPage()!=$page.getTotalPage()&&$page.getTotalPage()!=1)
+                <li><a href="#" onClick="javascript:pageNav(#if($page.getCurrentPage()==0) 2 #else $page.getCurrentPage()+1 #end);">下一页»</a></li>
+                <li><a href="#" onClick="javascript:pageNav($page.getTotalPage());">尾页</a></li>
+            #else
+                #if($page.getCurrentPage()==$page.getTotalPage())
+                    <li  class="disabled"><a href="#">下一页»</a></li>
+                    <li  class="disabled"><a href="#">尾页</a></li>
+                #else
+                    <li ><a href="#">下一页»</a></li>
+                    <li ><a href="#">尾页</a></li>
+                #end
+            #end
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" language="JavaScript">
+    function pageNav(_pageNo){
+        if(!_pageNo || _pageNo<=0){
+            _pageNo = 1;
+        }
+        $("#currentPage").val(_pageNo);
+        $("#pageForm").submit();
+    }
+</script>
+#else
+<div>
+    <div  style="text-align:center">无数据</div></div>
+#end

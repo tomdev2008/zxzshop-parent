@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProductInfo">
+
+	<!-- 带分页 -->
+	<select id="ProductInfo.queryListByPage" parameterType="map" resultType="map">
+		select
+			 <choose>
+			 	<when  test="limit !=null and limit == 1">
+			 		count(Id) as count
+			 	</when>
+			 	<otherwise>
+			 		id as productId, 
+				 (select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) enterprise ,
+				categoryId  ,
+				(select Name from wm_brands_t b where b.Id = a.BrandId limit 1)brandName,
+				name        ,
+				code        ,
+				picts       ,
+				advertise   ,
+				birthArea   ,
+				regionId,
+				addTime     ,
+				verifyTime  ,
+				marketPrice ,
+				maxPrice    ,
+				visitCount  ,
+				saleCount   ,
+				unit        ,
+				startMass   ,
+				counts      ,
+				status      ,
+				keyword     ,
+				isRecommend ,
+				commentCount,
+				grade     
+			 	</otherwise>
+			 </choose>
+		from wm_product_t a
+		<where>
+		    <!-- 关键字搜索 -->
+		    <if test="queryProduct.queryKey!=null and  queryProduct.queryKey !=''">
+			    <if test="queryProduct.type=null||queryProduct.type=''">and Name like '%${queryProduct.queryKey}%'</if>
+				<if test="queryProduct.type==1"> and Name like '%${queryProduct.queryKey}%'</if>
+				<if test="queryProduct.type==2"> and (select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) like '%${queryProduct.queryKey}%'</if>
+				<if test="queryProduct.type==3"> and (select Name from wm_brands_t b where b.Id = a.BrandId limit 1) like '%${queryProduct.queryKey}%'</if>
+		    </if>
+		        <if test="queryProduct.brandId!=null and queryProduct.brandId>0"> and BrandId = #{queryProduct.brandId}</if>
+			    <if test="queryProduct.categoryId!=null and queryProduct.categoryId!=''"> and CategoryId = #{queryProduct.CategoryId}</if>
+			    <if test="queryProduct.birthArea!=null and queryProduct.birthArea!=''"> and BirthArea = #{queryProduct.BirthArea}</if>
+			    <if test="queryProduct.priceMax!=null and queryProduct.priceMax!=''">and #{queryProduct.priceMax}<![CDATA[  >=  ]]> MarketPrice</if>
+				<if test="queryProduct.priceMin!=null and queryProduct.priceMin!=''">and #{queryProduct.priceMin}<![CDATA[  <=  ]]> MarketPrice</if>
+		        <if test="queryProduct.startMass!=null and queryProduct.startMass>0">and #{queryProduct.StartMass}<![CDATA[  <=  ]]>StartMass</if>
+		        <if test="queryProduct.isRecommend=null||queryProduct.isRecommend=''">and IsRecommend =#{queryProduct.IsRecommend}</if>
+		        and Status =1 <!-- 默认都是有效的 -->
+		</where>
+		     <!--  排序   -->
+		      order by MarketPrice
+		      <if test="queryProduct.price!=null and queryProduct.price!=''"> ${queryProduct.price}</if>
+		      ,SaleCount
+		      <if test="queryProduct.salecount!=null">${queryProduct.salecount}</if>
+		    <!--  分页 -->
+		    <if test="limit !=null and limit ==0"> limit #{begin},#{end} </if>
+	</select>
+	
+	<select id="ProductInfo.queryList" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="com.wangmeng.service.bean.Product">
+		select
+			  id as productId, 
+				 (select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) enterprise ,
+				categoryId  ,
+				(select Name from wm_brands_t b where b.Id = a.BrandId limit 1)brandName,
+				name        ,
+				code        ,
+				picts       ,
+				advertise   ,
+				birthArea   ,
+				regionId,
+				addTime     ,
+				verifyTime  ,
+				marketPrice ,
+				maxPrice    ,
+				visitCount  ,
+				saleCount   ,
+				unit        ,
+				startMass   ,
+				counts      ,
+				status,
+				keyword     ,
+				IsRecommend ,
+				commentCount,
+				grade     
+		from wm_product_t a
+		<where>
+		    <!-- 关键字搜索 -->
+		    <if test="queryKey!=null and  queryKey !=''">
+			    and Name like '%${queryKey}%'
+		    </if>
+		        <if test="userId>0">and (select e.Id from wm_enterpriseinfo_t e where e.UserId =#{userId} and Categery =1 limit  1)= a.EnterpriseId</if>
+		    	<if test="status>0">and Status=#{status}</if>
+		       
+		</where>
+		     order by addtime desc
+		    <!--  分页 -->
+		    limit #{begin},#{end}
+	</select>
+	
+	<select id="ProductInfo.queryListnumb" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_product_t a
+		<where>
+		    <!-- 关键字搜索 -->
+		    <if test="queryKey!=null and  queryKey !=''">
+			    and Name like '%${queryKey}%'
+		    </if>
+		        <if test="userId>0">and (select e.Id from wm_enterpriseinfo_t e where e.UserId =#{userId} and Categery =1 limit  1)= a.EnterpriseId</if>
+		    	<if test="status>0">and Status=#{status}</if>
+		</where>
+	</select>
+	<!--首页sql -->
+	<select id="ProductInfo.queryList_index" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="com.wangmeng.service.bean.Product">
+		select
+			  id as productId, 
+				 (select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) enterprise ,
+				categoryId  ,
+				(select Name from wm_brands_t b where b.Id = a.BrandId limit 1)brandName,
+				name        ,
+				code        ,
+				picts       ,
+				advertise   ,
+				birthArea   ,
+				regionId,
+				addTime     ,
+				verifyTime  ,
+				marketPrice ,
+				maxPrice    ,
+				visitCount  ,
+				saleCount   ,
+				unit        ,
+				startMass   ,
+				counts      ,
+				status,
+				keyword     ,
+				IsRecommend ,
+				commentCount,
+				grade     
+		from wm_product_t a
+		<where>
+		    Status=2
+		    <!-- 关键字搜索 -->
+		    <if test="queryKey!=null and  queryKey !=''">
+			    <if test="type==null">and Name like '%${queryKey}%'</if>
+				<if test="type==1"> and Name like '%${queryKey}%'</if>
+				<if test="type==2"> and (select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) like '%${queryKey}%'</if>
+				<if test="type==3"> and (select Name from wm_brands_t b where b.Id = a.BrandId limit 1) like '%${queryKey}%'</if>
+		    </if>
+		        <if test="brandId!=null and brandId>0"> and BrandId = #{brandId}</if>
+			    <if test="categoryId!=null and categoryId!=''"> and CategoryId = #{categoryId}</if>
+			    <if test="birthArea!=null and birthArea!='' and birthArea !='其他'"> and BirthArea = #{birthArea}</if>
+			    <if test="birthArea=='其他'"> and (BirthArea is null or BirthArea = '')  </if>
+			    <if test="priceMax!=null and priceMax!=''">and #{priceMax}<![CDATA[  >=  ]]> MarketPrice</if>
+				<if test="priceMin!=null and priceMin!=''">and #{priceMin}<![CDATA[  <=  ]]> MarketPrice</if>
+		        <if test="startMass!=null and startMass>0">and #{startMass}<![CDATA[  <=  ]]>StartMass</if>
+		</where>
+		     <!--  排序   -->
+		       order by AddTime desc ,MarketPrice
+		      <if test="price!=null and price!=''"> ${price}</if>
+		      ,SaleCount
+		      <if test="salecount!=null">${salecount}</if>
+		    <!--  分页 -->
+		    limit #{begin},#{end}
+	</select>
+	
+	<select id="ProductInfo.queryListnumb_index" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_product_t a
+		<where>
+		    Status=2
+		    <if test="queryKey!=null and  queryKey !=''">
+			    <if test="type=null||type=''">and Name like '%${queryKey}%'</if>
+				<if test="type==1"> and Name like '%${queryKey}%'</if>
+				<if test="type==2"> and (select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) like '%${queryKey}%'</if>
+				<if test="type==3"> and (select Name from wm_brands_t b where b.Id = a.BrandId limit 1) like '%${queryKey}%'</if>
+			</if>
+			    <if test="brandId!=null and brandId!=''"> and BrandId = #{brandId}</if>
+			    <if test="categoryId!=null and categoryId!=''"> and CategoryId = #{categoryId}</if>
+			    <if test="birthArea!=null and birthArea!='' and birthArea !='其他'"> and BirthArea = #{birthArea}</if>
+			    <if test="birthArea=='其他'"> and (BirthArea is null or BirthArea = '')  </if>
+		        <if test="priceMax!=null and priceMax!=''">and #{priceMax}<![CDATA[  >=  ]]> MarketPrice</if>
+				<if test="priceMin!=null and priceMin!=''">and #{priceMin}<![CDATA[  <=  ]]> MarketPrice</if>
+		        <if test="startMass!=null and startMass!=''">and #{startMass}<![CDATA[  <=  ]]>StartMass</if>
+			
+		</where>
+	</select>
+	<!-- v首页sql -->
+	<insert id="ProductInfo.insertproduct" parameterType="com.wangmeng.service.bean.Product">
+		insert into wm_product_t (
+			enterpriseId,
+			categoryId,
+			brandId,
+			name,
+			code,
+			picts,
+			advertise,
+			birthArea,
+			regionId,
+			detail,
+			addTime,
+			verifyTime,
+			marketPrice,
+			maxPrice,
+			visitCount,
+			saleCount,
+			unit,
+			startMass,
+			counts,
+			status,
+			keyword,
+			isRecommend,
+			commentCount,
+			model,
+			sku,
+			grade
+		)values(
+			IFNULL((select id  from wm_enterpriseinfo_t where userid=#{enterpriseId} and isdefault =1 and Categery =1 limit 1),0),
+			#{categoryId},
+			#{brandId},
+			#{name},
+			#{code},
+			#{picts},
+			#{advertise},
+			(select CONCAT_WS(ProvinceName,CityName,AreaName) from wm_region_t where ProvinceId=#{prod_province} and CityId =#{prod_city} and AreaId=#{prod_area} limit 1),<!-- 原来数据和新表业务处理 -->
+			(select id from wm_region_t where ProvinceId=#{prod_province} and CityId =#{prod_city} and AreaId=#{prod_area} limit 1),<!-- 原来数据和新表业务处理 -->
+			#{detail},
+			now(),
+			#{verifyTime},
+			#{marketPrice},
+			#{maxPrice},
+			#{visitCount},
+			#{saleCount},
+			#{unit},
+			#{startMass},
+			#{counts},
+			1,<!-- 默认待审核 -->
+			#{keyword},
+			#{isRecommend},
+			#{commentCount},
+			#{model},
+			#{sku},
+			#{grade}
+		)
+	</insert>
+	
+	<update id="ProductInfo.updateproduct" parameterType="com.wangmeng.service.bean.Product">
+		update wm_product_t 
+			<set>
+				<if test=" categoryId >0 ">
+					CategoryId=#{categoryId},
+				</if>
+				<if test=" brandId >0 ">
+					BrandId=#{brandId},
+				</if>
+				<if test=" name !=null and  name !='' ">
+					Name=#{name},
+				</if>
+				<if test=" code !=null and  code !='' ">
+					Code=#{code},
+				</if>
+				<if test=" picts !=null and  picts !='' ">
+					Picts=#{picts},
+				</if>
+				<if test=" advertise !=null and  advertise !='' ">
+					Advertise=#{advertise},
+				</if>
+				<if test="unit!=null and unit!='' ">
+					Unit=#{unit},
+				</if>
+				<if test="detail!=null and detail!=''">
+					detail=#{detail},
+				</if>
+				<if test="model!=null and model !=''">
+					model=#{model},
+				</if>
+				<if test="sku!=null and sku !=''">
+					sku=#{sku},
+				</if>
+				<if test="keyword!=null and keyword!=''">
+					keyword=#{keyword},
+				</if>
+				<if test="marketPrice>0">
+					marketPrice=#{marketPrice},
+				</if>
+				<if test="startMass>0">
+					startMass=#{startMass},
+				</if>
+				<if test="birthArea!=null and birthArea!=''">
+					birthArea=(select CONCAT_WS(ProvinceName,CityName,AreaName) from wm_region_t where ProvinceId=#{prod_province} and CityId =#{prod_city} and AreaId=#{prod_area}  limit 1),<!-- 原来数据和新表业务处理 -->
+					regionId=(select id from wm_region_t where ProvinceId=#{prod_province} and CityId =#{prod_city} and AreaId=#{prod_area}  limit 1),<!-- 原来数据和新表业务处理 -->
+				</if>
+				<if test="status!=0"> Status=#{status}</if>
+			</set>
+		   <where>
+		   		Id=#{productId}
+		   </where>    
+		       
+	</update>
+	<!-- 通过id查询产品信息 -->
+	<select id="ProductInfo.querybyid" parameterType="java.lang.Long" resultType="com.wangmeng.service.bean.Product">
+		select  Id          , 
+				EnterpriseId ,
+				CategoryId  ,
+				(select REPLACE(group_CONCAT(name,''),',','>') from wm_productcategory_t where  FIND_IN_SET(id,(replace((
+	select  SUBSTR(path, LOCATE('|', path)+1 ) from wm_productcategory_t where id =CategoryId),'|',','))))categoryname,
+				BrandId,
+				(select Name from wm_brands_t where Id = BrandId) brandName,
+				(select name from wm_brands_t where Id=BrandId limit 1) brandName,
+				Name        ,
+				Code        ,
+				Picts       ,
+				Advertise   ,
+				BirthArea   ,
+				regionId,
+				(select ProvinceId from wm_region_t where Id=regionId limit 1) prod_province,
+				(select CityId from wm_region_t where Id=regionId limit 1) prod_city,
+				(select AreaId from wm_region_t where Id=regionId limit 1) prod_area,
+				AddTime     ,
+				VerifyTime  ,
+				MarketPrice ,
+				MaxPrice    ,
+				VisitCount  ,
+				SaleCount   ,
+				Unit        ,
+				StartMass   ,
+				Counts      ,
+				Status      ,
+				Keyword     ,
+				IsRecommend ,
+				CommentCount,
+				detail,
+				model,
+				sku,
+				Grade
+		    from wm_product_t 
+		   where  Id = #{id}
+		  
+	</select>
+	<!-- 查询发货地 -->
+	<select id="ProductInfo.queryRegionId" parameterType="map" resultType="com.wangmeng.service.bean.Region">
+		SELECT 
+		<choose>
+			<when test="provinceId != null and provinceId >0">
+			DISTINCT cityId,cityName
+			</when>
+			<otherwise>
+			 DISTINCT provinceId, provinceName
+			</otherwise>
+		</choose>
+		 FROM wm_region_t
+		<where>
+			<if test="provinceId != null and provinceId >0"> and provinceId=#{provinceId}</if>
+		</where>
+	</select>
+	
+	<select id="ProductInfo.queryBirthArea" parameterType="map" resultType="String">
+		SELECT 
+			DISTINCT BirthArea
+		 FROM wm_product_t
+		<where>
+			<if test="categoryId != null and categoryId >0"> and categoryId=#{categoryId}</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询  -->
+	<select id="ProductInfo.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.ProductVo"
+		resultType="com.wangmeng.service.bean.vo.ProductVo" >
+		select
+			p.id,
+			p.enterpriseId,
+			p.categoryId,
+			p.brandId,
+			p.name,
+			p.code,
+			p.picts,
+			p.advertise,
+			p.birthArea,
+			p.regionId,
+			p.detail,
+			p.addTime,
+			p.verifyTime,
+			p.marketPrice,
+			p.maxPrice,
+			p.visitCount,
+			p.saleCount,
+			p.unit,
+			p.startMass,
+			p.counts,
+			p.status,
+			p.keyword,
+			p.isRecommend,
+			p.commentCount,
+			p.grade,
+			p.Model,
+			p.RefuseReason,
+			p.offshelf,
+			p.sku,
+		    e.CompanyName,
+		    b.Name brandName,
+		    c.Name categoryName
+		FROM wm_product_t p
+		LEFT JOIN wm_enterpriseinfo_t e
+		ON p.enterpriseId =e.id 
+		LEFT JOIN wm_brands_t b on
+		p.BrandId = b.Id
+		LEFT JOIN wm_productcategory_t c 
+		ON p.CategoryId = c.Id
+	    where p.status != 0
+	    	<if test="param.searchName!=null and param.searchName !=''">and (p.name like '%${param.searchName}%' or b.Name like '%${param.searchName}%' or c.Name like '%${param.searchName}%' or p.id like '%${param.searchName}%')</if>
+	    	<if test="param.companyName!=null and param.companyName !=''">and  e.CompanyName like '%${param.companyName}%'</if>
+	    	<if test="param.status!=null">and p.status = #{param.status}</if>
+	    	<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and p.verifyTime >= #{param.beginTime} and p.verifyTime <= #{param.endTime}
+			]]>
+		    </if>
+		ORDER BY p.verifyTime DESC
+	</select>
+	
+	<!-- 保存商品 -->
+	<insert id="ProductInfo.saveProduct" parameterType="com.wangmeng.service.bean.vo.ProductVo" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    INSERT INTO wm_product_t (
+    		id,
+	    	enterpriseId,
+			categoryId,
+	 		brandId,
+	 		name,
+	 		code,
+	 		picts,
+			advertise,
+			birthArea,
+			regionId,
+			detail,
+			addTime,
+			verifyTime,
+			marketPrice,
+			maxPrice,
+			visitCount,
+			saleCount,
+			unit,
+			startMass,
+			counts,
+			status,
+			keyword,
+			isRecommend,
+			commentCount,
+			grade, 
+			model,
+			refuseReason,
+			offshelf,
+			sku
+    )VALUES(
+    		null,
+    		#{enterpriseId},
+    		#{categoryId},
+	 		#{brandId},
+	 		#{name},
+	 		#{code},
+	 		#{picts},
+			#{advertise},
+			#{birthArea},
+			#{regionId},
+			#{detail},
+			#{addTime},
+			#{verifyTime},
+			#{marketPrice},
+			#{maxPrice},
+			#{visitCount},
+			#{saleCount},
+			#{unit},
+			#{startMass},
+			#{counts},
+			#{status},
+			#{keyword},
+			#{isRecommend},
+			#{commentCount},
+			#{grade}, 
+			#{model},
+			#{refuseReason},
+			#{offshelf},
+			#{sku}
+    		);
+	</insert>
+	
+	<!-- 根据ProductVo修改商品-->
+	<update id="ProductInfo.updateProductByVo" parameterType="com.wangmeng.service.bean.vo.ProductVo">
+		UPDATE wm_product_t SET
+		    enterpriseId = #{enterpriseId},
+    		categoryId = #{categoryId},
+	 		brandId = #{brandId},
+	 		name = #{name},
+	 		code = #{code},
+	 		picts = #{picts},
+			advertise = #{advertise},
+			birthArea = #{birthArea},
+			regionId = #{regionId},
+			detail = #{detail},
+			addTime = #{addTime},
+			verifyTime = #{verifyTime},
+			marketPrice = #{marketPrice},
+			maxPrice = #{maxPrice},
+			visitCount = #{visitCount},
+			saleCount = #{saleCount},
+			unit = #{unit},
+			startMass = #{startMass},
+			counts = #{counts},
+			status = #{status},
+			keyword = #{keyword},
+			isRecommend = #{isRecommend},
+			commentCount = #{commentCount},
+			grade = #{grade}, 
+			model = #{model},
+			refuseReason = #{refuseReason},
+			offshelf = #{offshelf},
+			sku = #{sku}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据example查出商品 -->
+	<select id="ProductInfo.queryProductByExample" resultType="com.wangmeng.service.bean.vo.ProductVo" parameterType="com.wangmeng.service.bean.vo.ProductVo">
+		 select id,
+		    	enterpriseId,
+				categoryId,
+		 		brandId,
+				(select Name from wm_brands_t where id = brandId)brandName,
+		 		name,
+		 		code,
+		 		picts,
+				advertise,
+				birthArea,
+				regionId,
+				detail,
+				addTime,
+				verifyTime,
+				marketPrice,
+				maxPrice,
+				visitCount,
+				saleCount,
+				unit,
+				startMass,
+				counts,
+				status,
+				keyword,
+				isRecommend,
+				commentCount,
+				grade, 
+				model,
+				refuseReason,
+				offshelf,
+				sku
+		from wm_product_t
+		<where>
+	 		<if test="id!=null" >and id = #{id}</if>
+	 		<if test="enterpriseId!=null" >and enterpriseId = #{enterpriseId}</if>
+	 		<if test="categoryId!=null" >and categoryId = #{categoryId}</if>
+	 		<if test="brandId!=null" >and brandId = #{brandId}</if>
+	 		<if test="name!=null and name !=''"> and name = #{name}</if>
+	 		<if test="code!=null and code !=''"> and code = #{code}</if>
+	 		<if test="picts!=null and picts !=''" >and picts = #{picts}</if>
+	 		<if test="advertise!=null and advertise !=''" >and advertise = #{advertise}</if>
+	 		<if test="birthArea!=null and birthArea !=''" >and birthArea = #{birthArea}</if>
+	 		<if test="regionId!=null" >and regionId = #{regionId}</if>
+	 		<if test="detail!=null and detail !=''"> and detail = #{detail}</if>
+	 		<if test="addTime!=null"> and addTime = #{addTime}</if>
+	 		<if test="verifyTime!=null"> and verifyTime = #{verifyTime}</if>
+	 		<if test="marketPrice!=null"> and marketPrice = #{marketPrice}</if>
+	 		<if test="maxPrice!=null"> and maxPrice = #{maxPrice}</if>
+	 		<if test="visitCount!=null"> and visitCount = #{visitCount}</if>
+	 		<if test="saleCount!=null"> and saleCount = #{saleCount}</if>
+	 		<if test="unit!=null and unit !=''"> and unit = #{unit}</if>
+	 		<if test="startMass!=null"> and startMass = #{startMass}</if>
+	 		<if test="counts!=null"> and counts = #{counts}</if>
+	 		<if test="status!=null"> and status = #{status}</if>
+	 		<if test="keyword!=null and keyword !=''"> and keyword = #{keyword}</if>
+	 		<if test="isRecommend!=null"> and isRecommend = #{isRecommend}</if>
+	 		<if test="commentCount!=null"> and commentCount = #{commentCount}</if>
+	 		<if test="grade!=null"> and grade = #{grade}</if>
+	 		<if test="model!=null and model !=''"> and model = #{model}</if>
+	 		<if test="refuseReason!=null and refuseReason !=''"> and refuseReason = #{refuseReason}</if>
+	 		<if test="offshelf!=null and offshelf !=''"> and offshelf = #{offshelf}</if>
+	 		<if test="sku!=null and sku !=''"> and sku = #{sku}</if>
+ 		</where>
+ 		ORDER BY verifyTime DESC
+	</select>
+	
+	<!-- 根据分类ID查出商品 -->
+	<select id="ProductInfo.findProductVoById" resultType="com.wangmeng.service.bean.vo.ProductVo">
+		 select id,
+		    	enterpriseId,
+		    	(select CompanyName from wm_enterpriseinfo_t where Id=enterpriseId) companyName,
+				categoryId,
+				(select name from wm_productcategory_t where Id=categoryId) categoryName,
+		 		brandId,
+		 		(select name from wm_brands_t where Id=brandId) brandName,
+		 		(select logo from wm_brands_t where Id=brandId) brandLogo,
+		 		name,
+		 		code,
+		 		picts,
+				advertise,
+				birthArea,
+				regionId,
+				detail,
+				addTime,
+				verifyTime,
+				marketPrice,
+				maxPrice,
+				visitCount,
+				saleCount,
+				unit,
+				startMass,
+				counts,
+				status,
+				keyword,
+				isRecommend,
+				commentCount,
+				grade, 
+				model,
+				refuseReason,
+				offshelf,
+				sku
+		from wm_product_t
+		where id = #{id}
+	</select>
+	
+	<!-- 查询商品（新），供APP用 -->
+	<select id="ProductInfo.queryproductList" parameterType="com.wangmeng.service.bean.QueryProduct" 
+		resultType="com.wangmeng.service.bean.Product">
+			select
+			  a.id as productId, 
+				(select c.CompanyName from wm_enterpriseinfo_t c where c.Id=a.EnterpriseId limit 1) enterprise ,
+				a.categoryId  ,
+				(select Name from wm_brands_t b where b.Id = a.BrandId limit 1)brandName,
+				a.name        ,
+				a.code        ,
+				a.picts       ,
+				a.advertise   ,
+				a.birthArea   ,
+				a.regionId,
+				a.addTime     ,
+				a.verifyTime  ,
+				a.marketPrice ,
+				a.maxPrice    ,
+				a.visitCount  ,
+				a.saleCount   ,
+				a.unit        ,
+				a.startMass   ,
+				a.counts      ,
+				a.status,
+				a.keyword     ,
+				a.IsRecommend ,
+				a.commentCount,
+				a.regionId,
+				a.model,
+				a.sku,
+				a.grade     
+		from wm_product_t a LEFT JOIN wm_region_t r on a.regionId = r.id
+		where a.Status = 2  
+		<!-- 关键字搜索 -->
+		<if test="queryKey!=null and  queryKey !=''">
+			<if test="type==1"> and a.Name like '%${queryKey}%'</if>
+			<if test="type==3"> and (select Name from wm_brands_t b where b.Id = a.BrandId limit 1) like '%${queryKey}%'</if>
+		</if>
+		    <if test="provinceId!=null">and r.provinceId = #{provinceId}</if>
+		    <if test="cityId!=null">and r.cityId = #{cityId}</if>
+		    <if test="userId>0">and (select e.Id from wm_enterpriseinfo_t e where e.UserId =#{userId} limit 1)= a.EnterpriseId</if>
+		    <if test="brandId!=null"> and a.BrandId = #{brandId}</if>
+		    <if test="ids != null">
+			  and a.BrandId in
+			  <foreach collection="ids" item="employeeId" index="index"
+	            open="(" close=")" separator=",">
+	            #{employeeId}
+	         </foreach>
+	        </if>
+			<if test="categoryId!=null"> and a.CategoryId = #{categoryId}</if>
+			<if test="birthArea!=null and birthArea!='' and birthArea !='其他'"> and BirthArea = #{birthArea}</if>
+			<if test="birthArea=='其他'"> and (a.BirthArea is null or a.BirthArea = '')  </if>
+			<if test="priceMax!=null">and #{priceMax}<![CDATA[  >=  ]]> a.MarketPrice</if>
+			<if test="priceMin!=null">and #{priceMin}<![CDATA[  <=  ]]> a.MarketPrice</if>
+		    <if test="startMass!=null">and a.startMass<![CDATA[  <=  ]]>#{startMass}</if>
+		     <!--  排序   -->
+		      <choose>  
+		            <when test="sortFlag !=null and sortFlag == 0"> 
+		                order by a.StartMass asc
+		            </when >  
+		            <when test="sortFlag !=null and sortFlag == 1">  
+		                order by a.StartMass desc  
+		            </when >  
+		            <otherwise>  
+					    order by a.StartMass asc
+		            </otherwise>  
+		      </choose>  
+		    <!--  分页 -->
+		    limit #{begin},#{end}
+	</select>
+	
+	<!-- 查询总数，APP用(新) -->
+	<select id="ProductInfo.queryProductListnumb" parameterType="com.wangmeng.service.bean.QueryProduct" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_product_t a LEFT JOIN wm_region_t r on a.regionId = r.id
+		where a.Status = 2
+		<!-- 关键字搜索 -->
+		<if test="queryKey!=null and  queryKey !=''">
+			<if test="type!=null and type==1"> and a.Name like '%${queryKey}%'</if>
+			<if test="type!=null and type==3"> and (select Name from wm_brands_t b where b.Id = a.BrandId limit 1) like '%${queryKey}%'</if>
+		</if>
+		    <if test="provinceId!=null">and r.provinceId = #{provinceId}</if>
+		    <if test="cityId!=null">and r.cityId = #{cityId}</if>
+		    <if test="userId>0">and (select e.Id from wm_enterpriseinfo_t e where e.UserId =#{userId} limit 1)= a.EnterpriseId</if>
+		    <if test="brandId!=null"> and a.BrandId = #{brandId}</if>
+		    <if test="ids != null">
+			  and a.BrandId in
+			  <foreach collection="ids" item="employeeId" index="index"
+	            open="(" close=")" separator=",">
+	            #{employeeId}
+	         </foreach>
+	        </if>
+			<if test="categoryId!=null"> and a.CategoryId = #{categoryId}</if>
+			<if test="birthArea!=null and birthArea!='' and birthArea !='其他'"> and BirthArea = #{birthArea}</if>
+			<if test="birthArea=='其他'"> and (a.BirthArea is null or a.BirthArea = '')  </if>
+			<if test="priceMax!=null">and #{priceMax}<![CDATA[  >=  ]]> a.MarketPrice</if>
+			<if test="priceMin!=null">and #{priceMin}<![CDATA[  <=  ]]> a.MarketPrice</if>
+		    <if test="startMass!=null">and a.startMass<![CDATA[  <=  ]]>#{startMass}</if>
+	</select>
+	
+	<!-- 查询此企业下的商品 APP用(新) -->
+	<select id="ProductInfo.queryProductByEnterprise" resultType="com.wangmeng.service.bean.vo.ProductVo" 
+		parameterType="com.wangmeng.service.bean.vo.QueryEnterpriseInfo">
+		 select id,
+		    	enterpriseId,
+				categoryId,
+		 		brandId,
+		 		(select Name from wm_brands_t where id = brandId)brandName,
+		 		name,
+		 		code,
+		 		picts,
+				advertise,
+				birthArea,
+				regionId,
+				detail,
+				addTime,
+				verifyTime,
+				marketPrice,
+				maxPrice,
+				visitCount,
+				saleCount,
+				unit,
+				startMass,
+				counts,
+				status,
+				keyword,
+				isRecommend,
+				commentCount,
+				grade, 
+				model,
+				refuseReason,
+				offshelf,
+				sku
+		from wm_product_t
+		where status = 2
+	 	<if test="enterpriseId!=null" >and enterpriseId = #{enterpriseId}</if>
+	 	<if test="categoryId!=null" >and categoryId = #{categoryId}</if>
+ 		ORDER BY categoryid asc, startMass asc
+ 		<!--  分页 -->
+		limit #{begin},#{end}
+	</select>
+	
+	<!-- 查询总数，APP用(新) -->
+	<select id="ProductInfo.queryProductByEnterprisenumb" parameterType="com.wangmeng.service.bean.vo.QueryEnterpriseInfo" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_product_t 
+		where Status = 2
+		<if test="enterpriseId!=null" >and enterpriseId = #{enterpriseId}</if>
+	 	<if test="categoryId!=null" >and categoryId = #{categoryId}</if>
+	</select>
+	
+	<!--添加商品到购物车 -->
+	<insert id="ProductInfo.insertProductCar" parameterType="com.wangmeng.service.bean.ProductCar">
+		insert into wm_productcar_t (
+			id,
+			userId,
+			productId, 
+			enterpriseInfoId, 
+			addCount,
+			addTime 
+		)values(
+			null,
+			#{userId},
+			#{productId}, 
+			#{enterpriseInfoId}, 
+			#{addCount},
+			#{addTime}
+		)
+	</insert>
+	
+	<!-- 根据example查询购物车 -->
+	<select id="ProductInfo.findProductCarByExample" resultType="com.wangmeng.service.bean.ProductCar" parameterType="com.wangmeng.service.bean.ProductCar">
+		 select id,
+	            userId,
+	            productId,
+	            enterpriseInfoId,
+	            addCount,
+	            addTime
+		from wm_productcar_t
+		<where>
+	 		<if test="id!=null" >and id = #{id}</if>
+	 		<if test="userId!=null" >and userId = #{userId}</if>
+	 		<if test="productId!=null" >and productId = #{productId}</if>
+	 		<if test="enterpriseInfoId!=null" >and enterpriseInfoId = #{enterpriseInfoId}</if>
+	 		<if test="addCount!=null" >and addCount = #{addCount}</if>
+ 		</where>
+ 		ORDER BY id DESC
+	</select>
+	
+	<!-- 根据id修改购物车-->
+	<update id="ProductInfo.updateProductCar" parameterType="com.wangmeng.service.bean.ProductCar">
+		UPDATE wm_productcar_t SET
+            addCount = #{addCount},
+            addTime = #{addTime}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据example删除购物车  -->
+	<delete id="ProductInfo.delProductCarByEnterpriseInfoId" parameterType="com.wangmeng.service.bean.ProductCar">
+		DELETE FROM wm_productcar_t
+		where id in
+			  <foreach collection="ids" item="employeeId" index="index"
+	            open="(" close=")" separator=",">
+	            #{employeeId}
+	         </foreach>
+	</delete>
+	
+	<!-- 查询总数 -->
+	<select id="ProductInfo.queryProductCarByQueryProductCarnumb" parameterType="com.wangmeng.service.bean.vo.QueryProductCar" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_productcar_t 
+		where userId = #{carUserId}
+	</select>
+	
+	<!-- 查询总数 -->
+	<select id="ProductInfo.queryProductCountByEnterprise" parameterType="com.wangmeng.service.bean.vo.EnterpriseinfoSimple" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_product_t 
+		where enterpriseId = #{id} and status = #{productStatus}
+	</select>
+	
+	<resultMap type="com.wangmeng.service.bean.ProductCar"  id="carMap">
+			<id column="id" property="id" />
+			<result column="userId" property="userId" />
+			<result column="enterpriseInfoId" property="enterpriseInfoId" />
+			<result column="addTime" property="addTime" />
+			<result column="companyName" property="companyName" />
+			<collection property="childs" ofType="com.wangmeng.service.bean.ProductCar" column="{enterpriseInfoId=enterpriseInfoId,userId=userId}" select="selectCarChilds" />
+	</resultMap>	
+	
+	<select id="ProductInfo.queryProductCarByQueryProductCar" parameterType="com.wangmeng.service.bean.vo.QueryProductCar"  resultMap="carMap">
+		 select DISTINCT
+	            userId,
+	            enterpriseInfoId,
+	            (select CompanyName from wm_enterpriseinfo_t where Id=enterpriseInfoId) companyName
+		from wm_productcar_t
+		where userId = #{carUserId}
+		ORDER BY CONVERT(companyName USING gbk ) COLLATE gbk_chinese_ci ASC
+	</select>
+	
+	<select id="selectCarChilds" parameterType="java.util.HashMap" resultType="com.wangmeng.service.bean.ProductCar">
+	     select id,
+	            userId,
+	            productId,
+	            (select categoryId from wm_product_t where Id=productId ) categoryId,
+                (SELECT name from wm_productcategory_t where id = categoryId) categoryName,
+                (select name from wm_product_t where Id=productId ) productName,
+				(select name from wm_brands_t where id =( SELECT brandid from wm_product_t where id = productId)) brandName,
+				(SELECT model from wm_product_t where Id=productId ) model,
+				(SELECT picts from wm_product_t where Id=productId ) picts,
+                (SELECT sku from wm_product_t where Id=productId ) sku,
+                (SELECT unit from wm_product_t where Id=productId ) unit,
+                (SELECT startMass from wm_product_t where Id=productId ) startMass,
+	            enterpriseInfoId,
+	            (select CompanyName from wm_enterpriseinfo_t where Id=enterpriseInfoId) companyName,
+	            addCount,
+	            addTime
+		from wm_productcar_t
+		where enterpriseInfoId = #{enterpriseInfoId} and  userId = #{userId}
+ 		ORDER BY addTime DESC
+	</select>
+
+	<resultMap type="com.wangmeng.service.bean.vo.ProductCategoryVo" id="productMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="enterpriseId" property="enterpriseId"/>
+		<collection property="productList" ofType="com.wangmeng.service.bean.vo.ProductVo"
+					column="{categoryId=id,enterpriseId=enterpriseId}" select="selectProductList"/>
+	</resultMap>
+
+	<select id="ProductInfo.queryOtherProductCategory"
+			parameterType="com.wangmeng.service.bean.vo.QueryEnterpriseInfo" resultMap="productMap">
+		SELECT id,name,#{enterpriseId} enterpriseId from wm_productcategory_t WHERE id in (
+			SELECT DISTINCT CategoryId FROM wm_enterprise_category_t WHERE EnterpriseId = #{enterpriseId} and CategoryId != #{categoryId}
+		)
+		ORDER BY CONVERT(name USING gbk ) COLLATE gbk_chinese_ci ASC
+	</select>
+
+	<select id="selectProductList" parameterType="java.util.HashMap" resultType="com.wangmeng.service.bean.vo.ProductVo">
+		 select id,
+		    	 enterpriseId,
+				 categoryId,
+		 		 brandId,
+		 		 (select Name from wm_brands_t where id = brandId)brandName,
+		 		 name,
+		 		 picts,
+				 birthArea,
+				 regionId,
+				 unit,
+				 startMass
+				FROM wm_product_t
+				WHERE  status = 2 AND CategoryId= #{categoryId} and EnterpriseId = #{enterpriseId}
+				ORDER BY CONVERT(name USING gbk ) COLLATE gbk_chinese_ci ASC
+	</select>
+	
+</mapper>

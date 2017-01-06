@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd ">
+
+ 	<context:component-scan base-package="com.wangmeng" />
+
+	<!-- 静态变量保存applicationContext,方便全局调用 -->
+	<bean class="com.wangmeng.spring.ApplicationContextHolder" lazy-init="false" />
+			
+	<!-- motan服务可用初始化  -->
+	<bean id="motanServicePostInitor" class="com.wangmeng.motan.MotanServicePostInitor">
+	</bean>
+	
+	<!-- Context Init Listener -->
+	<bean id="featureContextInitListener"  class="com.wangmeng.spring.FeatureContextInitListener">
+		<property name="postInitors">
+			<map>
+				<entry key="motan" value-ref="motanServicePostInitor"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	 <!-- 上传文件配置 --> 
+     <bean id="wmConfiguration" class="org.apache.commons.configuration.PropertiesConfiguration">
+         <constructor-arg type="java.lang.String">
+             <value>wm-config.properties</value>
+         </constructor-arg>               
+     </bean>
+
+    <bean id="propertyConfigurer" class="com.wangmeng.spring.XPropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:wm-config.properties"/>
+        <property name="searchSystemEnvironment" value="true" />
+        <property name="nestSystemResolver" value="true" />
+    </bean>
+
+
+     <!-- ssq配置 --> 
+     <bean id="ssqConfiguration" class="org.apache.commons.configuration.XMLConfiguration">
+         <constructor-arg type="java.lang.String">
+             <value>ssq-config.xml</value>
+         </constructor-arg>               
+     </bean>
+     
+     <!-- api配置服务 --> 
+     <bean id="ssqAPIConfig" class="com.wangmeng.expand.ssq.config.SsqAPIConfig" init-method="init">
+		<property name="ssqConfiguration" ref="ssqConfiguration" />          
+     </bean>
+     
+     <!-- ssq error 配置 --> 
+     <bean id="ssqErrorCodeConfiguration" class="org.apache.commons.configuration.PropertiesConfiguration">
+         <constructor-arg type="java.lang.String">
+             <value>ssq-errorcode.properties</value>
+         </constructor-arg>               
+     </bean>
+     
+    <!-- 上上签服务 -->
+	<bean id="ssqExpServiceInner"
+		class="com.wangmeng.expand.ssq.impl.SsqServiceImpl" init-method="init" >
+		<property name="orderInfoService" ref="orderInfoService" />
+		<property name="contractService" ref="contractService" />
+		<property name="enterpriseInfoService" ref="enterpriseInfoService" />
+		<property name="userInfoService" ref="userInfoService" />
+		<property name="dealQuoteService" ref="dealQuoteService" />
+		<property name="ssqAPIConfig" ref="ssqAPIConfig" />
+		<property name="ssqErrorCodeConfiguration" ref="ssqErrorCodeConfiguration" />
+	</bean>
+     
+	 <!-- ssq主动回调扫描服务-->
+     <bean id="ssqCallbackVolunteerService" class="com.wangmeng.expand.ssq.impl.SsqCallbackVolunteerServiceImpl" init-method="init">   
+	     <property name="ssqErrorCodeConfiguration" ref="ssqErrorCodeConfiguration" /> 
+	     <property name="ssqAPIConfig" ref="ssqAPIConfig" />   
+	     <property name="contractService" ref="contractService" />  
+	     <property name="orderInfoService" ref="orderInfoService" /> 
+	     <property name="ssqService" ref="ssqExpServiceInner" /> 
+     </bean>
+
+	<import resource="classpath:spring/applicationContext-motan.xml"/>
+	
+	<!-- 测试暂时去掉，防止日志滚动太快 -->
+	 <import resource="classpath:spring/applicationContext-task.xml"/>
+
+</beans>

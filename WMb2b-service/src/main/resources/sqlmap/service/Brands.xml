@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BrandsInfo">
+	
+	<!-- 查询品牌列表（首页） -->
+	<select id="BrandsInfo.queryBrandsList" parameterType="map" resultType="com.wangmeng.service.bean.Brands">
+		select id, name, logo from wm_brands_t
+		<where>
+			<if test="isIndexShow != null and isIndexShow != ''"> and isIndexShow=#{isIndexShow}</if>
+		</where>
+	</select>
+	
+	<!-- 根据分类查询品牌  -->
+	<select id="BrandsInfo.queryBrandsListByCategoryId" parameterType="map" resultType="com.wangmeng.service.bean.Brands">
+		select t.id, t.name From wm_brands_t t left join wm_categorybrands_t wc  on t.id = wc.brandid 
+		 	where 1=1 
+		 	<if test="categoryId != null and categoryId >0"> and wc.categoryid = #{categoryId}</if>
+		 	<if test="name != null and name != ''">and t.name = #{name}</if>
+	</select>
+	<!-- 品牌查询 判断是否已经申请 -->
+	<select id="BrandsInfo.queryBrandApply" parameterType="com.wangmeng.service.bean.BrandsApplay" resultType="com.wangmeng.service.bean.BrandsApplay">
+		select * from wm_brandsapply_t  
+		     where EnterPrInfoId =(select id  from wm_enterpriseinfo_t where userid=#{userId} and isdefault =1  and Categery = 1 limit 1 )
+		     <if test="brandId!=0">
+		     	and  BrandId=#{brandId}
+		     </if>
+		     <if test="brandId==0">
+		     	and  BrandName=#{brandName}
+		     </if>
+		     and AuditStatus in (0,1)
+	</select>
+	
+	<!-- 查询品牌库是否已经有品牌 -->
+	<select id="BrandsInfo.queryBrands" parameterType="com.wangmeng.service.bean.BrandsApplay" resultType="com.wangmeng.service.bean.Brands" >
+		select * from wm_brands_t where Name =#{brandName} and AuditStatus =1
+	</select>
+	<!-- 品牌申请 -->
+	<insert id="BrandsInfo.insertapply" parameterType="com.wangmeng.service.bean.BrandsApplay">
+		insert into wm_brandsapply_t (
+			EnterPrInfoId,
+			UserId,
+			BrandId,
+			BrandName,
+			Logo,
+			Description,
+			AuthCertificate,
+			ApplyMode,
+			Remark,
+			ApplyDate,
+			CategoryIds,
+			AuditStatus,
+			CategoryNames
+		)values(
+			IFNULL((select id  from wm_enterpriseinfo_t where userid=#{userId} and isdefault =1  and Categery = 1 limit 1 ),0),
+			#{userId},
+			#{brandId},
+			#{brandName},
+			<choose>
+				<when test="brandId!=null and brandId!=''">
+					(select logo from wm_brands_t where Id =#{brandId} limit 1 ),
+				</when>
+				<otherwise>
+					#{logo},
+				</otherwise>
+			</choose> 
+			<choose>
+				<when test="brandId!=null and brandId!=''">
+					(select Description from wm_brands_t where Id =#{brandId} limit 1 ),
+				</when>
+				<otherwise>
+					#{description},
+				</otherwise>
+			</choose>
+			
+			#{authCertificate},
+			#{applyMode},
+			#{remark},
+			now(),
+			#{categoryIds},
+			0,
+			#{categoryNames}
+			
+		)
+	</insert>
+	<!-- 查询品牌申请信息 -->
+	<select id="BrandsInfo.queryapply" resultType="com.wangmeng.service.bean.BrandsApplay" parameterType="map">
+		select  Id,
+				EnterPrInfoId,
+				UserId,
+				BrandId,
+				BrandName,
+				Logo,
+				Description,
+				AuthCertificate,
+				ApplyMode,
+				Remark,
+				ApplyDate,
+				CategoryIds,
+				case AuditStatus 
+				when 0 then '待审核'
+				when 1 then '审核通过'
+				when 2 then '审核拒绝' end  as auditStatus ,
+				RefuseReason,
+				CategoryNames
+		  from wm_brandsapply_t 
+		 <where>
+		 	<if test="userId!=null and userId!=''">
+		 		UserId =#{userId}
+		 	</if>
+		 	<if test="auditStatus!=null">
+		 		and AuditStatus =#{auditStatus}
+		 	</if>
+		 	<!--<if test="thirdId!=null and thirdId!= '' ">
+		 		and  FIND_IN_SET(#{thirdId},CategoryIds)
+		 	</if>-->
+		 	<if test="begin!=null and end!=null">
+		 		order by ApplyDate desc
+				<!--  分页 -->
+			    limit #{begin},#{end}
+			</if>
+		 </where>
+		 
+	</select>
+	<!-- 查询品牌申请数目 -->
+	<select id="BrandsInfo.queryapplynumb" resultType="java.lang.Integer" parameterType="map">
+		select  count(1) numb
+		  from wm_brandsapply_t 
+		 where UserId =#{userId}
+			<if test="auditStatus!=null and auditStatus!=''">
+		 		and AuditStatus =#{auditStatus}
+		 	</if>
+	</select>
+	
+	<!--  查询明细 -->
+	<select id="BrandsInfo.queryapplyById" resultType="com.wangmeng.service.bean.BrandsApplay" parameterType="java.lang.Integer">
+		select * from wm_brandsapply_t where id =#{id}
+	</select>
+	
+	<!-- 根据首字拼音模糊查询 -->
+	<select id="BrandsInfo.queryBrandsByFirstPY" resultType="com.wangmeng.service.bean.Brands" parameterType="java.lang.String">
+		select * from (select SUBSTRING(get_py(t.`Name`), 1, 1) as sd, t.* from `wm_brands_t` t )t where t.sd is not null AND t.sd=#{param} order by t.sd asc
+	</select>
+	
+	<!-- 根据Example查询 -->                                                                                      
+	<select id="BrandsInfo.queryBrandsByExample" resultType="com.wangmeng.service.bean.Brands" parameterType="com.wangmeng.service.bean.vo.BrandsVo">
+		select id, 
+		       name,
+		       displaySequence,
+		       logo,
+		       rewriteName,
+		       description,
+		       metaTitle,
+		       metaDescr,
+		       metaKeywords,
+			   isRecommend,
+			   auditStatus,
+			   isIndexShow
+		from wm_brands_t
+		<where>
+	 		<if test="id!=null" >and id = #{id}</if>
+	 		<if test="name!=null and name !=''"> and name = #{name}</if>
+	 		<if test="displaySequence!=null"> and displaySequence = #{displaySequence}</if>
+	 		<if test="logo!=null and logo !=''">and logo = #{logo}</if>
+	 		<if test="rewriteName!=null and rewriteName !=''">and rewriteName = #{rewriteName}</if>
+	 		<if test="description!=null and description !=''">and description = #{description}</if>
+	 		<if test="metaTitle!=null and metaTitle !=''">and metaTitle = #{metaTitle}</if>
+	 		<if test="metaDescr!=null and metaDescr !=''">and metaDescr = #{metaDescr}</if>
+	 		<if test="metaKeywords!=null and metaKeywords !=''">and metaKeywords = #{metaKeywords}</if>
+	 		<if test="isRecommend!=null" >and isRecommend = #{isRecommend}</if>
+	 		<if test="auditStatus!=null" >and auditStatus = #{auditStatus}</if>
+	 		<if test="isIndexShow!=null" >and isIndexShow = #{isIndexShow}</if>
+ 		</where>
+ 		ORDER BY id DESC		
+	</select>
+	
+	<!-- 根据ID查出品牌 -->
+	<select id="BrandsInfo.findBrandsById" resultType="com.wangmeng.service.bean.vo.BrandsVo">
+		select id, 
+		       name,
+		       displaySequence,
+		       logo,
+		       rewriteName,
+		       description,
+		       metaTitle,
+		       metaDescr,
+		       metaKeywords,
+			   isRecommend,
+			   auditStatus,
+			   isIndexShow
+		from wm_brands_t
+		where id = #{id}
+	</select>
+	
+	<!-- 保存品牌 -->
+	<insert id="BrandsInfo.saveBrands" parameterType="com.wangmeng.service.bean.vo.BrandsVo" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    INSERT INTO wm_brands_t (
+    		id, 
+		    name,
+		    displaySequence,
+		    logo,
+		    rewriteName,
+		    description,
+		    metaTitle,
+		    metaDescr,
+		    metaKeywords,
+			isRecommend,
+			auditStatus,
+			isIndexShow
+    )VALUES(
+    		null,
+    		#{name},
+    		#{displaySequence},
+    		#{logo},
+    		#{rewriteName},
+    		#{description},
+    		#{metaTitle},
+    		#{metaDescr},
+    		#{metaKeywords},
+    		#{isRecommend},
+    		#{auditStatus},
+    		#{isIndexShow}
+    		);
+	</insert>
+	
+	<!-- 保存品牌申请表 -->
+	<insert id="BrandsInfo.saveBrandsApplay" parameterType="com.wangmeng.service.bean.vo.BrandsApplayVo" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    INSERT INTO wm_brandsapply_t (
+    		Id,
+			EnterPrInfoId,
+			UserId,
+			BrandId,
+			BrandName,
+			Logo,
+			Description,
+			AuthCertificate,
+			ApplyMode,
+			Remark,
+			ApplyDate,
+			CategoryIds,
+			AuditStatus, 
+			RefuseReason,
+			CategoryNames
+    )VALUES(
+    		null,
+    		#{enterPrInfoId},
+    		#{userId},
+    		#{brandId},
+    		#{brandName},
+    		#{logo},
+    		#{description},
+    		#{authCertificate},
+    		#{applyMode},
+    		#{remark},
+    		#{applyDate},
+    		#{categoryIds},
+    		#{auditStatus},
+    		#{refuseReason},
+    		#{categoryNames}
+    		);
+	</insert>
+	
+	<!-- 分页查询 -->
+	<select id="BrandsInfo.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.BrandsApplayVo"
+		resultType="com.wangmeng.service.bean.vo.BrandsApplayVo" >
+		select
+			ba.Id,
+			ba.EnterPrInfoId,
+			ba.UserId,
+			ba.BrandId,
+			ba.BrandName,
+			ba.Logo,
+			ba.Description,
+			ba.AuthCertificate,
+			ba.ApplyMode,
+			ba.Remark,
+			ba.ApplyDate,
+			ba.CategoryIds,
+			ba.AuditStatus, 
+			ba.RefuseReason,
+			ba.CategoryNames,
+			e.CompanyName enterPrInfoName
+		FROM wm_brandsapply_t ba
+		LEFT JOIN wm_enterpriseinfo_t e
+		ON ba.EnterPrInfoId =e.id 
+		<where>
+		<if test="param.enterPrInfoName!=null and param.enterPrInfoName !=''">and e.CompanyName like '%${param.enterPrInfoName}%'</if>
+		<if test="param.brandName!=null and param.brandName !=''">and ba.BrandName like '%${param.brandName}%'</if>
+		<if test="param.auditStatus!=null">and ba.AuditStatus = #{param.auditStatus}</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and ba.ApplyDate >= #{param.beginTime} and ba.ApplyDate <= #{param.endTime}
+			]]>
+		</if>
+		</where>
+		ORDER BY ba.id desc
+	</select>
+	
+	<!-- 更新品牌 -->
+	<update id="BrandsInfo.updateBrands" parameterType="com.wangmeng.service.bean.vo.BrandsVo" >
+		UPDATE wm_brands_t SET 
+		    name = #{name},
+		    displaySequence=#{displaySequence},
+		    logo=#{logo},
+		    rewriteName=#{rewriteName},
+		    description=#{descriptions}
+		    metaTitle=#{metaTitle},
+		    metaDescr=#{metaDescr},
+		    metaKeywords=#{metaKeywords},
+		    isRecommend=#{isRecommend},
+		    auditStatus=#{auditStatus},
+		    isIndexShow=#{isIndexShow}
+		WHERE id = #{id}
+	</update>
+	<!-- 更新品牌申请 -->
+	<update id="BrandsInfo.updateBrandsApplay" parameterType="com.wangmeng.service.bean.vo.BrandsApplayVo" >
+		UPDATE wm_brandsapply_t SET 
+			id = #{id},
+			enterPrInfoId = #{enterPrInfoId},
+			userId=#{userId},
+			brandId=#{brandId},
+			brandName=#{brandName},
+			logo=#{logo},
+			description=#{description},
+			authCertificate=#{authCertificate},
+			applyMode=#{applyMode},
+			remark=#{remark},
+			applyDate=#{applyDate},
+			categoryIds=#{categoryIds},
+			auditStatus=#{auditStatus},
+			refuseReason=#{refuseReason},
+			categoryNames=#{categoryNames}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据ID查出分类品牌关系 -->
+	<select id="BrandsInfo.findBrandsApplayVoById" resultType="com.wangmeng.service.bean.vo.BrandsApplayVo">
+		select Id,
+			   EnterPrInfoId,
+			   UserId,
+			   BrandId,
+			   BrandName,
+			   Logo,
+			   Description,
+			   AuthCertificate,
+			   ApplyMode,
+			   Remark,
+			   ApplyDate,
+			   CategoryIds,
+			   AuditStatus, 
+			   RefuseReason,
+			   CategoryNames
+		from wm_brandsapply_t
+		where id = #{id}
+	</select>
+	
+	<!-- 根据Example查询 -->
+	<select id="BrandsInfo.queryBrandsApplayByExample" resultType="com.wangmeng.service.bean.vo.BrandsApplayVo" parameterType="com.wangmeng.service.bean.vo.BrandsApplayVo">
+		select id,
+			   enterPrInfoId,
+			   userId,
+			   brandId,
+			   brandName,
+			   logo,
+			   description,
+			   authCertificate,
+			   applyMode,
+			   remark,
+			   applyDate,
+			   categoryIds,
+			   auditStatus, 
+			   refuseReason,
+			   categoryNames
+		from wm_brandsapply_t
+		<where>
+	 		<if test="id!=null" >and id = #{id}</if>
+	 		<if test="enterPrInfoId!=null"> and enterPrInfoId = #{enterPrInfoId}</if>
+	 		<if test="userId!=null"> and userId = #{userId}</if>
+	 		<if test="brandId!=null"> and brandId = #{brandId}</if>
+	 		<if test="brandName!=null and brandName !=''">and brandName = #{brandName}</if>
+	 		<if test="logo!=null and logo !=''">and logo = #{logo}</if>
+	 		<if test="description!=null and description !=''">and description = #{description}</if>
+	 		<if test="authCertificate!=null and authCertificate !=''">and authCertificate = #{authCertificate}</if>
+	 		<if test="applyMode!=null">and applyMode = #{applyMode}</if>
+	 		<if test="remark!=null and remark !=''">and remark = #{remark}</if>
+	 		<if test="applyDate!=null">and applyDate = #{applyDate}</if>
+	 		<if test="categoryIds!=null and categoryIds !=''">and categoryIds = #{categoryIds}</if>
+	 		<if test="auditStatus!=null">and auditStatus = #{auditStatus}</if>
+	 		<if test="refuseReason!=null and refuseReason !=''">and refuseReason = #{refuseReason}</if>
+	 		<if test="categoryNames!=null and categoryNames !=''">and categoryNames = #{categoryNames}</if>
+ 		</where>
+ 		ORDER BY id DESC		
+	</select>
+	
+	<!-- 根据Id删除品牌申请表记录 -->
+	<delete id="BrandsInfo.delBrandsApplayById" parameterType="java.lang.Long">
+		delete from wm_brandsapply_t where ID = #{id}
+	</delete>
+	
+	<!-- 保存品牌企业关系 -->
+	<insert id="BrandsInfo.saveEnpriinfoBrands" parameterType="com.wangmeng.service.bean.EnpriinfoBrands" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO wm_enpriinfobrands_t (brandId,enterPrInfoId) select * from (select #{brandId} as brandId, #{enterPrInfoId} as enterPrInfoId) as tb WHERE NOT EXISTS(SELECT 1 FROM wm_enpriinfobrands_t WHERE brandId=#{brandId} AND enterPrInfoId = #{enterPrInfoId})
+	</insert>
+	
+	<!-- 根据categoryId查询品牌 -->
+	<select id="BrandsInfo.queryBrandsVoByCategoryId" resultType="com.wangmeng.service.bean.vo.BrandsVo" parameterType="java.lang.Long">
+		select b.id, 
+		   b.name,
+		   b.logo,
+		   b.rewriteName
+		from wm_brands_t b where b.auditStatus = 1 and b.id in(SELECT brandid FROM wm_categorybrands_t cb WHERE CategoryId = #{categoryId})
+           ORDER BY CONVERT( b.name USING gbk ) COLLATE gbk_chinese_ci ASC		
+	</select>
+	
+	<!-- 查询品牌 -->
+	<select id="BrandsInfo.queryAllBrandsVo" resultType="com.wangmeng.service.bean.vo.BrandsVo">
+		select b.id, 
+		   b.name,
+		   b.logo,
+		   b.rewriteName
+		from wm_brands_t b where b.auditStatus = 1 
+        ORDER BY CONVERT( b.name USING gbk ) COLLATE gbk_chinese_ci ASC		
+	</select>
+	
+	<!-- 查询品牌 -->
+	<select id="BrandsInfo.queryBrandsForAppByProductName" resultType="com.wangmeng.service.bean.vo.BrandsVo" parameterType="com.wangmeng.service.bean.vo.QueryBrands">
+		select b.id, 
+		   b.name,
+		   b.logo,
+		   b.rewriteName
+		from wm_brands_t b where b.auditStatus = 1 and b.id in (SELECT DISTINCT brandid from wm_product_t p where p.status=2
+		  <if test="queryKey!=null and queryKey !=''"> and p.name like '%${queryKey}%'</if>
+		 )
+        ORDER BY CONVERT( b.name USING gbk ) COLLATE gbk_chinese_ci ASC	
+        <!--  分页 -->
+		limit #{begin},#{end}	
+	</select>
+	
+	<!-- 查询总数，APP用(新) -->
+	<select id="BrandsInfo.queryBrandsForAppByProductNamenumb" resultType="java.lang.Long" parameterType="com.wangmeng.service.bean.vo.QueryBrands">
+		select  count(1) numb       
+		from wm_brands_t b where b.auditStatus = 1 and b.id in (SELECT DISTINCT brandid from wm_product_t p where p.status=2
+		<if test="queryKey!=null and  queryKey !=''"> and p.name like '%${queryKey}%'</if>
+		)
+	</select>
+	
+	<!-- 查询品牌,根据企业名 -->
+	<select id="BrandsInfo.queryBrandsForAppByCompanyName" resultType="com.wangmeng.service.bean.vo.BrandsVo" parameterType="com.wangmeng.service.bean.vo.QueryBrands">
+		select b.id, 
+				   b.name,
+				   b.logo,
+				   b.rewriteName
+				from wm_brands_t b where b.auditStatus = 1 and b.id in (
+		SELECT DISTINCT brandid from wm_enpriinfobrands_t WHERE enterprinfoid in (
+		SELECT id from wm_enterpriseinfo_t
+		<if test="queryKey!=null and  queryKey !=''">WHERE CompanyName like '%${queryKey}%'</if>
+		)
+		)
+        ORDER BY CONVERT( b.name USING gbk ) COLLATE gbk_chinese_ci ASC	
+        <!--  分页 -->
+		limit #{begin},#{end}	
+	</select>
+	
+	<!-- 查询总数,根据企业名 APP用(新) -->
+	<select id="BrandsInfo.queryBrandsForAppByCompanyNamenumb" resultType="java.lang.Long" parameterType="com.wangmeng.service.bean.vo.QueryBrands">
+		select  count(1) numb       
+		from wm_brands_t b where b.auditStatus = 1 and b.id in (
+		SELECT DISTINCT brandid from wm_enpriinfobrands_t WHERE enterprinfoid in (
+		SELECT id from wm_enterpriseinfo_t
+		<if test="queryKey!=null and  queryKey !=''">WHERE CompanyName like '%${queryKey}%'</if>
+		)
+		)
+	</select>
+	
+	<!-- 查询品牌,根据品牌名 -->
+	<select id="BrandsInfo.queryBrandsForAppByBrandName" resultType="com.wangmeng.service.bean.vo.BrandsVo" parameterType="com.wangmeng.service.bean.vo.QueryBrands">
+		select b.id, 
+		   b.name,
+		   b.logo,
+		   b.rewriteName
+		from wm_brands_t b where b.auditStatus = 1 
+        <if test="queryKey!=null and  queryKey !=''">and b.name like '%${queryKey}%'</if>
+        ORDER BY CONVERT( b.name USING gbk ) COLLATE gbk_chinese_ci ASC	
+        <!--  分页 -->
+		limit #{begin},#{end}	
+	</select>
+	
+	<!-- 查询总数,根据品牌名  APP用(新) -->
+	<select id="BrandsInfo.queryBrandsForAppByBrandNamenumb" resultType="java.lang.Long" parameterType="com.wangmeng.service.bean.vo.QueryBrands">
+		select  count(1) numb       
+		from wm_brands_t b where b.auditStatus = 1 
+		<if test="queryKey!=null and  queryKey !=''">and b.name like '%${queryKey}%'</if>
+	</select>
+</mapper>

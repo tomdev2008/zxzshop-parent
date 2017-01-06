@@ -1,0 +1,206 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>管理</title>
+        <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+
+      <link href="$request.getContextPath()/assets/css/jquery.switch.css" rel="stylesheet">
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery.switch.js"></script>
+    </head>
+    <body>
+		#parse("include/page_detect.vm")
+      <div class="demo-content">
+		  <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/payway/main.do" class="form-horizontal well" id="pageForm">
+				<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+				<input type="hidden" name="pageNo" id="pageNo" value="$!page.pageNo"/>
+                <div class="row">
+                 <div class="control-group span8">
+                    <label class="control-label">编号：</label>
+                    <div class="controls">
+                      <input type="text" name="code" value="$!{qryForm.code}" class="control-text">
+                    </div>
+                  </div>
+                  <div class="control-group span8">
+                    <label class="control-label">名称：</label>
+                    <div class="controls">
+                      <input type="text" name="payway" value="$!{qryForm.payway}" class="control-text">
+                    </div>
+                  </div>
+               
+                  <div class="form-actions span5 offset3">
+                    <button type="submit" class="button button-primary">搜索</button>
+                  </div>
+                </div>
+              </form>
+			
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr><th colspan="9">
+                <ul class="toolbar">
+				  <li><button class="button button-primary" id="addBtnShow">添加</button></li>
+                </ul>
+                </th></tr>
+                <tr>
+                  <th>编码</th>
+                  <th>支付方式代码</th>
+                  <th>支付方式名称</th>
+                  <th>手续费</th>
+##                  <th>状态</th>
+                  <th>控制</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+				#foreach($entity in $page.getDataList())
+                    <tr>
+                      <td>$!entity.id</td>
+                      <td>$!entity.code</td>
+                      <td>$!entity.payway</td>
+                      <td>$!entity.commission</td>
+                      <td>
+##                      	#if($!entity.status == 1)
+##						     <span class="label label-success">启用</span>
+##						  #else
+##							 <span class="label label-important">停用</span>
+##						  #end
+
+    <span class="controls  control-row2">
+        #auth($request.getSession().getAttribute("session.user").getId(),"支付管理.控制")
+            <input type="checkbox" id="statusEdit_$!{entity.id}" name="status" tag="$entity.id"  class="checkbox" value="1" #if($entity.status == 1) checked #else #end >
+        #end
+        <script type="text/javascript" language="JavaScript">
+            $("#statusEdit_$!{entity.id}").simpleSwitch();
+            $("#statusEdit_$!{entity.id}").change(function(){
+                var status=0;
+                var id=$(this).attr('tag');
+                var result = $(this).attr('result');
+               // alert(result);
+                if(result=="true")
+                {  status=1; }
+                //alert(status);
+                edit_entity_status(id,status);
+
+            });
+        </script>
+
+    </span>
+                      </td>
+                      <td nowrap>
+                        #auth($request.getSession().getAttribute("session.user").getId(),"支付管理.编辑")
+                            <a class="button button-primary" href="#" title="编辑信息" onClick="javascript:edit_entity($entity.id);" tab="$entity.id">编辑</a>
+						#end
+                          &nbsp;&nbsp;
+					    <a class="button button-primary" href="#" title="删除信息" onclick="javascript:del_entity($entity.id);">删除</a>
+					  </td>
+                    </tr>
+				#end
+              </tbody>
+            </table>
+			
+            #parse("include/page.vm")
+
+          </div>
+        </div> 
+    <!-- script end -->
+      </div>
+    </body>
+		
+	<script type="text/javascript" language="JavaScript">
+	    //添加信息
+    	BUI.use('bui/overlay',function(Overlay){
+    	  var  dialog_add = new Overlay.Dialog({
+                    title:'添加信息',
+                    width:600,
+                    height:370,
+                    loader : {
+                      url : '$request.getContextPath()/payway/to_add.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'   //加载的数据类型
+                    },
+                    mask:false,
+					success:function () {
+						  $("#U_Add_Form").submit();
+                          this.close();
+                    }
+                  });
+              $('#addBtnShow').on('click',function () {
+                dialog_add.show();
+                dialog_add.get('loader').load();
+              });
+    	 });
+		 
+		 //修改信息
+		 var dialog_edit
+		 BUI.use('bui/overlay',function(Overlay){
+    	    dialog_edit = new Overlay.Dialog({
+                    title:'修改信息',
+                    width:600,
+                    height:370,
+                    loader : {
+                      url : '$request.getContextPath()/payway/to_edit.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    mask:false,
+					success:function () {
+					  	$("#U_Edit_Form").submit();
+                        this.close();
+                    }
+                  });
+    	 });
+		 
+		 //修改信息
+		 function edit_entity(userId){
+             dialog_edit.show();
+            dialog_edit.get('loader').load({id:userId});
+		 }
+        //切换状态
+        function edit_entity_status(id,status){
+            $.ajax({
+                type: 'post',
+                url: '$request.getContextPath()/payway/editInfo.do',
+                data:{id:id,status:status},
+                dataType:'json',
+                error : function() {
+                    BUI.Message.Alert('修改状态出错！','error');
+                }
+            });
+        }
+
+		//删除信息
+		function del_entity(id) {
+            BUI.Message.Confirm('确认要删除么？',function(){
+			   $.ajax({
+                  type: 'post',
+                  url: '$request.getContextPath()/payway/delete.do',
+				  data:{id:id},
+				  dataType:'json', 
+				  success: function(data){
+				      if(data && data.resultCode && data.resultCode == '1000'){
+					     BUI.Message.Alert('删除成功！','success');
+					     location.reload();
+					  }else{
+					  	BUI.Message.Alert('删除失败！','success');
+					  }
+				  },
+				  error : function() {    
+                      BUI.Message.Alert('删除出错！','error'); 
+                  }   
+                });
+				
+            },'question');
+        }
+    </script>
+	
+    </html>       

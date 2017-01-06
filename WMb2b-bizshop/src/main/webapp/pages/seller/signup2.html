@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>询价管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-signup2.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <div class="order_title">
+                订单编号：<span class="orderno"></span>
+            </div>
+            <div class="progressbar">
+                <ul class="bar">
+                    <li class="done" id="order-done">已下单</li>
+                    <li class="" id="order-signed">签约生效</li>
+                    <li>买家已付款</li>
+                    <li>货已签收</li>
+                    <li>交易完成</li>
+                </ul>
+            </div>
+            <div class="msg"></div>
+            <a class="link" href="Order.html">返回我的订单管理</a>
+            <a class="link" href="#" onclick="showProtocol();">去查看协议</a>
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/admin/inquiry-management.js"></script>
+
+    <script src="../../assets/js/seller/common.js"></script>
+    <script type="text/javascript">
+
+        var globalOrderNo;
+
+        $(document).ready(function(){
+            var orderNo = $.getUrlParamVal('orderNo');
+            var status = $.getUrlParamVal('status');
+            $('.orderno').html(orderNo);
+            getOrderInfo(orderNo,status);
+        });
+
+        /**
+         * 卖家签约
+         *
+         * @param orderNo
+         */
+        function getOrderInfo(orderNo,status){
+
+            globalOrderNo = orderNo;
+            if (orderNo==null || status==null) return;
+
+            $.ajax({
+                type:"GET",
+                url:"/orderInfo/getOrderInfo.do?orderNo=" + orderNo,
+                dataType: "json",
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function(data){
+                    if (data!=null && data!=undefined && data.code=='000000') {
+                        if (data.obj.status>=30 && data.obj.status<50){
+                            $('#order-signed').addClass('done');
+                            $('.msg').html('尊敬的用户！您已签属协议,请等待买家付款！');
+                        }else {
+                            $('.msg').html('尊敬的用户！签约进行中！');
+                        }
+                    }else {
+                        $('.msg').html('<font color="red">尊敬的用户！签约失败！请返回重新签约！</font>');
+                    }
+                }
+            });
+        }
+
+        /**
+         * 查看协议
+         */
+        function showProtocol(){
+            var protocolUrl = "/Ssq/viewContractDirect.do?orderNo=" + globalOrderNo;
+//            var protocolUrl = "/Ssq/viewContractDirect.do?orderNo=DD1610051407620001";
+            $.dialog({
+                title: '协议',
+                lock: true,
+                id: 'protocolContent',
+                width: '80%',
+                height: '50%',
+                content: ['<div class="dialog-form">',
+                    '<div class="form-group">',
+                    '<iframe src=' +  protocolUrl + ' frameborder="0" width="100%" height="550"></iframe></div>',
+                    '</div>'].join(''),
+                padding: '0px'
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+##------------------------------------------------------------------------
+##  vm工具										
+##
+##  Author: 衣奎德
+##  Created: 2016-11-11
+##------------------------------------------------------------------------
+#macro(evalPageInfoPageSize $_pageSize)
+#if($_pageSize && $_pageSize>0) $_pageSize #else 10 #end
+#end
+
+#macro(evalPageInfoCurrentPage $_currentPage)
+#if($_currentPage && $_currentPage>0) $_currentPage #else 1 #end
+#end

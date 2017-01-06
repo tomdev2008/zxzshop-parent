@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StatisticInfo">
+	<!-- 统计查询 -->
+	
+	<!-- 统计企业数量 -->
+	<select id="countEnterprise"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		<!-- select count(1) from wm_enterpriseinfo_t --> 
+		select count(1) from wm_enterpriseinfo_t  a
+			INNER JOIN wm_user_t b on  a.userid = b.id  where b.usertype = 2
+	</select>
+
+	<!-- 企业： 统计数量 -->
+	<select id="countEnterpriseByStatus" parameterType="java.lang.Integer"  resultType="java.lang.Long" >
+		select count(1) from wm_enterpriseinfo_t a
+		INNER JOIN wm_user_t b on  a.userid = b.id  where b.usertype = 2 and a.Status = #{status}
+	</select>
+	
+	<!-- 企业： 按ca状态统计 -->
+	<select id="countEnterpriseByCAStatus" parameterType="java.lang.Integer"  resultType="java.lang.Long" >
+		select count(1) from wm_enterpriseinfo_t a
+		INNER JOIN wm_user_t b  on  a.userid = b.id  where Categery =1 and CertifStatus = #{status}
+	</select>
+	
+	<!-- 每日厂家入驻 -->
+	<select id="countEnterpriseByDay" parameterType="java.lang.Integer"  resultType="java.lang.Long" >
+		select count(1) from wm_enterpriseinfo_t a
+		 INNER JOIN wm_user_t b  on  a.userid = b.id  where b.usertype = 2
+		  and to_days(now())- TO_DAYS(CommitDate) = 0
+	</select>
+	
+	<!-- 每日 配套服务商入驻 -->
+	<select id="countThirdEnterpriseByDay" parameterType="java.lang.Integer"  resultType="java.lang.Long" >
+		select  count(1)  from wm_thridenterpriseinfo_t a
+		 INNER JOIN wm_user_t b  on  a.userid = b.id  where b.usertype = 3
+		  and to_days(now()) - TO_DAYS(PostTime) = 0
+	</select>
+	
+	<!-- 统计产品数量 -->
+	<select id="countProducts"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		select count(1) from wm_orderinfo_t 
+	</select>
+	
+	<!-- 商品: 按状态统计 -->
+	<select id="countProductsByStatus"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		select count(1) from wm_product_t  a  INNER JOIN wm_enterpriseinfo_t b on a.enterpriseid = b.id  WHERE a.Status = #{status}
+	</select>	
+	
+	<!--每日新增商品 统计-->
+	<select id="countProductsByDay"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		SELECT  count(1)  from wm_product_t a  INNER JOIN wm_enterpriseinfo_t b on a.enterpriseid = b.id 
+		WHERE to_days(now()) - TO_DAYS(AddTime) = 0
+	</select>
+	
+	<!-- 品牌 : 按状态统计 -->
+	<select id="countBrandsByStatus"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		select count(1) from wm_brands_t WHERE AuditStatus = #{status}
+	</select>
+	
+	<!-- 询价单 : 按状态统计 -->
+	<select id="countInquirySheetByStatus" parameterType="java.lang.Integer" resultType="java.lang.Long" >
+		select count(1) from wm_inquirysheet_t WHERE State = #{status}
+	</select>
+	
+	<!-- 采购单 : 按状态统计 -->
+	<select id="countPurchaseByStatus"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		select count(1) from wm_purchaseinfo_t WHERE Status = #{status}
+	</select>
+	
+	<!-- 订单 : 按状态统计 -->
+	<select id="countOrderByStatus"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		select count(1) from wm_orderinfo_t WHERE Status = #{status}
+	</select>
+	
+	<!-- 订单 : 按状态统计 -->
+	<select id="countOrderBeforeStatus"  resultType="java.lang.Long" parameterType="java.lang.Integer" >
+		<![CDATA[
+		select count(1) from wm_orderinfo_t WHERE Status = #{status}
+		]]>
+	</select>
+</mapper>

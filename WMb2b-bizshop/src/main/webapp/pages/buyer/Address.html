@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>收货地址管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-address.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="content clearfix" >
+        <div class="box clearfix">
+            <div class="panel_title">
+               	收货地址管理
+            </div>
+            <div class="repeater">
+            
+            </div>
+        </div>
+        <div style="display:none">
+            <div id="address-fields" class="thickcon">
+                <div id="addressDiagDiv">
+                    <input type="hidden" value="false" id="isDefault">
+                    <input type="hidden" value="0" id="update_paymentId">
+                    <input type="hidden" value="0" id="update_pickId">
+                    <input type="hidden" value="" id="update_pickName">
+                    <div id="edit-cont" class="m">
+                        <div class="mc">
+                            <div class="form">
+                               <div class="item">
+                                    <span class="label"><em>*</em>收货人：</span>
+                                    <div class="fl">
+                                        <input type="text" class="text" value="" id="consigneeName" placeholder="请输入收货人名称">
+                                        <span class="error-msg" id="consigneeNameNote">请您填写收货人姓名</span>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <span class="label"><em>*</em>所在地区：</span>
+                                    <div class="fl">
+                                        <select id="provinceDiv">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <select id="cityDiv">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <select id="countyDiv">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <span id="areaNote" class="error-msg">请您选择完整的地区信息</span>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <span class="label"><em>*</em>地址：</span>
+                                    <div class="fl">
+                                        <span id="areaName"></span>
+                                        <input type="text" class="text" value="" id="consigneeAddress" placeholder="详细地址">
+                                    </div>
+                                    <span id="consigneeAddressNote" class="error-msg">请您填写收货地址</span>
+                                </div>
+                                <div class="item">
+                                    <span class="label"><em>*</em>手机号码：</span>
+                                    <div class="fl">  
+                                        <input type="text" class="text" maxlength="11" value="" id="consigneeMobile" placeholder="请输入手机号码">
+                                        <span id="consigneeMobileNote" class="error-msg">请填写正确的手机号码</span>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <span class="label">固定电话：</span>
+                                    <div class="fl">
+                                        <input type="text" class="text" maxlength="13" value="" id="consigneeTel" placeholder="例 0571-85575757">
+                                        <span class="error-msg" id="consigneeTelNote">请填写正确的固定电话</span>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <span class="label">电子邮箱：</span>
+                                    <div class="fl">
+                                        <input type="text" class="text" value="" id="consigneeEmail" placeholder="请输入电子邮箱地址">
+                                        <span class="error-msg" id="consigneeEmailNote">请您填写正确的邮箱格式</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/Region.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/buyer/buyer-address.js"></script>
+</body>
+</html>

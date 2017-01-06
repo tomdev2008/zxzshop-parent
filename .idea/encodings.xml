@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-admin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-app" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-bizshop" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-service/src/main/resources/8582_dongfangjiancaiwang.key.p8" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/WMb2b-third" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

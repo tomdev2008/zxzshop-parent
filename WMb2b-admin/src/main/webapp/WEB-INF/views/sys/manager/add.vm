@@ -1,0 +1,69 @@
+  <div id="user_add_content">
+      <form id="U_Add_Form" class="form-horizontal" action="$request.getContextPath()/sys/manager/add.do">
+        <input type="hidden" name="a" value="3">
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>用户姓名</label>
+            <div class="controls">
+              <input name="userName" type="text"  data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>密码</label>
+            <div class="controls">
+              <input name="userPwd" type="password" value="123456"  data-rules="{required:true}"  class="input-normal control-text disabled">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>联系方式</label>
+            <div class="controls">
+              <input name="cellphone" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>真实姓名</label>
+            <div class="controls">
+              <input name="realName" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+          
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>邮箱</label>
+            <div class="controls">
+              <input name="email" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+		   #foreach($role in $listRole)
+			#if($!{velocityCount}==1||$!{velocityCount}==2)
+			   #if($!{velocityCount}==1)
+    		      <div class="control-group span8">
+				  <label class="control-label"><s>*</s>用户角色</label>
+			   #end
+                    <div class="controls">
+        				  <input name="roleIds" value="$role.id" type="checkbox">$role.roleName <br/>
+                    </div>
+			   #if($!{velocityCount}==2)
+                 </div>
+			   #end
+			 #else
+				#set($i=$!{velocityCount}/2)
+				#if($i==1)
+				  <div class="control-group span8">
+				  <label class="control-label">&nbsp;</label>
+				#end	
+                    <div class="controls">
+        				  <input name="roleIds" value="$role.id" type="checkbox">$role.roleName<br/>
+                    </div>
+				#if($i==0)
+				  </div>
+				#end
+			 #end
+		  #end
+        </div>
+		  
+      </form>
+    </div> 

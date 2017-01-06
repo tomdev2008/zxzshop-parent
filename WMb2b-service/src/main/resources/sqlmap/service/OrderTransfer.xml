@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderTransfer">
+	<!-- 添加发货信息 -->
+	<insert id="OrderTransfer.addTransfer" parameterType="com.wangmeng.service.bean.OrderTransfer">
+		insert into
+		wm_ordertransfer_t
+		(OrderNo,SendTime,SendType,TransferCom,TransCode,
+		SendProv,SendUser,Status)
+		values(#{orderNo},#{sendTime},#{sendType},#{transferCom},
+		#{transCode},#{sendProv},#{sendUser},#{status})
+	</insert>
+
+	<!-- 修改发货信息 -->
+	<update id="OrderTransfer.modifyTransfer" parameterType="com.wangmeng.service.bean.OrderTransfer">
+		update wm_ordertransfer_t
+		<set>
+			<if test="id != 0">
+				Id = #{id}
+			</if>
+			<if test="orderNo != null and orderNo != ''">
+			 	OrderNo = #{orderNo}
+			</if>
+			<if test="sendTime != null">
+				,SendTime = #{sendTime}
+			</if>
+			<if test="sendType != 0">
+				,SendType = #{sendType}
+			</if>
+			<if test="transferCom != null and transferCom != ''">
+				,TransferCom = #{transferCom}
+			</if>
+			<if test="transCode != null and transCode != ''">
+				,TransCode = #{transCode}
+			</if>
+			<if test="sendProv != null and sendProv != ''">
+				,SendProv = #{sendProv}
+			</if>
+			<if test="sendUser != 0">
+				,SendUser = #{sendUser}
+			</if>
+			<if test="reachTime != null">
+				,ReachTime = #{reachTime}
+			</if>
+			<if test="reachProv != null and reachProv != ''">
+				,ReachProv = #{reachProv}
+			</if>
+			<if test="reachDescr != null and reachDescr != ''">
+				,ReachDescr = #{reachDescr}
+			</if>
+			<if test="reachUser != null and reachUser != ''">
+				,ReachUser = #{reachUser}
+			</if>
+			<if test="status != 0">
+				,Status = #{status}
+			</if>
+		</set>
+		<where>
+			<if test="id != 0">
+				 Id = #{id}
+			</if>
+			<if test="orderNo != null and orderNo != ''">
+				 OrderNo = #{orderNo}
+			</if>
+		</where>
+	</update>
+
+	<select id="OrderTransfer.queryTransfer" parameterType="com.wangmeng.service.bean.OrderTransfer"
+		resultType="com.wangmeng.service.bean.OrderTransfer">
+		select *
+		from wm_ordertransfer_t
+		where 1=1
+		<if test="orderNo != null and orderNo != ''">
+			and OrderNo = #{orderNo}
+		</if>
+		<if test="id != 0">
+			and Id = #{id}
+		</if>
+		<if test="userId != 0">
+			and (SendUser = #{userId} or ReachUser = #{userId})
+		</if>
+		<if test="status != 0">
+			and Status = #{status}
+		</if>
+		order by SendTime desc
+	</select>
+	
+	<select id="OrderTransfer.queryTransferByOrderNo" parameterType="map"
+		resultType="com.wangmeng.service.bean.OrderTransfer">
+		select *
+		from wm_ordertransfer_t
+		where 1=1
+		<if test="orderNo != null and orderNo != ''">
+			and OrderNo = #{orderNo}
+		</if>
+		order by SendTime desc limit 1
+	</select>
+	
+	
+		<!-- 修改发货信息 -->
+	<update id="OrderTransfer.modifyTransferExt" parameterType="com.wangmeng.service.bean.OrderTransfer">
+		update wm_ordertransfer_t
+		set
+			 Id = #{id} 
+			<if test="sendTime != null">
+				,SendTime = #{sendTime}
+			</if>
+			<if test="sendType != 0">
+				,SendType = #{sendType}
+			</if>
+			<if test="transferCom != null and transferCom != ''">
+				,TransferCom = #{transferCom}
+			</if>
+			<if test="transCode != null and transCode != ''">
+				,TransCode = #{transCode}
+			</if>
+			<if test="sendProv != null and sendProv != ''">
+				,SendProv = #{sendProv}
+			</if>
+			<if test="sendUser != 0">
+				,SendUser = #{sendUser}
+			</if>
+			<if test="reachTime != null">
+				,ReachTime = #{reachTime}
+			</if>
+			<if test="reachProv != null and reachProv != ''">
+				,ReachProv = #{reachProv}
+			</if>
+			<if test="reachDescr != null and reachDescr != ''">
+				,ReachDescr = #{reachDescr}
+			</if>
+			<if test="reachUser != null and reachUser != ''">
+				,ReachUser = #{reachUser}
+			</if>
+			<if test="status != 0">
+				,Status = #{status}
+			</if> 
+			<if test="sendAuditedDesc != null and sendAuditedDesc != ''">
+				,SendAuditedDesc = #{sendAuditedDesc}
+			</if>
+			<if test="reachAuditedDesc != null and reachAuditedDesc != ''">
+				,ReachAuditedDesc = #{reachAuditedDesc}
+			</if>
+		where Id = #{id}
+	</update>
+	
+	<select id="OrderTransfer.queryTransferStatusById" parameterType="map"
+		resultType="java.lang.Integer">
+		select Status from wm_ordertransfer_t where Id = #{id}
+	</select>
+	
+	<select id="OrderTransfer.queryTransferById" parameterType="map"
+		resultType="com.wangmeng.service.bean.OrderTransfer">
+		select * from wm_ordertransfer_t where Id = #{id} 
+	</select>
+</mapper>

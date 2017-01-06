@@ -1,0 +1,163 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>商品分类管理</title>
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin-purchase-check.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-category-mgr.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-deliver-check.css?v=1" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-article-add.css" rel="stylesheet">
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-category-add.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/wm-common.js?v=1"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-productCategories-add.js"></script>
+	<script type="text/javascript" language="JavaScript">
+	 	    $(function() {
+				 $("#uploadpic").click(function(){
+					$("#provPicFile").click();
+				});
+				//_callbackImgId, _hiddenImgFileId, _uploadImgFileName, _uploadImgFileId, _filePath, _callbackBefore, _callbackAfter, _callbackImgDelId, _callbackDelete
+				$('#provPicFile').change(function(){
+					WM.uploadPic("provImg", "icon", "_file", "provPicFile", "common"
+						, function(){}
+						, function(){}
+						, ''
+						, function(){
+							$("provImg").attr("src", "");
+							$("provImg").hide();
+							$("provPicFile").val('');
+							$("icon").val('');
+						}
+					);
+				});
+				
+			 }); 
+		 	   
+		 function saveCategory(){
+		    var regNum = new RegExp("^[1-9][0-9]*$");
+			var displayOrder = $.trim($("#displayOrder").val());
+			if(displayOrder==""){
+			     $("#displayOrder_span").text("显示顺序不能为空!");
+				 return;
+			}else{
+    			if(!regNum.test(displayOrder)){
+    	        		$("#displayOrder_span").text("显示顺序必须为正整数");
+    					return;
+    			}
+			}
+		 	var name = $("#name").val();
+			if(name==""){
+				$("#name_span").text("名称不能为空!");
+				return;
+			}
+			//ajax 查询名称是否已经添加
+			var firstCateId = $("#firstCateId").val();
+			var parentId;
+			if(firstCateId == ""){
+			    parentId = 10000;
+			}else{
+				parentId = firstCateId;
+			}
+			$.ajax({
+			type:"POST",
+				url:'$request.getContextPath()/ProductCategories/api/queryRepeatCategory.do',
+				data:"parentId=" + parentId+"&name="+name,
+				dataType:"json",
+				success:function(obj){
+					if(obj==true){
+						$("#name_span").text("此分类已经存在!!!");
+						return;
+					}else if(obj==false){
+						pageForm.submit();
+					}
+			    }
+		     });
+    	}
+		
+		function goback(){
+		   window.location.href=document.referrer; 
+		}
+	</script>
+    </head>
+    <body>
+    
+     <div class="container">
+        <div class="account_mgr_nav">
+        	<a href="$request.getContextPath()/ProductCategories/toProductcategoriesList.do">分类管理</a>
+            <a href="$request.getContextPath()/ProductCategories/to_productcategories_add.do" class="active">新增分类</a>
+        </div>
+		 <input type="hidden" name="serverPath" id="serverPath" value="/product/category" class="text">
+         <form method="post" action="$request.getContextPath()/ProductCategories/saveProductCategory.do" class="form-horizontal well" id="pageForm" name="pageForm">
+            <div class="module-box mt20">
+                <div id="add_content">
+            		<div class="entry">
+            			<label for="" class="field_label">*分类名称：</label>
+            			<input type="text" class="field_value" id="name" name="name" value="$!category.name">
+						<span style="color:red" id="name_span"></span>
+            		</div>
+            		<div class="entry">
+            			<label for="" class="field_label">一级分类：</label>
+            			<select name="firstCateId" id="firstCateId" class="field_value">
+					    <option value="">请选择</option>
+	                      	#foreach( $productCategory in $productCategorys )
+								<option value="$!productCategory.id">$!productCategory.name</option>
+							#end
+				   	    </select>
+            		</div>
+                    <div class="entry">
+            			<label for="" class="field_label">图片：</label>
+            			
+            			<div class="cert_item">
+			                    <div class="uploadpic" style="height:178px; float:left;" id="businessimg">
+			                        <input class="id" id="businessid" type="hidden" name="enterprisephotoList[0].id" value="0" />
+			                        <input class="path" id="bussinesspath" type="hidden" name="icon" value=""/>
+			                        <input class="code" type="hidden" name="enterprisephotoList[0].dictCode" value="200001" />
+			                        <input type='file' name="_file" class="uploadFilebtn">
+			                    </div>
+			            </div>
+            			
+            		</div>
+					<div class="entry">
+            			<label for="" class="field_label">显示顺序：</label>
+            			<input type="text" class="field_value" id="displayOrder" name="displayOrder" style="width:400px;">
+            		</div>
+						<span id="displayOrder_span" style="color:red"></span>
+            		<div class="entry">
+            			<label for="" class="field_label">标题(title)：</label>
+            			<input type="text" class="field_value" name="metaTitle" style="width:400px;">
+            		</div>
+            		<div class="entry">
+            			<label for="" class="field_label">关键字(keywords)：</label>
+            			<input type="text" class="field_value" name="metaKeyword" style="width:400px;">
+            		</div>
+                    <div class="entry">
+            			<label for="" class="field_label">描述(description)：</label>
+            			<input type="text" class="field_value" name="metaDescr" style="width:400px;">
+            		</div>
+            	</div>
+            </div>
+       </form>
+	   <div class="entry form_btn">
+		   #auth($request.getSession().getAttribute("session.user").getId(),"新增分类.提交")
+		  		<button onclick="saveCategory()" style="margin-left:190px;background:white;color:#EE7700;height:34px;font-size:16px;width:100px">提交</button>
+			#end
+		   #auth($request.getSession().getAttribute("session.user").getId(),"新增分类.取消")
+		    <button onclick="goback()" style="margin-left:20px;background:white;color:#EE7700;height:34px;font-size:16px;width:100px">取消</button>
+       	   #end
+	   </div>
+       <input type='file' id="provPicFile" name="_file" style="display:none">
+    </body>
+    </html>       

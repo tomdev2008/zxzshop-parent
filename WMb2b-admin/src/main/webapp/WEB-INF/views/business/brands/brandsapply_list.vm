@@ -1,0 +1,198 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>品牌管理</title>
+    
+    
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-brand-mgr.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-article-add.css" rel="stylesheet">
+    
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-brand-mgr.js"></script>
+     <script type="text/javascript" language="JavaScript">
+     function searchBrandsapply(){
+	 	$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+    function seacrchAll(){
+   		$("#auditStatus").val("");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+    function seacrchDaiShenHe(){
+   		$("#auditStatus").val("0");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+    function seacrchShenHeJuJue(){
+   		$("#auditStatus").val("2");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+    function seacrchShenHeTongGuo(){
+   		$("#auditStatus").val("1");
+		$("#pageSize").val(10);
+	 	$("#currentPage").val(1);
+	    pageForm.submit();
+    }
+    </script>
+    </head>
+    <body>
+     #parse("include/page_normal_detect.vm")
+    <div class="demo-content">
+     <div class="span24 doc-content" style="width:90%">
+        <div class="account_mgr_nav">
+        	<a href="$request.getContextPath()/Brands/toBrandsapplyList.do" class="active">品牌管理</a>
+        	<a href="$request.getContextPath()/Brands/toBrandsapplyAdd.do">新增品牌</a>
+        	<!--<a href="$request.getContextPath()/Brands/toEnpriinfoBrandsAdd.do">品牌企业关联</a>-->
+		</div>
+        <input type="hidden" name="nullFlag" id="nullFlag" value="$!nullFlag"/>
+		<form name="pageForm" id="pageForm" class="form-horizontal" action="$request.getContextPath()/Brands/toBrandsapplyList.do">
+			<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+            <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+            <div class="search_box mt20">
+    			<div class="clearfix">
+    				<label for="" class="field_label">供应商:</label>
+    				<input type="text" name="enterPrInfoName" class="field_input" placeholder="供应商" value="$!brandsApplayVo.enterPrInfoName">
+    			</div>
+    			<div class="clearfix">
+    				<label for="" class="field_label">品牌:</label>
+    				<input type="text" name="brandName" class="field_input" placeholder="品牌名称" value="$!brandsApplayVo.brandName">
+    			</div>
+    			<div class="clearfix">
+    				<label for="" class="field_label">发布日期:</label>
+    					<input type="text" name="beginTime" class="field_input field_date" placeholder="起始日期"> <span class="fl dash">-</span> <input placeholder="截止日期" name="endTime" type="text" class="field_input field_date" >
+    				<button class="submit" onclick="searchBrandsapply()">查询</button>
+    			</div>
+    			<div class="clearfix status">
+    				<input id="auditStatus" name="auditStatus" type="hidden" value="$!brandsApplayVo.auditStatus">
+    				<label for="" class="field_label">品牌状态:</label>
+    				<button data-id="null" onclick=seacrchAll();>全部</button>
+                    <button data-id="0" onclick=seacrchDaiShenHe()>待审核</button>
+                    <button data-id="2" onclick=seacrchShenHeJuJue()>审核拒绝</button>
+                    <button data-id="1" onclick=seacrchShenHeTongGuo()>审核通过</button>
+    			</div>
+		 </form> 
+	</div>
+
+
+            <table cellspacing="0" class="table table-bordered">
+                <tr>
+                    <th>品牌编号</th>
+                    <th>供应商</th>
+                    <th>品牌名称</th>
+                    <th>logo</th>
+                    <th>发布时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                
+               #foreach($entity in $page.data)
+               	<tr>
+               		<td>$!{entity.id}</td>
+               		<td>$!{entity.enterPrInfoName}</td>
+               		<td>$!{entity.brandName}</td>
+               		<td>
+               			<div class="headerimg">
+                             <img src="$!serverPath$!entity.logo" style="height:40px;" />
+                        </div>
+               		</td>
+               		
+               		
+               		<td>$dateUtil.formatDate($!{entity.applyDate},"yyyy-MM-dd")</td>
+               		<td>
+               		   #if($!{entity.auditStatus}==0)
+	                                                              待审核
+                       #elseif($!{entity.auditStatus}==1)
+                      	  审核通过
+                       #elseif($!{entity.auditStatus}==2)
+                      	 审核拒绝
+                      #end
+               		</td>
+               		<td nowrap>
+               		   #if($!{entity.auditStatus}==0)
+						#auth($request.getSession().getAttribute("session.user").getId(),"品牌管理.审核")
+	                    	<a class="button button-primary" href="$request.getContextPath()/Brands/toBrandCheck.do?id=$!{entity.id}">审核</a>
+	                    #end
+				   		#auth($request.getSession().getAttribute("session.user").getId(),"品牌管理.删除")
+						   <a class="button button-primary delete" href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.brandName}">删除</a>
+                      	#end
+
+                       #elseif($!{entity.auditStatus}==1)
+
+						   #auth($request.getSession().getAttribute("session.user").getId(),"品牌管理.编辑")
+                      	 		<a class="button button-primary " href="$request.getContextPath()/Brands/toBrandsapplyEdit.do?id=$!{entity.id}">编辑</a>
+							#end
+
+						   #auth($request.getSession().getAttribute("session.user").getId(),"品牌管理.删除")
+                     	 		<a class="button button-primary delete" href="javascript:;" class="delete" tab="$!{entity.id}" rel="$!{entity.brandName}">删除</a>
+							#end
+
+					#elseif($!{entity.auditStatus}==2)
+
+	                       <div style="display:none">
+					        <div id="view_content">
+					            <div class="entry">
+					                <label for="" class="field_label">
+					                    备注：
+					                </label>
+					                <textarea>$!{entity.refuseReason}</textarea>
+					            </div>
+					        </div>
+					     </div>
+                     	 <a class="button button-primary" href="javascript:;" id="view">查看原因</a>
+                     	 <a class="button button-primary delete" href="javascript:;" tab="$!{entity.id}" rel="$!{entity.brandName}">删除</a>
+                       #end
+					</td>
+                </tr>
+				#end
+            </table>
+		    #parse("include/page_normal.vm")
+
+
+    	</div>
+    </div>
+
+   
+    <script type="text/javascript" language="JavaScript">
+    	$(function(){
+	    	var _status = $('#auditStatus').val();
+	    	_status = _status == "" ? "null" :  _status;
+    		$('.status > button[data-id='+_status+']').addClass('active').siblings().removeClass('active');
+    		var nullFlag = $('#nullFlag').val();
+    		if(nullFlag==1){
+    			$('#pageSize').removeAttr('value');
+    			$('#currentPage').removeAttr('value');
+    			$('#pageSize').val("10");
+    			$('#currentPage').val("1");
+    		}
+    	})
+		
+		$('img').error(function(){
+            $(this).hide();
+        })
+
+    </script>
+    
+    </body>
+    </html>       

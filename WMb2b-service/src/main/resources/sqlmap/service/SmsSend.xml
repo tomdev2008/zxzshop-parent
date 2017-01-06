@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MessagesendInfo">
+	
+	<insert id="MessagesendInfo.addMsg" parameterType="com.wangmeng.third.bean.Smssend" >
+		insert into wm_smssend_t(UserName,PlatType,Status,CellPhone,BackCode,Channel,Content,BusinessType,SendTime)
+		values(#{userName},#{platType},#{status},#{cellPhone},#{backCode},#{channel},#{content},#{businessType},now())
+	</insert>
+	
+	<select id="MessagesendInfo.getSendChannel" resultType="int">
+		select item_code from wm_sys_config where item_cate = 'sms_send_channel'
+		limit 0,1
+	</select>
+
+	<update id="MessagesendInfo.switchChannel" parameterType="int">
+		UPDATE wm_sys_config SET item_code = #{channel} where item_cate = 'sms_send_channel'
+	</update>
+	
+	<!-- 短信策略 -->
+	<select id="MessagesendInfo.searchnumtoday" parameterType="java.lang.String" resultType="int">
+		SELECT id from wm_smssend_t where date(SendTime) =date(NOW()) and CellPhone =#{cellPhone}  and status =1 limit 100
+	</select>
+	
+	<!-- 短信黑名单 -->
+	<select id="MessagesendInfo.searchblack" parameterType="java.lang.String" resultType="int">
+		SELECT id from wm_smssend_black_t where  CellPhone =#{cellPhone} and status=1
+	</select>
+</mapper>

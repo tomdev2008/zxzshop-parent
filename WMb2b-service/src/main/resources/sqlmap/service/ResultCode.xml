@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ResultCode">
+	<!-- 加载所有异常值和code -->
+	<select id="ResultCode.queryResultCodeList"  parameterType="String" resultType="com.wangmeng.service.bean.ResultCode">
+		select * from wm_resultCode_t
+	</select>
+	
+	<!-- 根据code查询对应的值 -->
+	<select id="ResultCode.queryResultValueByCode" parameterType="String"  resultType="String">
+		select `value`  from wm_resultCode_t where code = #{code} 
+	</select>
+	
+</mapper>

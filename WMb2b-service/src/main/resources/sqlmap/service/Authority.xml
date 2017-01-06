@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wangmeng.sys.authority.mapping.AuthorityMapper">
+
+	<resultMap id="authorityResultMap" type="com.wangmeng.sys.legacy.domain.SysPower">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="xuid" property="xuid" jdbcType="VARCHAR" />
+		<result column="power_name" property="powerName" jdbcType="VARCHAR" />
+		<result column="redirect_url" property="redirectUrl" jdbcType="VARCHAR" />
+		<result column="superid" property="superid" jdbcType="VARCHAR" />
+		<result column="sta" property="sta" jdbcType="SMALLINT" />
+		<result column="source_type" property="sourceType" jdbcType="INTEGER" />
+		<result column="owner_sys" property="owner" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="display" property="display" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 查询用户的权限数据 //todo 效率不高待优化 -->
+	<select id="queryByUserId" resultMap="authorityResultMap">
+		SELECT power.* FROM wm_sys_power power , wm_sys_role_power rolepower , wm_sys_user_role userrole
+		WHERE userrole.userid=#{userId} AND userrole.roleid=rolepower.roleid AND power.id=rolepower.powerid
+		<if test="sourceType!=null and sourceType>=0"> AND power.source_type = #{sourceType} </if>
+		ORDER BY power.create_time DESC
+	</select>
+
+</mapper>

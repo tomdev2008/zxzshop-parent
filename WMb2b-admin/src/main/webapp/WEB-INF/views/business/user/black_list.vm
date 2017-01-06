@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>黑名单</title>
+    <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/sea.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/config.js"></script>
+</head>
+<body>
+    #parse("include/page_normal_detect.vm")
+<div class="demo-content">
+    <div class="doc-content">
+        <ul class="nav-tabs">
+            <li class="active"><a href="$request.getContextPath()/user/queryBlackByPagination.do">黑名单</a></li>
+        </ul>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+
+                <form method="post" action="$request.getContextPath()/user/queryBlackByPagination.do" class="form-horizontal well" name="pageForm" id="pageForm">
+                    <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+                    <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+                    <div class="row">
+                        <div class="control-group span8">
+                            <label class="control-label">客户：</label>
+                            <div class="controls">
+                                <input type="text" name="userName" value="$!userVo.userName" class="control-text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span24">
+                            <label class="control-label">客户类型：</label>
+                            <div class="controls">
+                                <select name="userType">
+                                    <option value="0" #if($!userVo.userType==0) selected="selected" #end >请选择</option>
+                                    <option value="1" #if($!userVo.userType==1) selected="selected" #end >采购商</option>
+                                    <option value="2" #if($!userVo.userType==2) selected="selected" #end >供应商</option>
+                                    <option value="3" #if($!userVo.userType==3) selected="selected" #end >配套服务商</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span10">
+                            <label class="control-label">注册日期：</label>
+                            <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                                <input name="beginTime" value="$!userVo.beginTime" placeholder="起始日期" data-tip="{text : '起始日期'}" data-rules="{required:true}" data-messages="{required:'起始日期不能为空'}" class="input-small calendar" type="text"><label>&nbsp;-&nbsp;</label>
+                                <input name="endTime" value="$!userVo.endTime" placeholder="截止日期" data-rules="{required:true}" data-messages="{required:'截止日期不能为空'}" class="input-small calendar" type="text">
+                            </div>
+                        </div>
+                        <div class="form-actions span5">
+                            <button id="btnSearch" type="submit" class="button button-primary">搜索</button>
+                        </div>
+                    </div>
+                </form>
+                #auth($request.getSession().getAttribute("session.user").getId(),"黑名单管理.新增")
+                    <div id="addBlack" class="ml-25 fl-left button-gray" style="margin-bottom: 20px;">加入黑名单</div>
+                #end
+                #auth($request.getSession().getAttribute("session.user").getId(),"黑名单管理.删除")
+                    <div id="deleteUser" class="ml-25 fl-left button-gray">删除账户</div>
+                #end
+                <table cellspacing="0" class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="15">选择</th>
+                        <th>用户名</th>
+                        <th>手机号码</th>
+                        <th>姓名</th>
+                        <th>注册日期</th>
+                        <th>客户类型</th>
+                        <th>客户积分</th>
+                        <th>来源</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($userQueryResult in $result.obj.data)
+                        <tr>
+                            <td><input type="checkbox" name="oneCheck" value="$userQueryResult.id"></td>
+                            <td>$!userQueryResult.userName</td>
+                            <td>$!userQueryResult.cellPhone</td>
+                            <td>$!userQueryResult.realName</td>
+                            <td>$dateUtil.formatDate($!userQueryResult.createDate,"yyyy-MM-dd")</td>
+
+                            <td>
+                                #if($!userQueryResult.userType == 1)
+                                    采购商
+                                #elseif($!userQueryResult.userType == 2)
+                                    供应商
+                                #elseif($!userQueryResult.userType == 3)
+                                    配套服务商
+                                #end
+                            </td>
+
+
+                            <td>$!userQueryResult.availableCredits</td>
+
+                            <td>
+                                #if($!userQueryResult.registerWay == 0)
+                                    正常注册
+                                #elseif($!userQueryResult.status == 1)
+                                    询价注册
+                                #elseif($!userQueryResult.status == 2)
+                                    采购注册
+                                #end
+                            </td>
+
+                            <td class="tdBlack">
+                                #auth($request.getSession().getAttribute("session.user").getId(),"黑名单管理.还原")
+                                    <a href="#" title="还原" id="romoveBlack" data-id="$!userQueryResult.id" tab="$userQueryResult.id">还原</a>
+                                #end
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                #auth($request.getSession().getAttribute("session.user").getId(),"黑名单管理.查看")
+                                    <a href="#" title="查看记录" class="seeBlackLog" data-id="$!userQueryResult.id" tab="$userQueryResult.id">查看记录</a>
+                                #end
+                            </td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>
+                #parse("include/page_normal.vm")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add" class="digSize" style="display: none;top: 285px;left: 450px;">
+    <span class="fl-right fs-md fw-ber" id="close-add" style="position: relative">X</span>
+    <p style="font-size: 16px;border-bottom: 2px solid #000;padding: 13px">添加黑名单</p>
+    <label class="control-label" style="">客户：</label>
+    <input name="userName" placeholder="用户名/手机号码/姓名" id="add-userInfo" list="add-userList" style="width: 400px;height: 20px;"><br/>
+    <datalist id="add-userList">
+    </datalist>
+    <label class="control-label">备注：</label><br/>
+    <textarea rows="5" id="remark" placeholder="请说明添加原因" style="width: 400px;height: 150px;margin-left: 35px;"></textarea><br/>
+    <button id="confirmAdd" style="width: 80px;height: 40px;margin-left: 240px;margin-top: 30px;">确定</button><br/>
+    <span style="margin-left: 150px;margin-top: 50px;color: #fd672d">提示：添加黑名单后，当前客户的账户将被禁用，无法登陆。</span>
+</div>
+
+<div id="delete" class="digSize" style="display: none;top: 285px;left: 450px;">
+    <span class="fl-right fs-md fw-ber" id="close-delete" style="position: relative">X</span>
+    <p style="font-size: 16px;border-bottom: 2px solid #000;padding: 13px">删除账号</p>
+    <label class="control-label" style="">客户：</label>
+    <input name="userName" placeholder="用户名/手机号码/姓名" id="delete-userInfo" list="delete-userList" style="width: 400px;height: 20px;"/>
+    <datalist id="delete-userList">
+    </datalist>
+    <br/>
+    <button id="confirm-delete" style="margin-left: 138px;margin-top: 45px;width: 100px;height: 40px;">确认删除</button>
+    <button id="cancel-delete" style="margin-left: 138px;margin-top: 45px;width: 100px;height: 40px;">取消</button><br/>
+</div>
+
+<div id="restore" class="digSize" style="display: none;top: 285px;left: 450px;">
+    <div class="xSize">
+        <span class="fl-left fs-md" style="position: relative">取消用户黑名单</span>
+        <span class="fl-right fs-md fw-ber" id="closeb-block" style="position: relative">X</span>
+    </div>
+    <div class="tl-center" style="margin:120px auto 80px;display:block;">
+        <input type="hidden"  id="userId"/>
+        <span class="submit-btn" id="combtn">确认还原</span>
+        <span class="submit-btn ml-25" id="backbtn">返回</span>
+    </div>
+    <div class="fs-md tl-center mb-40">
+        <span id="congratulations" style="visibility: hidden;">恭喜您！数据还原成功，可在账户管理中查看该账户</span>
+    </div>
+    <div class="tl-center">
+        <span class="ft-orange fs-sm">提示：还原后，用户所有的历史数据将被恢复，账户可以重新登录</span>
+    </div>
+</div>
+<div id="record" class="digSize" style="display: none;top: 285px;left: 450px;overflow: auto;">
+    <div class="xSize">
+        <span class="fl-left fs-md" style="position: relative">查看操作记录</span>
+        <span class="fl-right fs-md fw-ber" id="closeb-record" style="position: relative">X</span>
+    </div>
+    <div class="tl-center">
+        <table class="gridtable" id="logTable" style="margin:40px 10px;">
+        </table>
+    </div>
+</div>
+<div id="maskLayer" style="display: none;"></div>
+<script>
+        $LAB
+    .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+            .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+            .script("$!{request.getContextPath()}/assets/js/config-min.js")
+            .wait(function(){
+
+            });
+
+    BUI.use('bui/calendar',function(Calendar){
+        var datepicker = new Calendar.DatePicker({
+            trigger:'.calendar',
+            autoRender : true
+        });
+    });
+
+</script>
+<script>
+
+    //还原用户黑名单
+    $("#combtn").click(function(){
+        var userId = $("#userId").val();
+        $.ajax({
+            url:"$request.getContextPath()/user/api/removeBlack.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userId":userId
+            },
+            success:function(data){
+                $("#restore,#maskLayer").hide();
+                if(data==true){
+                    BUI.Message.Alert('移除黑名单成功！','success');
+                } else {
+                    BUI.Message.Alert('移除黑名单失败！','success');
+                }
+                setTimeout(function(){
+                    $("#pageForm").submit();
+                },2000)
+            },
+            error:function(){
+                $("#restore,#maskLayer").hide();
+                BUI.Message.Alert('移除黑名单失败！','success');
+            }
+        });
+    });
+
+    $(".tdBlack").delegate("#romoveBlack", "click", function () {
+        var userId = $(this).attr("data-id");
+        $("#userId").val(userId);
+        $("#restore,#maskLayer").show();
+    })
+
+    //查看黑名单操作记录
+    $(".seeBlackLog").click(function(){
+        var userId = $(this).attr("data-id");
+        $.ajax({
+            url:"$request.getContextPath()/user/api/getBlackLogList.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userId":userId
+            },
+            success:function(data){
+                if (data != null) {
+                    var htm = '<tr><td>日期</td> <td>操作人</td><td>操作</td><td>备注</td></tr>';
+                    for (var i in data) {
+                        var blackLog = data[i];
+                        htm += '<tr>'+'<td>' + blackLog.createTimeStr + "</td>";
+                        htm += '<td>' + blackLog.operator + "</td>";
+                        htm += '<td>' + blackLog.operateTypeStr + "</td>";
+                        htm += '<td>' + blackLog.remark + "</td>"+'</tr>';
+                    }
+                }
+                $("#logTable").html(htm);
+                $("#record,#maskLayer").show();
+            },
+            error:function(){
+                BUI.Message.Alert('查看记录失败！','success');
+            }
+        });
+    })
+
+    $("#closeb-block,#backbtn").click(function(){
+        $("#restore,#maskLayer").hide();
+        $("#congratulations").css("visibility","hidden");
+    });
+    $("#closeb-record").click(function(){
+        $("#record,#maskLayer").hide();
+    })
+    //管理
+    function view_user(data){
+        location.href="$request.getContextPath()/user/showDetail.do?id="+data+"";
+    }
+
+
+    //添加黑名单时模糊搜索用户
+    $("#add-userInfo").bind('input propertychange', function(){
+        var userInfo = $("#add-userInfo").val();
+        $.ajax({
+            url:"$request.getContextPath()/user/api/getUserList.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userInfo":userInfo,
+                "type":2
+            },
+            success:function(data){
+                $("#add-userList").empty();
+                htm = '';
+                if (data != null) {
+                    for (var i in data) {
+                        var user = data[i];
+                        var id =user.id;
+                        var info = user.cellPhone + "/" + user.realName + "/" + user.userName;
+                        htm += '<option>' + info + '</option>';
+                    }
+                }
+                $("#add-userList").append(htm);
+            },
+            error:function(){
+                BUI.Message.Alert('搜索用户信息失败','success');
+            }
+        });
+    });
+
+    //删除用户时模糊搜索用户
+    $("#delete-userInfo").bind('input propertychange', function(){
+        var userInfo = $("#delete-userInfo").val();
+        $.ajax({
+            url:"$request.getContextPath()/user/api/getUserList.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userInfo":userInfo,
+                "type":1
+            },
+            success:function(data){
+                $("#delete-userList").empty();
+                htm = '';
+                if (data != null) {
+                    for (var i in data) {
+                        var user = data[i];
+                        var id =user.id;
+                        var info = user.cellPhone + "/" + user.realName + "/" + user.userName;
+                        htm += '<option>' + info + '</option>';
+                    }
+                }
+                $("#delete-userList").append(htm);
+            },
+            error:function(){
+                BUI.Message.Alert('搜索用户信息失败','success');
+            }
+        });
+    });
+
+    //取消加入黑名单弹窗
+    $("#close-add").click(function(){
+        $("#add").hide();
+    });
+
+    //取消删除用户弹窗
+    $("#close-delete").click(function(){
+        $("#delete").hide();
+    });
+    $("#cancel-delete").click(function(){
+        $("#delete").hide();
+    });
+
+    //加入黑名单
+    $("#confirmAdd").click(function () {
+        var userInfo = $("#add-userInfo").val();
+        var remark = $("#remark").val();
+        $.ajax({
+            url:"$request.getContextPath()/user/api/addBlack.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userInfo":userInfo,
+                "remark":remark
+            },
+            success:function(data){
+                $("#addBlackSize,#maskLayer").hide();
+                if(data==true){
+                    BUI.Message.Alert('添加用户到黑名单成功！','success');
+                } else {
+                    BUI.Message.Alert('添加用户到黑名单失败！','success');
+                }
+                setTimeout(function(){
+                    $("#pageForm").submit();
+                },2000)
+            },
+            error:function(){
+                $("#addBlackSize,#maskLayer").hide();
+                BUI.Message.Alert('添加用户到黑名单失败！','success');
+            }
+        });
+    });
+
+    //删除用户
+    $("#confirm-delete").click(function () {
+        var userInfo = $("#delete-userInfo").val();
+        $.ajax({
+            url:"$request.getContextPath()/user/api/deleteUser.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userInfo":userInfo
+            },
+            success:function(data){
+                $("#delete").hide();
+                if(data==true){
+                    BUI.Message.Alert('删除用户成功！','success');
+                } else {
+                    BUI.Message.Alert('删除用户失败！','success');
+                }
+                setTimeout(function(){
+                    $("#pageForm").submit();
+                },2000)
+            },
+            error:function(){
+                $("#delete").hide();
+                BUI.Message.Alert('删除用户失败！','success');
+            }
+        });
+    });
+
+    //弹出黑名单弹窗
+    $("#addBlack").click(function () {
+        $("#add").show();
+        $("#delete").hide();
+    });
+
+    //弹出删除用户弹窗
+    $("#deleteUser").click(function () {
+        $("#delete").show();
+        $("#add").hide();
+    });
+
+    //删除账户
+    $("#confirm-delete").click(function () {
+
+        var userId = $("#deleteUser").val();
+        $.ajax({
+            url:"$request.getContextPath()/user/api/deleteUser.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                "userId":userId,
+            },
+            success:function(data){
+                $("#delete").hide();
+                if(data==true){
+                    BUI.Message.Alert('删除用户成功！','success');
+                } else {
+                    BUI.Message.Alert('添加用户到黑名单失败！','success');
+                }
+                setTimeout(function(){
+                    $("#pageForm").submit();
+                },2000)
+            },
+            error:function(){
+                $("#delete").hide();
+                BUI.Message.Alert('添加用户到黑名单失败！','success');
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

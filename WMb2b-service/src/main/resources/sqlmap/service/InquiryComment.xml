@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="InquiryComment">
+
+	<!-- 通过询价单code 查询评价 -->
+	<select id="queryInquiryComment" parameterType="int" resultType="com.wangmeng.service.bean.InquiryComment">
+		select * from wm_inquirycomment_t
+		<where>
+			InquirySheetCode = #{inquiryCode}
+		</where>
+		limit 0,1
+	</select>
+
+	<!-- 查询服务费 -->
+	<select id="queryInquiryServiceOrder" parameterType="int"
+		resultType="com.wangmeng.service.bean.InquiryServiceOrder">
+		select * from wm_inquiryorder_t
+		<where>
+			InquirySheetCode = #{inquiryCode}
+		</where>
+		limit 0,1
+	</select> 
+	
+	<!-- 查询服务费 -->
+	<select id="queryInquiryServiceOrderByServiceNo" parameterType="int"
+		resultType="com.wangmeng.service.bean.InquiryServiceOrder">
+		select * from wm_inquiryorder_t
+		<where>
+			ServiceOrderCode = #{serviceOrderCode}
+		</where>
+	</select> 
+	<!-- 修改服务费 -->
+	<update id="InquiryComment.modifyOrder" parameterType="com.wangmeng.service.bean.InquiryServiceOrder">
+		update wm_inquiryorder_t
+		<set>
+		ServiceOrderCode = #{serviceOrderCode}
+			<if test="inquiryServiceCost != 0">
+			,InquiryServiceCost = #{inquiryServiceCost}
+			</if>
+			<if test="remark != null and remark != ''">
+			,Remark = #{remark}
+			</if>
+			<if test="paymentTypeName != null and paymentTypeName != ''">
+			,PaymentTypeName = #{paymentTypeName}
+			</if>
+			<if test="paymentSerialNumber != null and paymentSerialNumber != ''">
+			,PaymentSerialNumber = #{paymentSerialNumber}
+			</if>
+			<if test="status != 0">
+			,Status = #{status}
+			</if>
+			
+		</set>
+		<where>
+		ServiceOrderCode = #{serviceOrderCode}
+		</where>
+	</update>
+	<!-- 修改评价 -->
+	<update id="InquiryComment.modifyComment" parameterType="com.wangmeng.service.bean.InquiryComment">
+		update wm_inquirycomment_t
+		<set>
+		InquirySheetCode = #{inquirySheetCode}
+			<if test="quotationSpeed != 0">
+			,QuotationSpeed = #{quotationSpeed}
+			</if>
+			<if test="suggestion != null and suggestion != ''">
+			,Suggestion = #{suggestion}
+			</if>
+			<if test="serviceAttitude != 0">
+			,ServiceAttitude = #{serviceAttitude}
+			</if>
+			<if test="level != 0">
+			,Level = #{level}
+			</if>
+		</set>
+		<where>
+		InquirySheetCode = #{inquirySheetCode}
+		</where>
+	</update>
+
+	<!-- 评价询价单 -->
+	<insert id="InquiryComment.addComment" parameterType="com.wangmeng.service.bean.InquiryComment">
+		insert into wm_inquirycomment_t
+		(InquirySheetCode,CustomerId,QuotationSpeed,
+		ServiceAttitude,Suggestion,CreatedTime,Level)
+		values(
+		#{inquirySheetCode},#{customerId},
+		#{quotationSpeed},#{serviceAttitude},
+		#{suggestion},now(),#{level})
+	</insert>
+	
+	<!-- 添加支付询价服务费用记录 -->
+	<insert id="InquiryComment.addOrder" 
+		parameterType="com.wangmeng.service.bean.InquiryServiceOrder">
+		insert into wm_inquiryorder_t
+		(InquirySheetCode,InquiryServiceCost,CreatedTime,Remark,
+		PaymentTypeName,PaymentSerialNumber,Status,ServiceOrderCode,UserId)
+		values(#{inquirySheetCode},#{inquiryServiceCost},now(),#{remark},
+		#{paymentTypeName},#{paymentSerialNumber},#{status},#{serviceOrderCode},#{userId})
+	</insert>
+	
+</mapper>

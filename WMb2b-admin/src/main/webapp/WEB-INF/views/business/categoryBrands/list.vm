@@ -1,0 +1,106 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>类型管理</title>
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-type-mgr.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-article-add.css" rel="stylesheet">
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-type-mgr.js"></script>
+	<script type="text/javascript" language="JavaScript">
+         function search(){
+    	 	$("#pageSize").val(10);
+    	 	$("#currentPage").val(1);
+    	    pageForm.submit();
+        }
+	</script>
+    </head>
+    <body>
+     #parse("include/page_normal_detect.vm")
+   <div class="demo-content">
+     <div class="span24 doc-content" style="width:90%">
+        <div class="account_mgr_nav">
+       		<a href="$request.getContextPath()/CategoryBrands/toCategoryBrandsList.do" class="active">类型管理</a>
+        	<a href="$request.getContextPath()/CategoryBrands/toCategoryBrandsAdd.do">新增类型</a>
+        </div>
+        
+	       <form name="pageForm" id="pageForm" class="form-horizontal" action="$request.getContextPath()/CategoryBrands/toCategoryBrandsList.do"> 
+	        <input type="hidden" name="nullFlag" id="nullFlag" value="$!nullFlag"/>
+	        <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+	        <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+	        <div class="search_box mt20">
+				<div class="clearfix">
+					<label for="" class="field_label">名称:</label>
+					<input type="text" class="field_input" placeholder="请输入类型名称" name="categoryName" value="$!categoryBrandsVo.categoryName">
+				</div>
+				<div class="clearfix">
+					<label for="" class="field_label">关联品牌:</label>
+					<input type="text" class="field_input" placeholder="请输入品牌名称" name="brandNames" value="$!categoryBrandsVo.brandNames">
+					<input type="submit" onclick="search()" value="查询" class="query_btn"/>
+				</div>
+	
+			</div>
+		  </form> 
+	 </div>	
+        <table cellspacing="0" class="table table-bordered">
+            <table class="table table-bordered category">
+               <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>关联品牌</th>
+                    <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+              
+               #foreach($entity in $page.data)
+               	<tr>
+               		<td>${entity.categoryName}</td>
+               		<td>${entity.brandNames}</td>
+               		<td nowrap>
+                        #auth($request.getSession().getAttribute("session.user").getId(),"类型管理.编辑")
+                     	    <a class="button button-primary" href="$request.getContextPath()/CategoryBrands/toCategoryBrandsEdit.do?categoryId=${entity.categoryId}">编辑</a>
+                        #end
+                        #auth($request.getSession().getAttribute("session.user").getId(),"类型管理.删除")
+                     	    <a class="button button-primary" href="$request.getContextPath()/CategoryBrands/delCategoryBrands.do?categoryId=${entity.categoryId}">删除</a>
+					    #end
+					    </td>
+                </tr>
+				#end
+              </tbody>
+            </table>
+          #parse("include/page_normal.vm")
+       </div>
+    </div>
+    
+    <script type="text/javascript" language="JavaScript">
+    	$(function(){
+	    	var _status = $('#auditStatus').val();
+	    	_status = _status == "" ? "null" :  _status;
+    		$('.status > button[data-id='+_status+']').addClass('active').siblings().removeClass('active');
+    		var nullFlag = $('#nullFlag').val();
+    		if(nullFlag==1){
+    			$('#pageSize').removeAttr('value');
+    			$('#currentPage').removeAttr('value');
+    			$('#pageSize').val("10");
+    			$('#currentPage').val("1");
+    		}
+    	})
+    </script>
+    </body>
+    </html>       

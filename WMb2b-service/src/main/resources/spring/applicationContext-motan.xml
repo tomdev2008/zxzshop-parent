@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:motan="http://api.weibo.com/schema/motan"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+   http://api.weibo.com/schema/motan http://api.weibo.com/schema/motan.xsd">
+
+   <!-- 注册中心配置 使用不同注册中心需要依赖对应的jar包。如果不使用注册中心，可以把check属性改为false，忽略注册失败。-->
+    <!--<motan:registry regProtocol="local" name="registry" />-->
+    <!--<motan:registry regProtocol="consul" name="registry" address="127.0.0.1:8500"/>-->
+    <motan:registry regProtocol="zookeeper" name="registry" address="${zookeeper.server}" connectTimeout="2000"/>
+
+    <!-- 协议配置。为防止多个业务配置冲突，推荐使用id表示具体协议。-->
+    <motan:protocol id="wangmengMotan" default="true" name="motan"
+                    maxServerConnection="80000" maxContentLength="1048576"
+                    maxWorkerThread="2000" minWorkerThread="20"/>
+
+    <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口”-->
+    <motan:basicService export="wangmengMotan:20040"
+                        group="motan-wangmeng-service-rpc-${profile.name}" accessLog="false" shareChannel="true" module="motan-wangmeng-service-rpc"
+                        application="WMb2b-service-app" registry="registry" id="serviceBasicConfig"/>
+    <!-- 具体rpc服务配置，声明实现的接口类。-->
+
+
+    <!-- 缓存服务 -->
+
+    <!-- memcached -->
+    <!--<bean id="cacheService" class="com.wangmeng.service.impl.MemcachedCacheServiceImpl">-->
+        <!--<property name="memcachedClient" ref="memcachedClient"></property>-->
+    <!--</bean>-->
+    <!--<motan:service interface="com.wangmeng.service.api.ICacheService" ref="cacheService" basicService="serviceBasicConfig" />-->
+
+    <!-- redis -->
+    <bean id="cacheExtService" class="com.wangmeng.service.impl.RedisCacheServiceImpl">
+        <property name="redisFacade" ref="redisFacade"></property>
+    </bean>
+    <motan:service interface="com.wangmeng.service.api.ICacheExtService" ref="cacheExtService" basicService="serviceBasicConfig" />
+
+
+    <!-- 系统管理服务模块 -->
+ 	<!-- 
+	 迁移过来的权限管理
+	 -->
+	<bean id="adminLoginService" class="com.wangmeng.sys.legacy.impl.LoginServiceImpl"/>
+    <motan:service interface="com.wangmeng.sys.legacy.api.ILoginService" ref="adminLoginService" basicService="serviceBasicConfig" />
+	
+	<bean id="adminUserService" class="com.wangmeng.sys.legacy.impl.UserServiceImpl"/> 
+    <motan:service interface="com.wangmeng.sys.legacy.api.IUserService" ref="adminUserService" basicService="serviceBasicConfig" />
+	
+	<bean id="adminRoleService" class="com.wangmeng.sys.legacy.impl.RoleServiceImpl"/> 
+    <motan:service interface="com.wangmeng.sys.legacy.api.IRoleService" ref="adminRoleService" basicService="serviceBasicConfig" />
+	
+	<bean id="adminPowerService" class="com.wangmeng.sys.legacy.impl.PowerServiceImpl"/> 
+    <motan:service interface="com.wangmeng.sys.legacy.api.IPowerService" ref="adminPowerService" basicService="serviceBasicConfig" />
+	
+	<!-- 系统管理: 协议 -->
+	<bean id="adminAgreementService" class="com.wangmeng.agreement.service.impl.AgreementServiceImpl"/> 
+    <motan:service interface="com.wangmeng.agreement.service.api.AgreementService" ref="adminAgreementService" basicService="serviceBasicConfig" />
+ 	
+	<!-- 系统管理: 系统配置，站点，通知，smtp, sms等 -->
+	<bean id="adminSysConfigService" class="com.wangmeng.sys.service.impl.SysConfigServiceImpl"/> 
+    <motan:service interface="com.wangmeng.sys.service.api.SysConfigService" ref="adminSysConfigService" basicService="serviceBasicConfig" />
+	
+	<!-- 系统管理: 支付方式 -->
+	<bean id="adminPaywayService" class="com.wangmeng.payway.service.impl.PaywayServiceImpl"/> 
+    <motan:service interface="com.wangmeng.payway.service.api.PaywayService" ref="adminPaywayService" basicService="serviceBasicConfig" />
+ 	
+ 	<!-- 系统管理: 三方采购协议 -->
+	<bean id="adminPurchaseProtocolService" class="com.wangmeng.protocols.service.impl.PurchaseProtocolServiceImpl"/> 
+    <motan:service interface="com.wangmeng.protocols.service.api.PurchaseProtocolService" ref="adminPurchaseProtocolService" basicService="serviceBasicConfig" />
+ 	
+ 	<!-- 系统管理: 产品类别／目录 -->
+ 	<bean id="adminCategoryService" class="com.wangmeng.product.service.impl.CategoryServiceImpl"/> 
+    <motan:service interface="com.wangmeng.product.service.api.CategoryService" ref="adminCategoryService" basicService="serviceBasicConfig" />
+ 	
+ 	<!-- 系统管理: 新闻 -->
+    <bean id="adminNewService" class="com.wangmeng.news.service.impl.NewServiceImpl"/> 
+    <motan:service interface="com.wangmeng.news.service.api.NewService" ref="adminNewService" basicService="serviceBasicConfig" />
+ 	
+ 	<!-- 系统管理: 收藏 -->
+ 	<bean id="adminFavService" class="com.wangmeng.fav.service.impl.FavServiceImpl"/> 
+    <motan:service interface="com.wangmeng.fav.service.api.FavService" ref="adminFavService" basicService="serviceBasicConfig" />
+ 	
+ 	<!-- 系统管理: 品牌 -->
+ 	<bean id="adminBrandService" class="com.wangmeng.brands.service.impl.BrandServiceImpl"/> 
+    <motan:service interface="com.wangmeng.brands.service.api.BrandService" ref="adminBrandService" basicService="serviceBasicConfig" />
+ 	
+ 	<!-- 系统管理: 系统日志 -->
+ 	<bean id="adminSysOperationLogService" class="com.wangmeng.sys.service.impl.SysOperationLogServiceImpl"/> 
+    <motan:service interface="com.wangmeng.sys.service.api.SysOperationLogService" ref="adminSysOperationLogService" basicService="serviceBasicConfig" />
+ 	
+    <!-- Service Export -->
+	<!-- 返回操作结果 -->
+	<bean id="resultCodeImpl" class="com.wangmeng.service.impl.ResultCodeServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.ResultCodeService" ref="resultCodeImpl" basicService="serviceBasicConfig" />
+	
+ 	<!-- app用户会话 -->
+	<bean id="appSessionServiceImpl" class="com.wangmeng.service.impl.AppSessionServiceImpl">
+		<property name="cacheService" ref="cacheExtService"></property>
+	</bean>
+    <motan:service interface="com.wangmeng.service.api.AppSessionService" ref="appSessionServiceImpl" basicService="serviceBasicConfig" />
+ 
+ 	<!-- 产品种类  -->
+	<bean id="productCategoryImpl" class="com.wangmeng.service.impl.ProductCategoryImpl" />
+    <motan:service interface="com.wangmeng.service.api.ProductCategoriesService" ref="productCategoryImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 品牌  -->
+	<bean id="brandsImpl" class="com.wangmeng.service.impl.BrandsServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.BrandsService" ref="brandsImpl" basicService="serviceBasicConfig" />
+		
+	<!-- 新闻列表 -->
+	<bean id="newsServiceImpl" class="com.wangmeng.service.impl.NewsServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.NewsService" ref="newsServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 询价管理 -->
+	<bean id="buyerInquiryServiceImpl" class="com.wangmeng.service.impl.BuyerInquiryServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.BuyerInquiryService" ref="buyerInquiryServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 报价管理 -->
+	<bean id="dealQuoteServiceImpl" class="com.wangmeng.service.impl.DealQuoteServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.DealQuoteService" ref="dealQuoteServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 采购管理 -->
+	<bean id="buyerPurchaseServiceImpl" class="com.wangmeng.service.impl.BuyerPurchaseServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.BuyerPurchaseService" ref="buyerPurchaseServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 产品列表 -->
+	<bean id="productServiceImpl" class="com.wangmeng.service.impl.ProductServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.ProductService" ref="productServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 订单管理 -->
+	<bean id="orderInfoServiceImpl" class="com.wangmeng.service.impl.OrderInfoServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.OrderInfoService" ref="orderInfoServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 订单发货管理 -->
+	<bean id="orderTransferServiceImpl" class="com.wangmeng.service.impl.OrderTransferServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.OrderTransferService" ref="orderTransferServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 地区管理 -->
+	<bean id="areaRegionServiceImpl" class="com.wangmeng.service.impl.AreaRegionServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.AreaRegionService" ref="areaRegionServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 用户信息 -->
+	<bean id="userInfoServiceImpl" class="com.wangmeng.service.impl.UserInfoServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.UserInfoService" ref="userInfoServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 企业信息 -->
+	<bean id="enterpriseInfoServiceImpl" class="com.wangmeng.service.impl.EnterpriseInfoServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.EnterpriseInfoService" ref="enterpriseInfoServiceImpl" basicService="serviceBasicConfig" />
+
+	<!-- 企业回访 -->
+	<bean id="visitServiceImpl" class="com.wangmeng.service.impl.VisitServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.VisitService" ref="visitServiceImpl" basicService="serviceBasicConfig" />
+
+	<!-- 短信  -->
+	<bean id="messagesendServiceImpl"
+		class="com.wangmeng.third.impl.MessagesendServiceImpl" init-method="init" />
+    <motan:service interface="com.wangmeng.third.api.MessagesendService" ref="messagesendServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 第三方配套服务服务 -->
+	<bean id="thirdentpriseInfoServiceImpl" class="com.wangmeng.service.impl.ThirdentpriseInfoServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.ThirdentpriseInfoService" ref="thirdentpriseInfoServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 协议 -->
+	<bean id="contractServiceImpl" class="com.wangmeng.service.impl.ContractServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.ContractService" ref="contractServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 收藏服务 -->
+	<bean id="favServiceImpl" class="com.wangmeng.service.impl.FavServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.FavService" ref="favServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 第三方配套服务用户信息服务 -->
+	<bean id="thirdUserInfoServiceImpl" class="com.wangmeng.service.impl.ThirdUserInfoServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.ThirdUserInfoService" ref="thirdUserInfoServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 支付功能接口 -->
+	<bean id="unionPayServiceImpl" class="com.wangmeng.service.impl.UnionPayServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.PayService" ref="unionPayServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 消息中心 -->
+	<bean id="messageServiceImpl" class="com.wangmeng.service.impl.MessageServiceImpl" />
+    <motan:service interface="com.wangmeng.service.api.MessageService" ref="messageServiceImpl" basicService="serviceBasicConfig" />
+
+	<!-- 用户积分 -->
+	<bean id="creditsServiceImpl" class="com.wangmeng.service.impl.CreditsServiceImpl"/>
+    <motan:service interface="com.wangmeng.service.api.CreditsService" ref="creditsServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 报价 -->
+    <bean id="readFileServiceImpl" class="com.wangmeng.service.impl.ReadFileServiceImpl"/>
+    <motan:service interface="com.wangmeng.service.api.ReadFileService" ref="readFileServiceImpl" basicService="serviceBasicConfig" />
+	
+	<!-- 统计 -->
+    <bean id="statisticServiceImpl" class="com.wangmeng.service.impl.StatisticServiceImpl"/>
+    <motan:service interface="com.wangmeng.service.api.StatisticService" ref="statisticServiceImpl" basicService="serviceBasicConfig" />
+    
+	<!-- 品牌分类关系 -->
+    <bean id="categoryBrandsServiceImpl" class="com.wangmeng.service.impl.CategoryBrandsServiceImpl"/>
+    <motan:service interface="com.wangmeng.service.api.CategoryBrandsService" ref="categoryBrandsServiceImpl" basicService="serviceBasicConfig" />
+
+    <!-- 订单委派 -->
+    <bean id="assignPendingServiceImpl" class="com.wangmeng.service.impl.AssignPendingServiceImpl">
+        <!-- 该缓存key需要与admin中配置一致 -->
+        <property name="sessionOnlineCacheKey" value="admin#session-tick-onlinecus-${profile.name}"/>
+        <property name="sessionOnlineCacheKeyCand" value="admin#ssession-onlinecus-${profile.name}"/>
+    </bean>
+    <motan:service interface="com.wangmeng.service.api.AssignPendingService" ref="assignPendingServiceImpl" basicService="serviceBasicConfig" />
+
+    <!-- 语言转换 -->
+    <bean id="languageServiceImpl" class="com.wangmeng.service.impl.LanguageServiceImpl"/>
+    <motan:service interface="com.wangmeng.service.api.LanguageService" ref="languageServiceImpl" basicService="serviceBasicConfig" />
+
+    <!-- 权限服务 -->
+    <bean id="authorityServiceImpl" class="com.wangmeng.sys.authority.impl.AuthorityServiceImpl"/>
+    <motan:service interface="com.wangmeng.sys.authority.api.IAuthorityService" ref="authorityServiceImpl" basicService="serviceBasicConfig" />
+
+</beans>

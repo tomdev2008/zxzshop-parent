@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserInfo">
+	
+	<!-- 查询用户 -->
+	<select id="UserInfo.queryUserInfoByCellPhone" parameterType="map" resultType="com.wangmeng.service.bean.User">
+		select * from wm_user_t 
+		<where>
+			<if test="null != cellPhone and '' !=cellPhone "> and cellPhone = #{cellPhone} </if>
+			<if test="null != userId and userId > 0"> and Id = #{userId} </if>
+			<if test="null != userName and userName != ''"> and userName = #{userName} </if>
+		</where>
+		 
+	</select>
+	
+	<!-- 注册用户  -->
+	<insert id="UserInfo.insertUserInfo" parameterType="com.wangmeng.service.bean.User" useGeneratedKeys="true" keyProperty="id">
+		insert into wm_user_t (CreateDate,RealName,CellPhone,Disabled,LoginNum,RegisterWay,UserType,Status,passWord,passWordsalt)
+		values(now(),#{realName},#{cellPhone},0,0,#{registerWay},#{userType},#{status},#{password},#{passwordSalt})
+	</insert>
+	
+	<!-- 修改用户信息 -->
+	<update id="UserInfo.updateUserInfo" parameterType="com.wangmeng.service.bean.User">
+		update wm_user_t
+		<set>
+			<if test="password != null and password != ''"> password = #{password}, </if>
+			<if test="passwordSalt != null and passwordSalt != ''"> passwordSalt = #{passwordSalt}, </if>
+			<if test="lastLoginDate != null"> lastLoginDate = #{lastLoginDate}, </if>
+			<if test="loginNum != null and loginNum > 0"> loginNum = #{loginNum}, </if>
+			<if test="updateDate != null"> updateDate = #{updateDate}, </if>
+			<if test="userType != null"> userType = #{userType}, </if>
+			<if test="status!=null and status>0"> Status = #{status},</if>
+			<if test="photo!=null and photo!=''"> Photo = #{photo},</if>	
+			<if test="cellPhone!=null and cellPhone!=''"> CellPhone = #{cellPhone},</if>	
+			<if test="userName!=null and userName!=''"> UserName = #{userName},</if>
+			<if test="realName!=null and realName!=''"> RealName = #{realName},</if>								
+			<if test="remark!=null and remark!=''"> Remark=#{remark}</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 修改用户信息 轻量级 -->
+	<update id="UserInfo.updateUserInfoLite" parameterType="com.wangmeng.service.bean.User">
+		update wm_user_t
+		<set>
+			<if test="lastLoginDate != null"> lastLoginDate = #{lastLoginDate}, </if>
+			<if test="loginNum != null and loginNum > 0"> loginNum = #{loginNum}, </if>
+			<if test="updateDate != null"> updateDate = #{updateDate} </if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 查询用户关联的企业信息 -->
+	<select id="UserInfo.queryEnterpriselist" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select 
+			Id,
+			UserId,
+			CompanyName,
+			CompanyAddress,
+			LegalPerson,
+			IdCardNo,
+			CardType,
+			EnterpriseType,
+			ContactsName,
+			ContactsPhone,
+			ContactsEmail,
+			ContactsFix,
+			ContactsTelPhone,
+			Status,
+			RegisteredCapital,
+			IsDefault,
+			PersonEmail,
+			PersonName,
+			PersonPhone,
+			Categery,
+			AuditDate,
+			CommitDate,
+			CertifStatus,
+			CertifDate,
+			RegionId,
+			(select a.Status from wm_certification_t a where a.EnterPriInfoid = b.id)caStatus
+		 from wm_enterpriseinfo_t b
+		where UserId=#{userid} and  categery=1 
+		<!-- 需求更改 一用户对应一个企业 默认企业 -->
+		and IsDefault=1 limit 1
+	</select>
+	
+	<!-- 查询用户关联的企业信息 -->
+	<select id="UserInfo.queryEnterprise" parameterType="com.wangmeng.service.bean.Enterpriseinfo" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select 
+			Id,
+			UserId,
+			CompanyName,
+			CompanyAddress,
+			LegalPerson,
+			IdCardNo,
+			CardType,
+			EnterpriseType,
+			ContactsName,
+			ContactsPhone,
+			ContactsEmail,
+			ContactsFix,
+			ContactsTelPhone,
+			Status,
+			RegisteredCapital,
+			IsDefault,
+			PersonEmail,
+			PersonName,
+			PersonPhone,
+			Categery,
+			AuditDate,
+			CommitDate,
+			CertifStatus,
+			CertifDate,
+			RegionId,
+			(select OrgPath from wm_enterprisephoto_t b  where b.EnterpriseinfoId =a.Id and DictCode = 200006 limit 1)flipimage,
+			(select OrgPath from wm_enterprisephoto_t c where c.EnterpriseinfoId =a.Id and DictCode = 200005 limit 1)positiveimage
+		 from wm_enterpriseinfo_t a
+		where UserId=#{userId} and IsDefault =1 and categery=#{categery} limit 1
+	</select>
+	
+	<!-- 查询用户关联的企业信息 
+		适用与一期：企业个人一对一的规则查询，如果业务规则不匹配 重新修改本查询
+	-->
+	<select id="UserInfo.queryEnterpriseByUserId" parameterType="map" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select 
+			Id,
+			UserId,
+			CompanyName,
+			CompanyAddress,
+			LegalPerson,
+			IdCardNo,
+			CardType,
+			EnterpriseType,
+			ContactsName,
+			ContactsPhone,
+			ContactsEmail,
+			ContactsFix,
+			ContactsTelPhone,
+			Status,
+			RegisteredCapital,
+			IsDefault,
+			PersonEmail,
+			PersonName,
+			PersonPhone,
+			Categery,
+			AuditDate,
+			CommitDate,
+			CertifStatus,
+			CertifDate,
+			RegionId
+		 from wm_enterpriseinfo_t a
+		where UserId=#{userId} order by categery DESC, IsDefault desc limit 1
+	</select>
+	
+	<select id="UserInfo.searchEnterprise" parameterType="com.wangmeng.service.bean.Enterpriseinfo" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select * from wm_enterpriseinfo_t where  categery=#{categery}
+		<if test="categery==0">
+			and PersonPhone=#{personPhone}
+		</if>
+		<if test="categery==1">
+			and CompanyName =#{companyName}
+		</if>
+		<if test="id >0">
+			and id = #{id}
+		</if>
+		and UserId = #{userId}
+	</select>
+	<insert id="UserInfo.insertEnterprise" useGeneratedKeys="true" keyProperty="id" parameterType="com.wangmeng.service.bean.Enterpriseinfo" >
+			insert into wm_enterpriseinfo_t(
+					UserId          ,
+					CompanyName     ,
+					CompanyAddress  ,
+					LegalPerson     ,
+					IdCardNo        ,
+					CardType        ,
+					EnterpriseType   ,
+					status,
+					contactsName,
+					contactsPhone,
+					isDefault,
+					PersonEmail,
+					PersonName,
+					PersonPhone,
+					Categery,
+					CommitDate
+			)select * FROM (select 
+					#{userId} userId,
+					#{companyName} companyName,
+					#{companyAddress} companyAddress,
+					#{legalPerson} legalPerson,
+					#{idCardNo} idCardNo,
+					#{cardType} cardType,
+					#{enterpriseType} enterpriseType,
+					1 status,
+					#{contactsName} contactsName,
+					#{contactsPhone} contactsPhone,
+					#{isDefault} isDefault,
+					#{personEmail} personEmail,
+					#{personName} personName,
+					#{personPhone} personPhone,
+					#{categery} categery,
+					now() CommitDate
+			) as A
+			 where not exists (
+			 	select * from wm_enterpriseinfo_t where  categery=#{categery}
+					<if test="categery==0">
+						and PersonPhone=#{personPhone}
+					</if>
+					<if test="categery==1">
+						and CompanyName =#{companyName}
+					</if>
+					and UserId = #{userId}
+			 )
+	</insert>
+	
+	<!-- 新增企业、三方配套服务企业的资料图片 -->
+	<insert id="UserInfo.insertEnterprisePhoto" parameterType="com.wangmeng.service.bean.Enterprisephoto">
+		insert into wm_enterprisephoto_t(
+			EnterpriseinfoId,
+			OrgPath,
+			DictCode,
+			Category
+		)values(
+			#{enterpriseinfoId},
+			#{orgPath},
+			#{dictCode},
+			#{category}
+		)
+	</insert>
+	
+	
+	<!-- 更新企业、三方配套服务企业的资料图片 -->
+	<update id="UserInfo.updateEnterprisePhoto" parameterType ="com.wangmeng.service.bean.Enterpriseinfo">
+		UPDATE wm_enterprisephoto_t set OrgPath=#{orgPath} WHERE EnterpriseinfoId=#{enterpriseinfoId} AND DictCode=#{dictCode} AND Category=#{category}
+	</update>
+	
+	<delete id="UserInfo.deleteEnterprisePhoto" parameterType="com.wangmeng.service.bean.Enterprisephoto">
+		DELETE FROM wm_enterprisephoto_t WHERE EnterpriseinfoId=#{enterpriseinfoId} AND DictCode=#{dictCode} AND Category=#{category}
+	</delete>
+	
+	<!-- 更改企业信息 -->
+	<update id="UserInfo.enterprise" parameterType ="com.wangmeng.service.bean.Enterpriseinfo">
+		update wm_enterpriseinfo_t
+			<set>
+			  <if test="companyName!=null and companyName!=''">CompanyName=#{companyName},</if>
+			  <if test="companyAddress!=null and companyAddress!=''">CompanyAddress=#{companyAddress},</if>
+			  <if test="legalPerson!=null and legalPerson!=''">LegalPerson=#{legalPerson},</if>
+			  <if test="idCardNo!=null and idCardNo!=''">IdCardNo=#{idCardNo},</if>
+			  <if test="cardType!=null and cardType!=''">CardType=#{cardType},</if>
+			  <if test="enterpriseType!=null and enterpriseType!=''">EnterpriseType=#{enterpriseType},</if>
+			  
+			  <if test="contactsName != null and contactsName != ''"> ContactsName = #{contactsName}, </if>
+			  <if test="contactsEmail != null and contactsEmail != ''"> ContactsEmail = #{contactsEmail}, </if>
+			  <if test="contactsPhone != null and contactsPhone != ''"> ContactsPhone = #{contactsPhone}, </if>
+			  <if test="contactsTelPhone != null and contactsTelPhone != ''"> ContactsTelPhone = #{contactsTelPhone}, </if>
+			  <if test="contactsFix != null and contactsFix != ''"> ContactsFix = #{contactsFix}, </if>
+			  
+			  <!-- 个人ca信息 -->
+			  <if test="personEmail!=null and personEmail!=''">PersonEmail=#{personEmail},</if>
+			  <if test="personName!=null and personName!=''">PersonName=#{personName},</if>
+			  <if test="personPhone!=null and personPhone!=''">PersonPhone=#{personPhone}</if>
+			</set>
+			where id=#{id}
+	</update>
+	<!-- 收货地址管理 -->
+	<select id="UserInfo.queryAddlist" parameterType="map" resultType="com.wangmeng.service.bean.Address">
+		select CONCAT(b.ProvinceName,b.CityName,b.AreaName) as regionStr, a.*,b.ProvinceId  ,b.CityId ,b.AreaId 
+		from wm_addresses_t a,wm_region_t b
+		where a.RegionId = b.Id and a.UserId=#{userid}
+		limit ${begin} ,${end}
+	</select>
+	<insert id="UserInfo.insertAddress" parameterType="com.wangmeng.service.bean.Address" useGeneratedKeys="true" keyProperty="id">
+		insert into wm_addresses_t(
+			UserId,
+			RegionId,
+			ShipTo,
+			Address,
+			Phone,
+			Email,
+			TelPhone,
+			IsDefault
+		)values(
+			#{userId},
+			#{regionId},
+			#{shipTo},
+			#{address},
+			#{phone},
+			#{email},
+			#{telPhone},
+			#{isDefault}
+		)
+	</insert>
+	<update id="UserInfo.updateAddress" parameterType="com.wangmeng.service.bean.Address">
+	     update wm_addresses_t 
+			<set>
+			  <if test="regionId>0"> RegionId=#{regionId}, </if>
+			  <if test="shipTo != null and shipTo != ''"> ShipTo = #{shipTo}, </if>
+			  <if test="address != null and address != ''"> Address = #{address}, </if>
+			  <if test="phone != null and phone != ''"> Phone = #{phone}, </if>
+			  <if test="telPhone != null and telPhone != ''"> TelPhone = #{telPhone}, </if>
+			  <if test="email != null and email != ''"> Email = #{email} </if>
+			</set>
+			where Id=#{id}
+	</update>
+	<!-- 删除收货地址 -->
+	<delete id="UserInfo.deleteAddress">
+		delete from wm_addresses_t where id=#{id}
+	</delete>
+	<!-- 发票 -->
+	<select id="UserInfo.queryInvoice" parameterType="map" resultType="com.wangmeng.service.bean.Invoiceinfo">
+	    select  Id,
+				CompanyName,
+				CompanyAddress,
+				Mobile,
+				IdentificationNo,
+				BankAccount,
+				DepositBank,
+				UserId,
+				IsDelete,
+				InvoiceType
+		    from  wm_invoice_t 
+		   where UserId =#{userId} 
+		     and IsDelete=0 	
+		     and invoiceType=#{invoiceType}
+		     limit 1	
+	    
+	</select>
+	<update id="UserInfo.updateInvoice" parameterType="com.wangmeng.service.bean.Invoiceinfo">
+	    update wm_invoice_t 
+	    <set>
+	    	<if test="companyName != null and companyName != ''"> CompanyName = #{companyName}, </if>
+	   		<if test="companyAddress != null and companyAddress != ''"> CompanyAddress = #{companyAddress}, </if>
+	   		<if test="mobile != null and mobile != ''"> Mobile = #{mobile}, </if>
+	   		<if test="identificationNo != null and identificationNo != ''"> IdentificationNo = #{identificationNo}, </if>
+	   		<if test="depositBank != null and depositBank != ''"> DepositBank = #{depositBank}, </if>
+	   		<if test="bankAccount != null and bankAccount != ''"> BankAccount = #{bankAccount} </if>
+	    </set>
+	    where Id=#{id}
+	</update>
+	<!-- 新增发票信息 -->
+	<insert id="UserInfo.insertInvoice" parameterType="com.wangmeng.service.bean.Invoiceinfo" useGeneratedKeys="true" keyProperty="id">
+		insert into wm_invoice_t(
+				CompanyName,
+				CompanyAddress,
+				Mobile,
+				IdentificationNo,
+				BankAccount,
+				DepositBank,
+				UserId,
+				IsDelete,
+				InvoiceType
+		)values(
+			    #{companyName},
+				#{companyAddress},
+				#{mobile},
+				#{identificationNo},
+				#{bankAccount},
+				#{depositBank},
+				#{userId},
+				#{isDelete},
+				#{invoiceType}
+		)
+	</insert>
+	
+	<!-- 更新用户信息：昵称、手机号、头像 -->
+	<update id="UserInfo.updateUserBaseInfoById" parameterType="com.wangmeng.service.bean.UserBaseInfo">
+		update wm_user_t
+		<set>
+			<if test="nick != null and nick != ''"> Nick = #{nick}, </if>
+			<if test="userName != null and userName != ''"> UserName = #{userName}, </if>
+			<if test="cellPhone != null and cellPhone != ''"> CellPhone = #{cellPhone}, </if>
+			<if test="photo != null and photo != ''"> Photo = #{photo}, </if>
+		</set>
+		where Id=#{id} and Status=1
+	</update>
+	
+	<!-- 更新用户密码 -->
+	<update id="UserInfo.updateUserPwdById" parameterType="map">
+		update wm_user_t set Password = #{Password}, PasswordSalt = #{PasswordSalt}
+		where Id=#{id} and Status=1
+	</update>
+
+	<!-- 用户账号基本信息 resultMap -->
+   <resultMap id="UserBaseInfoResultMap" type="com.wangmeng.service.bean.UserBaseInfo" >
+    <result column="Id" property="id" jdbcType="BIGINT" />
+    <result column="Nick" property="nick" jdbcType="VARCHAR" />
+    <result column="UserName" property="userName" jdbcType="VARCHAR" />
+    <result column="CellPhone" property="cellPhone" jdbcType="VARCHAR" />
+    <result column="Photo" property="photo" jdbcType="VARCHAR" />
+    <result column="UserType" property="userType" jdbcType="INTEGER" />
+   </resultMap>	
+
+	<!-- 查询有效用户账号基本信息 -->
+	<select id="UserInfo.queryUserBaseInfoById" parameterType="java.lang.Long"  resultMap="UserBaseInfoResultMap">
+		select Id, UserName, Nick, CellPhone, Photo, UserType  from wm_user_t  where  Id = #{userId} and Status=1
+	</select>
+	
+	
+	<!-- 用户密码信息 resultMap -->
+   <resultMap id="UserPwdInfoResultMap" type="com.wangmeng.service.bean.UserPwdInfo" >
+    <result column="Password" property="password" jdbcType="VARCHAR" />
+    <result column="PasswordSalt" property="passwordSalt" jdbcType="VARCHAR" />
+   </resultMap>		
+   
+	<!-- 查询有效用户密码信息 -->
+	<select id="UserInfo.queryUserPwdInfoById" parameterType="java.lang.Long"  resultMap="UserPwdInfoResultMap">
+		select Password, PasswordSalt  from wm_user_t  where  Id = #{userId} and Status=1
+	</select>
+	
+	<!-- 检查用户名是否重复  -->
+	<select id="UserInfo.countUserNameExcept"  parameterType="map" resultType="long">
+		select count(1) from wm_user_t where UserName=#{userName} AND Id = #{userId}
+	</select>
+	
+	<!-- 检查用户手机号是否重复  -->
+	<select id="UserInfo.countUserPhoneExcept"  parameterType="map" resultType="long">
+		select count(1) from wm_user_t where CellPhone=#{phone} AND Id = #{userId}
+	</select>
+	
+	<!-- 查询有效用户手机号码 -->
+	<select id="UserInfo.queryUserPhoneById" parameterType="java.lang.Long" resultType="java.lang.String">
+		select CellPhone from wm_user_t where  Id = #{userId} and Status=1
+	</select>
+
+	<!-- 分页查询用户信息  -->
+	<select id="UserInfo.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.UserVo" resultType="com.wangmeng.service.bean.vo.UserVo">
+		SELECT
+			u.id,
+			u.userName,
+			u.cellPhone,
+			u.realName,
+			u.createDate,
+			u.userType,
+			u.registerWay,
+			credit.AvailableCredits
+		FROM wm_user_t u
+		LEFT JOIN wm_credits_t credit ON (u.Id=credit.UserId)
+		WHERE u.Status!=99
+
+		<if test="param.userName!=null and param.userName!=''" >
+			and ( u.UserName like '%${param.userName}%'
+			OR u.RealName like '%${param.userName}%'
+			OR u.CellPhone like '%${param.userName}%' )
+		</if>
+
+		<if test="param.status>0">
+			and u.Status=#{param.status}
+		</if>
+
+		<if test="param.userType>0">
+			and u.UserType = #{param.userType}
+		</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and u.CreateDate >= #{param.beginTime} and u.CreateDate <= #{param.endTime}
+			]]>
+		</if>
+		ORDER BY u.CreateDate DESC
+	</select>
+
+	<!-- 更新默认收货地址 -->
+	<update id="UserInfo.updateaddressdefault" parameterType="map">
+		update wm_addresses_t 
+			<if test="id>0">
+				<set>
+					IsDefault = 1
+				</set>
+				where Id =#{id}
+		    </if>
+		    <if test="userId>0">
+		    	<set>
+					IsDefault = 0
+				</set>
+				where UserId =#{userId}
+		    </if>
+	</update>
+
+	<!-- 查询用户关联的企业信息app -->
+	<select id="UserInfo.queryEnterprisephone" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Enterpriseinfo">
+		select 
+			Id,
+			UserId,
+			CompanyName,
+			CompanyAddress,
+			LegalPerson,
+			IdCardNo,
+			CardType,
+			EnterpriseType,
+			ContactsName,
+			ContactsPhone,
+			ContactsEmail,
+			ContactsFix,
+			ContactsTelPhone,
+			Status,
+			RegisteredCapital,
+			IsDefault,
+			PersonEmail,
+			PersonName,
+			PersonPhone,
+			Categery,
+			AuditDate,
+			CommitDate,
+			CertifStatus,
+			CertifDate,
+			RegionId,
+			(select b.orgPath from wm_enterprisephoto_t b where b.DictCode=200005 and b.EnterpriseinfoId=a.Id  limit 1  ) positiveimage,
+			(select b.orgPath from wm_enterprisephoto_t b where b.DictCode=200006 and b.EnterpriseinfoId=a.Id  limit 1 ) flipimage
+		 from wm_enterpriseinfo_t a
+		where UserId=#{userid} and IsDefault =1 
+	</select>
+
+	<!-- 注册用户（后台） -->
+	<insert id="UserInfo.saveUser" parameterType="com.wangmeng.service.bean.vo.UserVo" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into wm_user_t
+		(UserName,CreateDate,RealName,CellPhone,Disabled,LoginNum,RegisterWay,UserType,Status,passWord,passWordsalt)
+		values
+		(#{userName},#{createDate},#{realName},#{cellPhone},0,0,0,#{userType},#{status},#{password},#{passwordSalt})
+	</insert>
+
+	<!-- 根据用户id查询黑名单  -->
+	<select id="UserInfo.selectByUserId" parameterType="java.util.List" resultType="long">
+		select UserId from wm_blacklist_t
+		where UserId in (
+		<foreach item="item" index="index" collection="list" separator=",">
+			#{item}
+		</foreach>
+		)
+	</select>
+
+	<!-- 用户批量加入黑名单表  -->
+	<insert id="UserInfo.insertBlack" parameterType="long">
+		insert into wm_blacklist_t(UserId,CreateTime)
+		values(#{userId},now())
+	</insert>
+
+	<!-- 批量修改用户信息,让用户成为黑名单  -->
+	<update id="UserInfo.updateUserStatus" parameterType="long">
+		update wm_user_t set Status=2
+		where Id = #{userId}
+	</update>
+
+	<!-- 批量删除用户  -->
+	<update id="UserInfo.deleteUserById" parameterType="long">
+		update wm_user_t set Status=3
+		where Id=#{userId}
+	</update>
+
+	<!-- 添加批量加入黑名单的操作记录 -->
+	<insert id="UserInfo.addBlackLog" parameterType="com.wangmeng.service.bean.BlackLog">
+		insert into wm_blacklist_log_t(UserId,Operator,Remark,CreateTime,OperateType)
+		values(
+		#{userId},
+		<if test="operator != null">
+			#{operator},
+		</if>
+		<if test="operator == null">
+			"",
+		</if>
+		<if test="remark != null">
+			#{remark},
+		</if>
+		<if test="remark == null">
+			"",
+		</if>
+		now(),
+		#{operateType})
+	</insert>
+
+	<!--移除黑名单-->
+	<delete id="UserInfo.removeBlack" parameterType="long">
+		delete from wm_blacklist_t where UserId=#{userId}
+	</delete>
+
+	<!--查询黑名单操作记录-->
+	<select id="UserInfo.getBlackLogListByUserId" parameterType="long" resultType="com.wangmeng.service.bean.BlackLog">
+		select Id,UserId,Operator,Remark,CreateTime,OperateType from wm_blacklist_log_t where UserId=#{userId}
+	</select>
+
+	<!-- 根据用户名、手机号、姓名模糊查询用户信息:type为1时为查询待删除的，2为待添加黑名单的-->
+	<select id="UserInfo.getUserList" parameterType="java.util.HashMap" resultType="com.wangmeng.service.bean.User">
+		select Id,UserName,RealName,CellPhone from wm_user_t where (UserName like '%${userInfo}%' or RealName like '%${userInfo}%' or CellPhone like '%${userInfo}%')
+		<if test="type == 1">
+			and (Status = 1 or Status = 2)
+		</if>
+		<if test="type == 2">
+			and Status = 1
+		</if>
+	</select>
+
+</mapper>

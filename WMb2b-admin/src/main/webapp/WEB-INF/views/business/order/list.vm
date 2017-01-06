@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>订单管理</title>
+        <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+ </head>
+    <body>
+    #parse("include/vm_utils.vm")
+    #parse("include/page_normal_detect.vm")
+      <div class="demo-content">
+          <div class="doc-content">
+            <ul class="nav-tabs">
+              <li class="active"><a href="#">订单管理</a></li>
+             </ul>
+             <div class="row">
+             <div class="span24 doc-content" style="width:90%">
+             <form method="post" action="$request.getContextPath()/orderInfo/queryOrderInfo.do" class="form-horizontal well" name="page" id="pageForm">
+                <input type="hidden" name="pageSize" id="pageSize" value="#evalPageInfoPageSize($!page.pageSize) "/>
+                <input type="hidden" name="currentPage" id="currentPage" value="#evalPageInfoCurrentPage($!page.currentPage)"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">用户名：</label>
+                    <div class="controls">
+                      <input type="text" name="userName" value="$!query.userName" placeholder="用户名" class="control-text">
+                    </div>
+                  </div>
+                  <div class="control-group span8">
+                    <label class="control-label">订单编号：</label>
+                    <div class="controls">
+                      <input type="text" name="orderNo" value="$!query.orderNo"  placeholder="订单编号" class="control-text">
+                    </div>
+                  </div>
+                   <div class="control-group span8">
+                    <label class="control-label">工程名称：</label>
+                    <div class="controls">
+                      <input type="text" name="projectName" value="$!query.projectName" placeholder="工程名称" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                
+                   <div class="row">
+                    <div class="control-group span10">
+                      <label class="control-label">起始日期：</label>
+                      <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                        <input name="startTime" data-tip="{text : '起始日期'}" data-rules="{required:true}" data-messages="{required:'起始日期不能为空'}" class="input-small calendar" type="text" value="$!query.startTime" placeholder="起始日期"><label>&nbsp;-&nbsp;</label>
+                        <input name="endTime" data-rules="{required:true}" data-messages="{required:'截止日期不能为空'}" class="input-small calendar" type="text" value="$!query.endTime" placeholder="截止日期">
+                      </div>
+                    </div>
+                    <div class="form-actions span5">
+                        <input type="button" id="btnSearch" class="button button-primary" value="搜索"/>
+                    </div>                    
+                  </div>
+                  
+                    <div class="row">
+                      <div class="control-group span24">
+                        <label class="control-label">订单状态：</label>
+                        <div class="controls">
+
+                            #if ($!query.status==0)
+                                <input type="hidden" name="state" id="status" value="" />
+                            #else
+                                <input type="hidden" name="state" id="status" value="$!query.status" />
+                            #end
+
+                             <a href="#" title="全部" onClick="javascript:act('');" class="button button-primary">全部</a>
+                             #set($ongoing = 0)
+                             #set($finished = 0)
+                             #set($Integer = 0)
+                             #set($end = 0)
+                            #foreach($!MapEntity in $!statusCount)
+                             #if($!MapEntity.key == 10 || $!MapEntity.key == 20 || $!MapEntity.key == 30
+                                 || $!MapEntity.key == 40 || $!MapEntity.key == 50 || $!MapEntity.key == 60
+                                  ||$!MapEntity.key == 70 || $!MapEntity.key == 80 ||$!MapEntity.key == 41 || $!MapEntity.key == 44)
+                               #set($ongoing =  $ongoing + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #if($!MapEntity.key == 90)
+                                #set($finished = $finished + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #if($Integer.parseInt($!MapEntity.key) == 99)
+                                #set($end = $end + $Integer.parseInt($MapEntity.value))
+                              #end
+                              #end
+
+                             <a href="#" title="交易中" onClick="javascript:act('0,10,20,30,40,41,50,60,70,80');" class="button button-primary">交易中($!ongoing)</a>
+                             <a href="#" title="交易完成" onClick="javascript:act('90');" class="button button-primary">交易完成($!finished)</a>
+                             <a href="#" title="已关闭" onClick="javascript:act('99');" class="button button-primary">已关闭($!end)</a>
+                             
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                     #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.备注")
+                        <div class="control-group span2 btns" style="padding-left:10px;"> <button type="button"  id="addRemark" class="button button-primary" >备注</button></div>
+                     #end
+                        <div class="control-group span4 btns" style="padding-left:10px;"> <button type="button"  id="viewArrval" class="button button-primary" >查看到账信息</button></div>
+                     <div class="control-group span4 btns" style="padding-left:10px;"> <button type="button"  id="viewSend" class="button button-primary" >查看发货信息</button></div>
+                     <div class="control-group span4 btns" style="padding-left:10px;"> <button type="button"  id="viewRevicer" class="button button-primary" >查看到货信息</button></div>
+                     </div>
+              </form>
+
+
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="30">选择</th>
+                  <th width="80">订单编号</th>
+                  <th>工程名称</th>
+                  <th width="80">采购商</th>
+                  <th width="120">供应商</th>
+                  <th width="80">材料总类</th>
+                  <th width="80">合计金额</th>
+                  <th width="80">下单时间</th>
+                  <th width="80">状态</th>
+                #if($roleid != 4)
+                  <th width="80">客服</th>
+                  #end
+                  <th width="80">操作</th>
+                </tr>
+              </thead>
+               <tbody>
+                    #foreach($OrderInfo in $!result.obj.data)
+                        <tr>
+                          <td>
+                           #if($!OrderInfo.status == '5')
+                               <input  disabled type="checkbox" class="uuid" name="oneCheckName$!OrderInfo.orderNo" value="$!OrderInfo.orderNo" data-status="$!OrderInfo.status" data-total="$!OrderInfo.totalCost" >
+                           #else
+                              <input  type="checkbox" class="uuid" name="oneCheckName$!OrderInfo.orderNo" value="$!OrderInfo.orderNo" data-status="$!OrderInfo.status" data-total="$!OrderInfo.totalCost">
+                           #end
+                          </td>
+                          <td><a href='$!{request.getContextPath()}/orderInfo/getOrderDetail.do?id=$!OrderInfo.id'>$!OrderInfo.orderNo</a></td>
+                          <td>$!OrderInfo.projectName</td>
+                          <td>$!OrderInfo.userName</td>
+                          <td>$!OrderInfo.supplyName</td>
+                          <td>$!OrderInfo.productKind</td>
+                           <td>$!OrderInfo.totalCost</td>
+                          <td>$dateUtil.formatDate($!OrderInfo.sendTime,"yyyy-MM-dd HH:mm")</td>
+                          <td>$!OrderInfo.statusStr</td>
+                           #if($roleid != 4)
+                            <td>$!OrderInfo.customerName</td>
+                          #end
+                          <td nowrap>
+                             #if($!OrderInfo.status == "10" )
+                                 #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.推送")
+                                   <a class="button button-primary" href="#" title="推送" onClick="javascript:push_order('$!OrderInfo.orderNo','$!OrderInfo.supplyId','$!OrderInfo.supplyName');" tab="$!OrderInfo.orderNo">推送</a>
+                                 #end
+                                 &nbsp;&nbsp;
+                             #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.关闭")
+                                  <a class="button button-primary" href="#" title="关闭" onClick="javascript:close_order('$!OrderInfo.orderNo');" tab="$!OrderInfo.orderNo">关闭</a>
+                             #end
+                            #elseif($!OrderInfo.status == "20")
+                                #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.修改撤回")
+                                    <a class="button button-primary" href="#" title="修改撤回" onClick="javascript:update_push('$!OrderInfo.orderNo','$!OrderInfo.supplyId','$!OrderInfo.supplyName');" tab="$!OrderInfo.orderNo">修改撤回</a>
+                                #end
+                                    &nbsp;&nbsp;
+                            #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.关闭")
+                                  <a class="button button-primary" href="#" title="关闭" onClick="javascript:close_order('$!OrderInfo.orderNo','$!OrderInfo.supplyId');" tab="$!OrderInfo.orderNo">关闭</a>
+                            #end
+
+                            #elseif($!OrderInfo.status == "30")
+                             <a class="button button-primary" href="https://www.bestsign.cn/login.do?method=toLoginPage" target="_blank" title="尚尚签确认" tab="$!OrderInfo.orderNo">尚尚签确认</a>
+                               &nbsp;&nbsp;
+                             #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.平台签约")
+                                <a class="button button-primary" href="#" title="协议确认" onClick="javascript:platform_confirm('$!OrderInfo.orderNo');" tab="$!OrderInfo.orderNo">协议确认</a>
+                             #end
+                                &nbsp;&nbsp;
+
+                            #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.关闭")
+                              <a class="button button-primary" href="#" title="关闭" onClick="javascript:close_order('$!OrderInfo.orderNo','$!OrderInfo.supplyId');" tab="$!OrderInfo.orderNo">关闭</a>
+                            #end
+
+                            #elseif($!OrderInfo.status == "40" || $!OrderInfo.status == "41" || $!OrderInfo.status == "50")
+                                #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.确认到账")
+                                    <a class="button button-primary" href="#" title="确认到账" onClick="javascript:confirm_arrval('$!OrderInfo.orderNo',$!OrderInfo.totalCost);" tab="$!OrderInfo.orderNo">确认到账</a>
+                                #end
+                             #elseif($!OrderInfo.status == "60" || $!OrderInfo.status == "70" )
+                                #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.发货审核")
+                                    <a class="button button-primary" href="#" title="发货审核" onClick="javascript:send_audit('$!OrderInfo.orderNo');" tab="$!OrderInfo.orderNo">发货审核</a>
+                                #end
+                              #elseif($!OrderInfo.status == "80")
+                                #auth($request.getSession().getAttribute("session.user").getId(),"订单管理.货到审核")
+                                    <a class="button button-primary" href="#" title="货到审核" onClick="javascript:product_arrval('$!OrderInfo.orderNo');" tab="$!OrderInfo.orderNo">货到审核</a>
+                                #end
+                                #else
+                              <a class="button button-primary" href="$!{request.getContextPath()}/orderInfo/getOrderDetail.do?id=$!OrderInfo.id" title="查看历史订单" target="_blank" tab="$!OrderInfo.orderNo">查看历史订单</a>
+                              #end
+                          </td>
+                        </tr>
+                    #end
+                  </tbody>
+                    </table>
+
+               #parse("include/page_normal.vm")
+              </div>
+            </div>
+          </div>  
+      </div>
+     
+     <div id="pushid" style="display:none;">
+         <div id="tipInfo">
+         </div>
+     </div>
+
+
+      <div id="remarkSize" class="digSize3 pd-15" style="display: none;top:170px;left:410px;">
+            <div class="xSize">
+                <span class="fl-left fs-md" style="position: relative">备注</span>
+                <span class="fl-right fs-md fw-ber" id="closebtn2" style="position: relative">X</span>
+            </div>
+            <div class="mt-30">
+                <div class="ml-43 fl-left" style="display: inline;">内容：</div>
+                <div class="areatxt">
+                    <textarea id="recontent" rows="5" style="width: inherit;height: inherit;"></textarea>
+                </div>
+            </div>
+
+            <div class="tl-center" style="margin:30px auto;display:block;">
+                <span class="submit-btn" id="recontbtn">提交</span>
+            </div>
+            <div style="margin-top:10px;border-top: 1px solid #eee;">
+                <div class="mt-10">历史记录：</div>
+                <div class="" id="recordSize">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>日期</th>
+                            <th>操作人</th>
+                            <th>备注内容</th>
+                        </tr>
+                        <tbody id="remarksid">
+                          
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="maskLayer" style="display: none;"></div>
+      <script type="text/javascript" language="JavaScript">
+   $LAB
+   .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+   .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+   .script("$!{request.getContextPath()}/assets/js/config-min.js")
+   .wait(function(){
+    
+   });
+   
+    BUI.use('bui/calendar',function(Calendar){
+      var datepicker = new Calendar.DatePicker({
+        trigger:'.calendar',
+        autoRender : true
+      });
+    });
+
+    
+    var  dialog;
+      BUI.use(['bui/overlay','bui/form'],function(Overlay,Form){
+
+      dialog = new Overlay.Dialog({
+            title:'处理订单',
+            width:400,
+            height:350,
+            contentId:'pushid',
+            success:function () {
+                var orderNo = $("input[name='update-orderNo").val();
+                var supplyId = $("input[name='supplyId").val();
+                var status = $("input[name='status").val();
+                $.ajax({
+                    url:"$request.getContextPath()/orderInfo/pushOrder.do",
+                    type:"post",
+                    dataType:"json",
+                    data:{
+                        "orderNo":orderNo,
+                        "supplyId":supplyId,
+                        "status":status
+                    },
+                    success:function(data){
+                        dialog.close();
+                        if (data) {
+                            BUI.Message.Alert('操作成功！','success');
+                        } else {
+                            BUI.Message.Alert('操作失败！','success');
+                        }
+                        setTimeout(function(){
+                            $("#pageForm").submit();
+                        },2000)
+                    },
+                    error:function(){
+                        this.close();
+                        $("#pageForm").submit();
+                        BUI.Message.Alert('操作失败！','success');
+                    }
+                });
+
+
+
+            }
+          }); 
+ 
+      }); 
+
+    function push_order(orderNo,supplyId,supplyName) {
+       $("#tipInfo").html('');
+          var html='';
+          html+='<div><input type="hidden" name="update-orderNo" value ="'+orderNo+'"/>\
+            <input type="hidden" name="supplyId" value ="'+supplyId+'"/>\
+            <input type="hidden" name="status" value ="20"/></div>';
+          html+="<div>温馨提示：推送订单后，会连带签订的协议一起到卖家账号。</div>"
+
+          $("#tipInfo").append("提示：请确认将订单"+orderNo+"推送至"+supplyName+html);
+          dialog.show();
+    };
+
+function update_push(orderNo,supplyId,supplyName){
+   $("#tipInfo").html('');
+    var html='';
+    html+='<div><input type="hidden" name="update-orderNo" value ="'+orderNo+'"/>\
+      <input type="hidden" name="supplyId" value ="'+supplyId+'"/>\
+      <input type="hidden" name="status" value ="10"/></div>';
+
+    $("#tipInfo").append("提示：订单"+orderNo+"已推送"+supplyName+"，请确认是否撤回?"+html);
+    dialog.show();
+}
+
+function close_order(orderNo,supplyId){
+   $("#tipInfo").html('');
+  var html='';
+  html+='<div><input type="hidden" name="update-orderNo" value ="'+orderNo+'"/>\
+      <input type="hidden" name="supplyId" value =""/>\
+      <input type="hidden" name="status" value ="99"/></div>';
+
+    $("#tipInfo").append("提示：您确定要关闭该订单("+orderNo+")吗？"+html);
+
+    dialog.show();  
+}
+
+function platform_confirm(orderNo){
+  location.href="$!{request.getContextPath()}/purchaseProtocal/queryByOrderNo.do?orderNo="+orderNo;
+}
+
+ function confirm_arrval(orderNo,totalCost){
+     location.href="$!{request.getContextPath()}/orderInfo/confirmArrval.do?orderNo="+orderNo+"&totalCost="+totalCost;
+ }
+ 
+ function send_audit(orderNo){
+  location.href="$!{request.getContextPath()}/orderInfo/deliveryCheck.do?orderNo="+orderNo;
+}
+
+function product_arrval(orderNo){
+  location.href="$!{request.getContextPath()}/orderInfo/receiveCheck.do?orderNo="+orderNo;
+}
+
+ function act(data){
+        $("#status").val(data);
+         $("#pageForm").submit();
+    }
+
+    var aArr = new Array();
+
+  //添加备注
+    function addRemark(){
+        var remarkCont = $("#recontent").val();
+        $.ajax({
+            url: "../orderInfo/addRemark.do",
+            type:"get",
+            dataType:"json",
+            data:{
+                "remark":remarkCont,
+                "orderNo":aArr[0]
+            },
+            success:function(data){
+                if(data.code=="000000"){
+                    BUI.Message.Alert('提交成功！','success');
+                    $("#remarkSize").hide();
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
+                }else{
+                  BUI.Message.Alert('提交失败!','error');
+                }
+            },
+            error:function(){
+                BUI.Message.Alert('提交失败！','error');
+            }
+        });
+    }
+
+      $("#addRemark").click(function(){
+        $(".uuid:checked").each(function(){
+            aArr.push($(this).val());
+        });
+        if(aArr.length==1){
+            $.ajax({
+            url: "../orderInfo/queryRemark.do",
+            type:"get",
+            dataType:"json",
+            data:{orderNo:aArr[0]},
+            success:function(data){
+               if(data.code=='000000'){
+                   $("#remarksid").html('');
+                   var ht='';
+                    var objdata = data.obj;
+                    if (objdata!=null && objdata.length > 0) {
+                      for(var i=0;i<objdata.length;i++){
+                        ht += '<tr><td> '+objdata[i].CreateDate +'</td>\
+                         <td>'+objdata[i].sysUserName+'</td>\
+                         <td>'+ objdata[i].remark +'</td></tr>';
+                      }
+                    }
+                     $("#remarksid").html(ht);
+
+                    $("#remarkSize,#maskLayer").show();
+                }
+            },
+            error:function(){
+                BUI.Message.Alert('查询备注失败！','error');
+            }
+        });
+
+        }else{
+            BUI.Message.Alert('请选择一条信息添加备注！','warning');
+            aArr.length = 0;
+        }
+    });
+    $("#closebtn2").click(function(){
+        $("#remarkSize,#maskLayer").hide();
+        aArr.length = 0;
+    });
+    $("#recontbtn").click(function(){
+        addRemark();
+    });
+
+
+ $("#viewArrval").click(function(){
+        var totalCost = 0;
+        var status = '';
+        $(".uuid:checked").each(function(){
+            aArr.push($(this).val());
+            totalCost = $(this).attr('data-total');
+            status = $(this).attr('data-status');
+        });
+        if(aArr.length==1){
+          if (status >= 40 && status != 99) {
+             confirm_arrval(aArr[0],totalCost);
+          }else{
+             BUI.Message.Alert('订单还未支付,请稍候再试！','warning');
+            aArr.length = 0;
+          }
+        }else{
+            BUI.Message.Alert('请选择一条信息查看！','warning');
+            aArr.length = 0;
+        }
+    });
+
+  $("#viewSend").click(function(){
+        var status = '';
+        $(".uuid:checked").each(function(){
+            aArr.push($(this).val());
+            status = $(this).attr('data-status');
+        });
+        if(aArr.length==1){
+          if (status >= 60 && status != 99) {
+             send_audit(aArr[0]);
+          }else{
+             BUI.Message.Alert('订单还未发货,请稍候再试！','warning');
+            aArr.length = 0;
+          }
+        }else{
+            BUI.Message.Alert('请选择一条信息查看！','warning');
+            aArr.length = 0;
+        }
+    });
+
+  $("#viewRevicer").click(function(){
+        var status = '';
+        $(".uuid:checked").each(function(){
+            aArr.push($(this).val());
+            status = $(this).attr('data-status');
+        });
+        if(aArr.length==1){
+          if (status >= 80 && status != 99) {
+             product_arrval(aArr[0]);
+          }else{
+             BUI.Message.Alert('还未上传货到凭证,请稍候再试！','warning');
+            aArr.length = 0;
+          }
+        }else{
+            BUI.Message.Alert('请选择一条信息查看！','warning');
+            aArr.length = 0;
+        }
+    });
+
+      //条件搜索
+      $("#btnSearch").click(function () {
+          $("#currentPage").val(1);
+          $("#pageForm").submit();
+      });
+
+</script>  
+</body>
+</html>

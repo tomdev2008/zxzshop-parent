@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="true" />
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<setting name="logImpl" value="LOG4J"/>
+	</settings>
+
+	<plugins>
+		<!-- 分页拦截器，整合参数类型和方法名称两种拦截模式 -->
+	    <plugin interceptor="com.wangmeng.mybatis.PaginationInterceptor">
+	    	<!-- 如果启用了名称自动发现 -->
+			<property name="pageSqlId" value=".*ListByPage" />
+	    </plugin>
+	</plugins>
+
+	<mappers>
+		<!-- mybatis service mapper -->
+		<mapper resource="sqlmap/service/Oprationlog.xml"/>	
+		<mapper resource="sqlmap/service/ResultCode.xml"/>	
+		<mapper resource="sqlmap/service/Brands.xml"/>	
+		<mapper resource="sqlmap/service/NewsInfo.xml"/>
+		<mapper resource="sqlmap/service/Product.xml"/>	
+		<mapper resource="sqlmap/service/UserInfo.xml"/>
+		<mapper resource="sqlmap/service/SmsSend.xml"/>
+		<mapper resource="sqlmap/service/BuyerInquiry.xml"/>
+		<mapper resource="sqlmap/service/BuyerPurchase.xml"/>
+		<mapper resource="sqlmap/service/ProductCategories.xml"/>
+		<mapper resource="sqlmap/service/DealQuote.xml"/>
+		<mapper resource="sqlmap/service/Thridenterpriseinfo.xml"/>
+		<mapper resource="sqlmap/service/OrderInfo.xml"/>
+		<mapper resource="sqlmap/service/Purchaseprotocol.xml"/>
+		<mapper resource="sqlmap/service/AreaRegion.xml"/>
+		<mapper resource="sqlmap/service/OrderTransfer.xml"/>
+		<mapper resource="sqlmap/service/InquiryComment.xml"/>
+		<mapper resource="sqlmap/service/Bankaccountinfo.xml"/>
+		<mapper resource="sqlmap/service/EnterpriseInfo.xml"/>
+		<mapper resource="sqlmap/service/ProductFav.xml"/>
+		<mapper resource="sqlmap/service/Messages.xml"/>
+		<mapper resource="sqlmap/service/Sellerquotation.xml"/>
+		<mapper resource="sqlmap/service/Enterprisephoto.xml"/>
+		<mapper resource="sqlmap/service/CategoryBrands.xml"/>
+		
+		<mapper resource="sqlmap/service/Credits.xml"/>
+		<mapper resource="sqlmap/service/Visit.xml"/>
+		<mapper resource="sqlmap/service/Photo.xml"/>
+		
+		<mapper resource="sqlmap/service/StatisticInfo.xml"/>
+		<mapper resource="sqlmap/service/OrderFlow.xml"/>
+		<mapper resource="sqlmap/service/AssignPending.xml"/>
+
+		<mapper resource="sqlmap/service/Language.xml"/>
+		<mapper resource="sqlmap/service/Authority.xml"/>
+
+		<!-- mybatis admin mapper -->
+		<!-- 暂时启用迁移过来的权限管理mapper -->
+		<mapper resource="sqlmap/admin/SysPowerMapper.xml"/>
+		<mapper resource="sqlmap/admin/SysRoleMapper.xml"/>
+		<mapper resource="sqlmap/admin/SysRolePowerMapper.xml"/>
+		<mapper resource="sqlmap/admin/SysUserMapper.xml"/>
+		<mapper resource="sqlmap/admin/SysUserRoleMapper.xml"/>
+		<!-- 系统扩展mapper -->
+		<mapper resource="sqlmap/admin/SysExtMapper.xml"/>
+		
+		<!-- 配置项mapper -->
+		<mapper resource="sqlmap/admin/SysConfigMapper.xml"/>
+		<mapper resource="sqlmap/admin/SysConfigNoticeMapper.xml"/>
+		<mapper resource="sqlmap/admin/AgreementMapper.xml"/>
+		
+		<!-- 支付方式mapper -->
+		<mapper resource="sqlmap/admin/PaywayMapper.xml"/>
+		
+		<!-- 协议类mapper -->
+		<mapper resource="sqlmap/admin/PurchaseprotocolMapper.xml"/>
+		<mapper resource="sqlmap/admin/PurchaseprotocolExtMapper.xml"/>
+		
+		<!-- 品牌产品 -->
+		<mapper resource="sqlmap/admin/BrandsMapper.xml"/>
+		<mapper resource="sqlmap/admin/ProductMapper.xml"/>
+		<mapper resource="sqlmap/admin/BrandsapplyMapper.xml"/>
+		<mapper resource="sqlmap/admin/CategorybrandsMapper.xml"/>
+		<mapper resource="sqlmap/admin/ProductcategoryMapper.xml"/>
+		<mapper resource="sqlmap/admin/EnpriinfobrandsMapper.xml"/>
+		
+		<!-- 新闻 -->
+		<mapper resource="sqlmap/admin/NewsinfoMapper.xml"/>
+		<mapper resource="sqlmap/admin/NewscategoryMapper.xml"/>
+		
+		<!-- 新设计的，尚未启用mapper -->
+		<mapper resource="sqlmap/admin/MemberMapper.xml"/>
+		<mapper resource="sqlmap/admin/PermissionMapper.xml"/>
+		<mapper resource="sqlmap/admin/RoleMapper.xml"/>
+		<mapper resource="sqlmap/admin/SysactionMapper.xml"/>	
+		<mapper resource="sqlmap/admin/OprationlogMapper.xml"/>	
+		
+		<!-- 收藏功能 -->
+		<mapper resource="sqlmap/admin/FavMapper.xml"/>
+	</mappers>
+	
+</configuration>

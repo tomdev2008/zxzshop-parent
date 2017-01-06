@@ -1,0 +1,48 @@
+<div id="viewcontent">
+    <div class="row">
+      <div class="control-group span8">
+        <label class="control-label">操作人名称</label>
+        <div class="controls">
+          $!{entity.userName}
+        </div>
+      </div>
+      <div class="control-group span8">
+        <label class="control-label">页面名称</label>
+        <div class="controls">
+          $!{entity.pageName}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="control-group span8">
+        <label class="control-label">操作的接口名称</label>
+        <div class="controls">
+          $!{entity.action}
+        </div>
+      </div>
+      <div class="control-group span8">
+        <label class="control-label">中文描述</label>
+        <div class="controls">
+           $!{entity.actionDescript}
+        </div>
+      </div>
+      <div class="control-group span8">
+        <label class="control-label">日志记录</label>
+        <div class="controls">
+           $!{entity.contents}
+        </div>
+      </div>
+      <div class="control-group span8">
+        <label class="control-label">操作时间</label>
+        <div class="controls">
+           $!{entity.opereadate}
+        </div>
+      </div>
+      <div class="control-group span8">
+        <label class="control-label">ip地址</label>
+        <div class="controls">
+           $!{entity.iPAddress}
+        </div>
+      </div>
+    </div>
+</div> 

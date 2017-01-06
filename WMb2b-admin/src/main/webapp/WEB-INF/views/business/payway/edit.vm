@@ -1,0 +1,51 @@
+ <div id="user_edit_content">
+  <form id="U_Edit_Form" class="form-horizontal" action="$request.getContextPath()/payway/edit.do">
+  		<input type="hidden" name="id" value="$!entity.id">
+          <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">支付方式代码</label>
+            <div class="controls">
+              <input name="code" value="$!entity.code" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">支付方式名称</label>
+            <div class="controls  control-row2">
+             <input name="payway" value="$!entity.payway" type="text" data-rules="{required:true}" class="input-normal control-text">
+	        </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">商户代码</label>
+            <div class="controls  control-row2">
+             <input name="merchantcode" value="$!entity.merchantcode" type="text" data-rules="{required:true}" class="input-normal control-text">
+	        </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">手续费</label>
+            <div class="controls  control-row2">
+             <input name="commission" value="$!entity.commission" type="text" data-rules="{required:true}" class="input-normal control-text">
+	        </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">状态</label>
+            <div class="controls  control-row2">
+			  <input type="checkbox" id="statusCheckboxEdit" name="status" class="checkbox" value="1" #if($entity.status == 1) checked #else #end >
+				<script type="text/javascript" language="JavaScript">
+					$("#statusCheckboxEdit").simpleSwitch();
+				</script>
+	        </div>
+          </div>
+        </div>
+  </form>
+     <script type="text/javascript" language="JavaScript">
+
+     </script>
+</div> 

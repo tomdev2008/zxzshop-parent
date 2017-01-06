@@ -1,0 +1,68 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>商品分类管理</title>
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-category-mgr.css" rel="stylesheet" type="text/css">
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-category-mgr.js"></script>
+    </head>
+    <body>
+    
+    
+     <div class="container">
+         <div class="account_mgr_nav">
+            <a href="$request.getContextPath()/ProductCategories/toProductcategoriesList.do" class="active">分类管理</a>
+            <a href="$request.getContextPath()/ProductCategories/to_productcategories_add.do">新增分类</a>
+         </div>
+        <div class="module-box mt20">
+            <table class="table table-bordered category">
+                <tr>
+                    <th>分类名称</th>
+                    <th>操作</th>
+                </tr>
+                #foreach( $firstProductCategory in $productCategorys )
+                    <tr data-id="$!firstProductCategory.id">
+                      <td><i class=""></i>$!firstProductCategory.name</td>
+                      <td>
+                          #auth($request.getSession().getAttribute("session.user").getId(),"分类管理.新增下级")
+                            <a class="button button-primary active" href="$request.getContextPath()/ProductCategories/to_productcategories_sub.do?id=$!firstProductCategory.id&name=$!firstProductCategory.name" class="active">新增下级</a>
+                          #end
+
+                          #auth($request.getSession().getAttribute("session.user").getId(),"分类管理.编辑")
+                            <a class="button button-primary delete" href="$request.getContextPath()/ProductCategories/toProductCategoryEdit.do?id=$!firstProductCategory.id" class="active">编辑</a>
+                            #end
+
+                          #auth($request.getSession().getAttribute("session.user").getId(),"分类管理.删除")
+                            <a class="button button-primary delete" href="javascript:;" tab="$!firstProductCategory.id" rel="$!firstProductCategory.name">删除</a>
+					      #end
+                        </td>
+                    </tr>
+                     #foreach( $secondProductCategory in $firstProductCategory.subProductCategorys )
+	                     <tr data-parent="$!firstProductCategory.id" data-id="$!secondProductCategory.id">
+	                        <td class="second"><i class=""></i>$secondProductCategory.name</td>
+	                        <td nowrap>
+	                         <a class="button button-primary active" href="$request.getContextPath()/ProductCategories/toProductCategoryEdit.do?id=$!secondProductCategory.id">编辑</a>
+                       		 <a class="button button-primary delete" href="javascript:;" tab="$!secondProductCategory.id" rel="$!secondProductCategory.name">删除</a>
+		                    </td>
+		                </tr>
+                     #end
+				#end
+            </table>
+        </div>
+        
+    </div>
+    </body>
+    </html>       

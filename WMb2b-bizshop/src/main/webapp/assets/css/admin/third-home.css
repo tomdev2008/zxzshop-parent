@@ -1,0 +1,106 @@
+.f12{
+    font-size: 12px;
+}
+.home_title{
+    background: #fff;
+    padding: 20px;
+    font-size: 14px;
+}
+.home_title .ca{
+    padding-left: 30px;
+    background-image: url(../../img/admin/icon_center_renzheng.png);
+    background-repeat: no-repeat;
+    background-position: 5px center;
+}
+.home_title .ca1{
+    padding-left: 30px;
+    background-image: url(../../img/admin/icon_center_question.png);
+    background-repeat: no-repeat;
+    background-position: 5px center;
+}
+.home_title .ca0{
+    padding-left: 30px;
+    background-image: url(../../img/admin/icon_center_renzheng0.png);
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    color: #999;
+}
+.home_title .uname{
+    padding-left: 30px;
+    background-image: url(../../img/admin/icon_center_touxiang.png);
+    background-repeat: no-repeat;
+    background-position: 5px center;
+}
+.home_title .tel{
+    padding-left: 30px;
+    background-image: url(../../img/admin/icon_center_shouji.png);
+    background-repeat: no-repeat;
+    background-position: 5px center;
+}
+.box{
+    padding: 20px;
+    background-color: #fff;
+}
+.box .box_title{
+    font-size: 16px;
+}
+.box .steps{
+    padding-left: 150px;
+    padding-bottom: 150px;
+    padding-top: 60px;
+}
+.box .steps .step{
+    width: 135px;
+    height: 85px;
+    background-image: url(../../img/admin/steps-bg-wide.png);
+    background-repeat: no-repeat ;
+    float: left;
+    margin-right: 150px;
+    position: relative;
+    text-align: center;
+}
+.box .step:before{
+    content: '';
+    width:1px;
+    height: 16px;
+    position: absolute;
+    background-image: url(../../img/login/01.png);
+    background-repeat: no-repeat ;
+    bottom: -28px;
+    transform: translateX(-50%);
+    left:50%;
+}
+.box .step:after{
+    content: '';
+    width: 24px;
+    height: 17px;
+    position: absolute;
+    background-image: url(../../img/login/03.png);
+    background-repeat: no-repeat ;
+    right: -90px;
+    top:50%;
+}
+.box .step:last-child{margin-right: 0px;}
+.box .step:last-child:after{background: none;}
+.box .text{
+    line-height: 100px;
+    color: white;
+}
+.box .number{
+    font-size: 16px;
+    position: absolute;
+    left:50%;
+    top:5px;
+    transform: translateX(-50%);
+}
+.box .desc{
+    color:#a9a9a9;
+    bottom: -50px;
+    position: absolute;
+    white-space:nowrap;
+     overflow:hidden;
+    text-overflow:ellipsis;
+    transform: translateX(-50%);
+    left:50%;
+}
+.step a:hover .text{text-decoration: underline !important;}

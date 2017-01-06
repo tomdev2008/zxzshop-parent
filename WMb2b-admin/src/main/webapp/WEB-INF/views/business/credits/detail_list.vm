@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>详情页</title>
+<!-- 此文件为了显示Demo样式，项目中不需要引入 -->
+<link href="$request.getContextPath()/assets/code/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+</head>
+<body>
+ <div class="demo-content">
+<!-- 详情页 ================================================== -->
+ <div>
+  <div class="row">
+    <div class="span24 doc-content" style="width:90%">
+        <ul class="nav-tabs">
+          <li class="active"><a href="$request.getContextPath()/enterprise/showDetail.do?viewType=1&id=$!result.obj.id">企业审核</a></li>
+        </ul>
+
+      <form name="" action="" method="post" id="detailForm">
+        <h3>企业信息</h3>
+        <div class="row detail-row form-horizontal well">
+          <div class="span8">
+          <label>询价单号：</label><span class="detail-text">$!result.obj.inquirySheetCode</span>   
+          </div>
+          <div class="span8">
+          <label>提交时间：</label><span class="detail-text">
+           $dateUtil.formatDate($!result.obj.publishDate,"yyyy-MM-dd HH:mm")
+           </span>
+          </div>
+          <div class="span8">
+          <label>询价截止时间：</label><span class="detail-text">
+                $dateUtil.formatDate($!result.obj.quotationEndDate,"yyyy-MM-dd HH:mm")
+          </span>
+          </div>
+        </div>    
+
+          公司名称：$!result.obj.companyName
+
+
+         <div class="form-horizontal well">
+        <div class="row detail-row">
+          <div class="span8">
+            <label>工程名称：</label><span class="detail-text">$!result.obj.title</span>
+          </div>
+          <div class="span8">
+            <label>收货方式：</label><span class="detail-text">
+            #if($!result.obj.receiving == "1")
+                                                        自取
+            #else
+                                                        物流配送
+             #end 
+            </span>
+          </div>
+        </div>    
+        <div class="row detail-row">
+           <div class="span8">
+            <label>企业名称：</label><span class="detail-text">$!result.obj.companyId</span>
+          </div>
+          <div class="span8">
+            <label>收货地址：</label><span class="detail-text">$!result.obj.address</span>
+          </div>
+        </div>    
+          <div class="row detail-row">      
+             <div class="span8">
+                <label >联系人：</label><span class="detail-text">$!result.obj.name</span>
+              </div>
+              <div class="span8">
+                <label>发票类型：</label><span class="detail-text">
+                 #if($!result.obj.receiving == "0")
+                                                               无需发票
+                #elseif($!result.obj.receiving == "1")
+                                                                普通发票
+                  #else
+                                                                增值税发票
+                 #end 
+                </span>
+              </div>
+          </div>
+        <div class="row detail-row">      
+          <div class="span8">
+            <label>联系人手机号码：</label><span class="detail-text">$!result.obj.phone</span>
+          </div>
+          <div class="span8">
+            <label>询价备注：</label><span class="detail-text">$!result.obj.remark</span>
+          </div>
+        </div>    
+        </div>
+        
+
+           #if($!result.obj.state >3 &&  $!result.obj.state != 5 && $commontResult)
+               <h3>评价信息</h3> 
+                <div class="form-horizontal well">
+                    <h4>$!commontResult.customerId 先生/女士，请您对我们询价服务，给予评价：</h4>
+                     <div>
+                        <label class="radio">
+                            #if(!$commontResult.inqueryServiceOrder)
+                                   <div class="row detail-row">  
+                                     <input type="radio" checked="checked">1.我对本次询价服务满意，表示感谢！</input>
+                                   </div>
+                                  <div class="row detail-row">  
+                                         <input type="radio" class="auxiliary-text" disabled>2.我对本次询价服务非常满意！愿意按咨询材料单价的0.5%支付服务费：25元!</input>
+                                  </div>
+                            #else
+                                  <div class="row detail-row">  
+                                     <input type="radio" disabled>1.我对本次询价服务满意，表示感谢！</input>
+                                   </div>
+                                  <div class="row detail-row">  
+                                         <input type="radio" class="auxiliary-text" checked="checked">2.我对本次询价服务非常满意！愿意按咨询材料单价的0.5%支付服务费：25元!</input>
+                                  </div>
+                            #end
+                            <h4>   我对本次询价客服经理，给予评价： </h4>
+                                 
+                                 <div class="row detail-row">  
+                                 <div class="span8">
+                                    <label>报价速度：</label>
+                                     #foreach($i in [1 .. 5])
+                                        #if($i <= $!commontResult.quotationSpeed)
+                                        <span class="icon-star"></span>
+                                       #else
+                                         <span class="icon-star-empty"></span>
+                                        #end
+                                     #end
+                                  </div>
+                                  </div>
+                                  <div class="row detail-row">  
+                                  <div class="span8">
+                                  <label>服务态度：</label>
+                                     #set($Integer = 0)   
+                                     #foreach($k in [1 .. 5])
+                                        #if($k <=  $Integer.parseInt($!commontResult.serviceAttitude))
+                                        <span class="icon-star"></span>
+                                       #else
+                                         <span class="icon-star-empty"></span>
+                                        #end
+                                     #end
+                                  </div>     
+                                  </div>
+                                  <div class="row detail-row">   
+                                   <div class="span8">
+                                    <label>备注：</label><span class="detail-text">$!commontResult.suggestion</span>
+                                  </div>                        
+                                 </div> 
+                        </label>
+                      </div>
+               </div>   
+           #end
+           
+           #if($commontResult && $commontResult.inqueryServiceOrder)
+             <h3>付费信息</h3> 
+             <div class="form-horizontal well">
+                  <div class="row detail-row">  
+                         <div class="span8">
+                            <label>日期：</label><span class="detail-text"> $dateUtil.formatDate($!commontResult.inqueryServiceOrder.createdTime,"yyyy-MM-dd HH:mm")</span>
+                          </div>
+                          <div class="span8">
+                            <label>支付金额：</label><span class="detail-text">$!commontResult.inqueryServiceOrder.inquiryServiceCost</span>
+                          </div>
+                          <div class="span8">
+                            <label>支付方式：</label><span class="detail-text">$!commontResult.inqueryServiceOrder.paymentTypeName</span>
+                          </div>
+                 </div>
+                </div>
+            #end
+      </form>
+      </div>
+    </div>
+  </div>
+<script src="../../assets/js/jquery-1.8.1.min.js"></script>
+<script src="../../assets/js/build/bui-min.js"></script> 
+  </div>
+</body>
+</html>         

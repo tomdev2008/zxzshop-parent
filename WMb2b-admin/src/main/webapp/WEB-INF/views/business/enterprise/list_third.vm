@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>企业管理</title>
+    <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/sea.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/config.js"></script>
+</head>
+<body>
+    #parse("include/page_normal_detect.vm")
+<div class="demo-content">
+    <div class="doc-content">
+        <ul class="nav-tabs">
+            <li  #if($!enterpriseInfoVo.user.userType == 1) class="active" #end ><a href="$request.getContextPath()/enterprise/queryByPagination.do?user.userType=1">采购商</a></li>
+            <li  #if($!enterpriseInfoVo.user.userType == 2) class="active" #end ><a href="$request.getContextPath()/enterprise/queryByPagination.do?user.userType=2">供应商</a></li>
+            <li  class="active" ><a href="$request.getContextPath()/enterprise/queryByPagination4Third.do">配套服务商</a></li>
+        </ul>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+
+##                <input type="text" id="path" value="$request.getContextPath()" style="display: none;">
+##				<input type="hidden" name="nullFlag" id="nullFlag" value="$!nullFlag"/>
+
+                <form method="get" action="$request.getContextPath()/enterprise/queryByPagination4Third.do" class="form-horizontal well" name="pageForm" id="pageForm">
+                    <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+                    <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+                    <div class="row">
+                        <div class="control-group span8">
+                            <label class="control-label">客户：</label>
+                            <div class="controls">
+                                <input type="text" name="companyName" value="$!enterpriseInfoVo.companyName" class="control-text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span24">
+                            <label class="control-label">企业类型：</label>
+                            <div class="controls">
+                                <select name="categery">
+                                    <option name="" value="-1" #if($!enterpriseInfoVo.categery==-1) selected="selected" #end >请选择</option>
+                                    <option name="" value="0" #if($!enterpriseInfoVo.categery==0) selected="selected" #end >个人</option>
+                                    <option name="" value="1" #if($!enterpriseInfoVo.categery==1) selected="selected" #end >企业</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span24">
+                            <label class="control-label">状态：</label>
+                            <div class="controls">
+                                <select name="status">
+                                    <option name="" value="0" #if($!enterpriseInfoVo.status==0) selected="selected" #end >请选择</option>
+                                    <option name="" value="1" #if($!enterpriseInfoVo.status==1) selected="selected" #end>审核中</option>
+                                    <option name="" value="2" #if($!enterpriseInfoVo.status==2) selected="selected" #end>已审核</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span10">
+                            <label class="control-label">提交日期：</label>
+                            <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                                <input name="beginTime" value="$!enterpriseInfoVo.beginTime" data-tip="{text : '起始日期'}" data-rules="{required:true}" data-messages="{required:'起始日期不能为空'}" class="input-small calendar" type="text"><label>&nbsp;-&nbsp;</label>
+                                <input name="endTime" value="$!enterpriseInfoVo.endTime" data-rules="{required:true}" data-messages="{required:'截止日期不能为空'}" class="input-small calendar" type="text">
+                            </div>
+                        </div>
+                        <div class="form-actions span5">
+                            <button id="btnSearch" type="submit" class="button button-primary">搜索</button>
+                        </div>
+                    </div>
+                </form>
+
+
+
+                <table cellspacing="0" class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="15">选择</th>
+                        <th>企业名称</th>
+                        <th>用户名</th>
+                        <th>手机号码</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($enterpriseQueryResult in $result.obj.data)
+                        <tr>
+                            <input type="hidden" id="contactsName-$enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsName"/>
+                            <input type="hidden" id="contactsEmail-$enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsEmail"/>
+                            <input type="hidden" id="contactsPhone-$enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsPhone"/>
+                            <input type="hidden" id="contactsTelPhone-$enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsTelPhone"/>
+                            <input type="hidden" id="contactsFix-$enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsFix"/>
+                            <input type="hidden" id="userId-$enterpriseQueryResult.id" value="$!enterpriseQueryResult.userId"/>
+
+                            <td><input type="checkbox" name="oneCheck" class="uuid" value="$enterpriseQueryResult.id"></td>
+                            <td>$!enterpriseQueryResult.companyName</td>
+                            <td>$!enterpriseQueryResult.user.userName</td>
+                            <td>$!enterpriseQueryResult.user.cellPhone</td>
+
+##                            <td>$dateUtil.formatDate($!enterpriseQueryResult.auditDate,"yyyy-MM-dd")</td>
+
+                            <td>
+                                #if($!enterpriseQueryResult.status == 1)
+                                    审核中
+                                #elseif($!enterpriseQueryResult.status == 2)
+                                    已审核
+                                #elseif ($!enterpriseQueryResult.status == 0)
+                                    待提交
+                                #end
+                            </td>
+
+                            <td nowrap>
+                                #if($!enterpriseQueryResult.status == 1)
+                                    <a class="button button-primary" href="#" title="待审核" onClick="javascript:auditing_enterprise('$enterpriseQueryResult.id','$enterpriseQueryResult.status');" tab="$enterpriseQueryResult.id">审核通过</a>
+                                #elseif($!enterpriseQueryResult.status == 0)
+                                    <a class="button button-primary" href="#" title="待提交" tab="$enterpriseQueryResult.id"></a>
+                                #elseif($!enterpriseQueryResult.status == 2)
+                                    <a class="button button-primary" href="#" title="审核通过" tab="$enterpriseQueryResult.id"></a>
+                                #end
+                            </td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>
+                #parse("include/page_normal.vm")
+            </div>
+        </div>
+    </div>
+    <div id="maskLayer" style="display: none;"></div>
+</div>
+<script type="text/javascript" language="JavaScript">
+        $LAB
+    .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+            .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+            .script("$!{request.getContextPath()}/assets/js/config-min.js")
+            .wait(function(){
+
+            });
+
+    BUI.use('bui/calendar',function(Calendar){
+        var datepicker = new Calendar.DatePicker({
+            trigger:'.calendar',
+            autoRender : true
+        });
+    });
+
+</script>
+<script type="text/javascript" language="JavaScript">
+
+//    var pathContacts = $("#path").val()+"/enterprise/updateContacts.do",
+//            pathBank = $("#path").val()+"/enterprise/updateBank.do";
+//    var aArr = new Array();
+//    var uid = "";
+
+//    function act(data){
+//        $("#status").val(data);
+//        $("#pageForm").submit();
+//    }
+
+    //审核通过企业
+    function auditing_enterprise(data,status){
+
+        $.ajax({
+            url: "$request.getContextPath()/enterprise/audit4Third.do?id=" + data + "&status=" + status,
+            type:"GET",
+            dataType:"json",
+            success:function(data){
+                if(data.code=="000000"){
+                    BUI.Message.Alert('审核成功！','success');
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
+                }else {
+                    BUI.Message.Alert('审核失败！','error');
+                }
+            },
+            error:function(){
+                BUI.Message.Alert('审核失败！','error');
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript" language="JavaScript">
+
+	$(function(){
+		var nullFlag = $('#nullFlag').val();
+		if(nullFlag==1){
+			$('#pageSize').removeAttr('value');
+			$('#currentPage').removeAttr('value');
+			$('#pageSize').val("10");
+			$('#currentPage').val("1");
+		}
+	})
+</script>
+</body>
+</html>

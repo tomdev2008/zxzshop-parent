@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>账户信息</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <div class="box-title">
+                <h2>查看采购单</h2>
+                <a class="back" href="Purchase.html">返回采购管理</a>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-title">
+                <h3>采购信息</h3>
+                <ul>
+                </ul>
+            </div>
+            <div class="info">
+                <ul>
+                </ul>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-title">
+                <h3>货品清单</h3>
+                <p>材料种类：<strong id="Kinds"></strong> 种</p>
+            </div>
+            <table class="table" id="SheetProducts">
+                <thead>
+                    <tr>
+                        <th>材料名称</th>
+                        <th>材料品牌</th>
+                        <th>规格</th>
+                        <th>型号</th>
+                        <th>数量</th>
+                        <th>单位</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/buyer/buyer_base.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/buyer/buyer-purchase-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>管理</title>
+        <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+        <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+      <link href="$request.getContextPath()/assets/css/jquery.switch.css" rel="stylesheet">
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery.switch.js"></script>
+    </head>
+    <body>
+		#parse("include/page_detect.vm")
+      <div class="demo-content">
+		  <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/protocol/main_pp.do" class="form-horizontal well" id="pageForm">
+				<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+				<input type="hidden" name="pageNo" id="pageNo" value="$!page.pageNo"/>
+                <div class="row">
+                 <div class="control-group span24">
+                    <label class="control-label">协议编号：</label>
+                    <div class="controls">
+                      <input type="text" placeholder="协议编号" name="protocolno" value="$!{qryForm.protocolno}" class="control-text">
+                    </div>
+                    <label class="control-label">项目名称：</label>
+                    <div class="controls">
+                      <input type="text" placeholder="项目名称"  name="projectName" value="$!{qryForm.projectName}" class="control-text">
+                    </div>
+                  </div>
+                   
+                   <div class="control-group span24">
+                    <label class="control-label">开始日期：</label>
+                    <div class="controls">
+                    	<input name="timeStart" type="text" style="width:150px" class="calendar" placeholder="开始日期" value="$!{qryForm.timeStart}" />
+                    	～
+                    	<input name="timeEnd" type="text" style="width:150px" class="calendar" placeholder="截止日期" value="$!{qryForm.timeEnd}" />
+                    	
+                    	&nbsp;
+                    	<a  class="button" id="search">搜索</a>
+                    </div>
+                  </div>
+                  
+                   <div class="control-group span24">
+                    <label class="control-label"> 协议状态：</label>
+                    <div class="controls">
+                    	<a id="btnFull" class="button">全部</a>
+                    	<a id="btnBuy" class="button button-primary">买家已签约($!statistic.status1)</a>
+                    	<a id="btnToAudit" class="button button-info">平台待审核($!statistic.status2)</a>
+                    	<a id="btnPValid" class="button button-success">协议生效($!statistic.status3)</a>
+                    	<a id="btnPExpired" class="button button-warning">协议失效($!statistic.status4)</a>
+                    </div>
+                    <input type="hidden" name="statusMode" id="statusMode" value="$!{qryForm.statusMode}">
+                  </div>
+                  
+                </div>
+              </form>
+			
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr>
+                  ##<th>ID</th>
+                  <th>协议编号</th>
+                  <th>协议名称</th>
+                  <th>项目名称</th>
+                  <th>买家签约时间</th>
+                  <th>卖家签约时间</th>
+                  <th>平台签约时间</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+				#foreach($entity in $page.getDataList())
+                    <tr>
+                      ##<td>$!entity.id</td>
+                      <td>$!entity.protocolno</td>
+                      <td><a href="${request.getContextPath()}/Ssq/viewContractDirect.do?protocolNo=$!{entity.protocolno}&orderNo=$!{entity.orderno}">$!entity.protocolname</a></td>
+                      <td>$!entity.projectName</td>
+                      <td>$!entity.buyertime</td>
+                      <td>$!entity.supplyertime</td>
+                      <td>$!entity.finishtime</td>
+                      <td>
+                    	
+                         ## 0买家待签约 1-采购方已签 2-供应已签 3-系统已审核
+                      	  #if($!entity.status == 0)
+						     <span class="label label-success">买家待签约</span>
+						  #elseif($!entity.status == 1)
+						     <span class="label label-success">买家已签约</span>
+						  #elseif($!entity.status == 2)
+						     <span class="label label-success">平台待审核</span>
+						  #elseif($!entity.status == 3)
+						     <span class="label label-success">协议生效</span>
+						  #elseif($!entity.status == 4)
+						     <span class="label label-success">协议失效</span>   
+						  #end
+                      </td>
+                      <td nowrap>
+                          #auth($request.getSession().getAttribute("session.user").getId(),"协议管理.查看关联订单")
+                                <a class="button button-primary" href="#" title="查看关联订单" onClick="javascript:view_entity('$!entity.orderno');" tab="$entity.id">查看关联订单</a>
+						 #end
+                          &nbsp;&nbsp;
+                          #auth($request.getSession().getAttribute("session.user").getId(),"协议管理.下载")
+					            <a class="button button-primary" href="#" title="下载" onclick="javascript:download_entity('$!entity.protocolno', '$!entity.orderno');">下载</a>
+					      #end
+                      </td>
+                    </tr>
+				#end
+              </tbody>
+            </table>
+            #parse("include/page.vm")
+          </div>
+        </div> 
+    <!-- script end -->
+      </div>
+    </body>
+		
+	<script type="text/javascript">
+     BUI.use('bui/calendar',function(Calendar){
+      var datepicker = new Calendar.DatePicker({
+        trigger:'.calendar',
+        autoRender : true
+      });
+     });  
+     
+	 //查看关联订单
+	 function view_entity(orderno){
+	 	self.location.href = "${request.getContextPath()}/orderInfo/getOrderDetail.do?orderNo="+orderno;
+	 }
+	 
+	 //下载
+	 function download_entity(protocolno, orderno) {
+	   if((protocolno && protocolno!="") || (orderno && orderno!="")){
+	    	self.location.href = "${request.getContextPath()}/Ssq/downloadContractDirect.do?protocolNo="+protocolno+"&orderNo="+orderno;
+	   }else{
+	   		BUI.Message.Alert('协议编号无效','error');
+	   }
+     }
+
+     $(function(){
+        $('#search').click(function(){
+           $("#pageNo").val(1);
+	       $('#pageForm').submit();
+	    });
+      	$('#btnFull').click(function(){
+      	 	$("#pageNo").val(1);
+	        $('#statusMode').val("Full");
+	        $('#pageForm').submit();
+	    });
+	    $('#btnBuy').click(function(){
+      	 	$("#pageNo").val(1);
+	        $('#statusMode').val("Buy");
+	        $('#pageForm').submit();
+	    });
+	    $('#btnToAudit').click(function(){
+      	 	$("#pageNo").val(1);
+	        $('#statusMode').val("ToAudit");
+	        $('#pageForm').submit();
+	    });
+	    $('#btnPValid').click(function(){
+      	 	$("#pageNo").val(1);
+	        $('#statusMode').val("PValid");
+	        $('#pageForm').submit();
+	    });
+	    $('#btnPExpired').click(function(){
+      	 	$("#pageNo").val(1);
+	        $('#statusMode').val("PExpired");
+	        $('#pageForm').submit();
+	    });
+      });   
+         
+    </script>
+	
+    </html>       

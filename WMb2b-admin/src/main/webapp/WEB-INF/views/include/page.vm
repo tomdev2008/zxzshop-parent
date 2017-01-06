@@ -1,0 +1,116 @@
+##------------------------------------------------------------------------
+##  分页工具											
+##
+##  Author: 衣奎德
+##  Created: 2016-11-11
+##------------------------------------------------------------------------
+#parse("include/page_detect.vm")
+ 
+#if($page)
+	 <div>
+          <div class="pagination pull-right">
+            <ul>
+
+			## 上一页
+				#if($page.getPageNo()!=1 && $page.getPageNo()!= 0)
+                    <li><a href="#" onClick="javascript:pageNav(1);">首页</a></li>
+                    <li><a href="#" onClick="javascript:pageNav($page.getPageNo()-1);">上一页</a></li>
+				#else
+					#if($page.getPageNo()==1 || $page.getPageNo()==0)
+                        <li class="disabled"><a href="#">首页</a></li>
+                        <li class="disabled"><a href="#">上一页</a></li>
+					#else
+                        <li ><a href="#">首页</a></li>
+                        <li ><a href="#">上一页</a></li>
+					#end
+				#end
+			##  1～9 页
+				#if($page.getTotalPage() > 9)
+				## 如果大于9页显示当前页开始的最多9个页面
+                    #set( $_pageFrom = $page.getPageNo())
+
+                    #set( $_pageLast = $page.getPageNo() + 9 )
+
+                    #if($_pageLast > $page.getTotalPage() )
+                        #set( $_pageLast = $page.getTotalPage())
+                    #end
+
+                    #if (($_pageLast -  $_pageFrom) < 9)
+                        #set( $_pageFrom = $_pageLast - 9)
+                    #end
+
+                    #if ($_pageFrom < 1)
+                        #set( $_pageFrom = 1)
+                    #end
+
+					#if($_pageLast > $page.getTotalPage() )
+						#set( $_pageLast = $page.getTotalPage())
+					#end
+
+					#foreach($_pageTo in [$page.getPageNo()..$_pageLast ])
+                        <li><a href="#" onClick="javascript:pageNav($_pageTo);"> #if($page.getPageNo() == $_pageTo) <b>$_pageTo</b> #else $_pageTo #end </a></li>
+					#end
+				#else
+				## 如果小于9页显示全部页
+                    #if($page.getTotalPage() > 0)
+                        #foreach($_pageTo in [1..$page.getTotalPage()])
+                            <li><a href="#" onClick="javascript:pageNav($_pageTo);"> #if($page.getPageNo() == $_pageTo) <b>$_pageTo</b> #else $_pageTo #end </a></li>
+                        #end
+                    #end
+				#end
+			## 下一页
+				#if($page.getPageNo() != $page.getTotalPage() && $page.getTotalPage()!=1)
+                    <li><a href="#" onClick="javascript:pageNav(#if($page.getPageNo()==0) 2 #else $page.getPageNo()+1 #end);">下一页</a></li>
+                    <li><a href="#" onClick="javascript:pageNav($page.getTotalPage());">尾页</a></li>
+				#else
+					#if($page.getPageNo() == $page.getTotalPage())
+                        <li  class="disabled"><a href="#">下一页</a></li>
+                        <li  class="disabled"><a href="#">尾页</a></li>
+					#else
+                        <li ><a href="#">下一页</a></li>
+                        <li ><a href="#">尾页</a></li>
+					#end
+				#end
+			## N 条/页
+			##				<select id="_pageSize" name="_pageSize" style="width:80px;height:35px">
+			##					<option value="10">10条/页</option>
+			##                    <option value="20">20条/页</option>
+			##                    <option value="30">30条/页</option>
+			##                    <option value="40">40条/页</option>
+			##                    <option value="50">50条/页</option>
+			##				</select>
+			## 跳到第几页
+			## <li class="active"><a href="#">当前第($page.getPageNo())页共($page.getTotalPage())页</a></li>
+                跳至<input type="text" id="_pageNo" name="_pageNo" size="2" value="$!{page.getPageNo()}" style="width:30px;">页,共 $page.getTotalPage() 页
+			## 确定
+                <button type="button" class="button button-info" onclick="pageNavByInput();return false;">确定</button>
+
+
+
+            </ul>
+          </div>
+    </div>
+	
+    <script type="text/javascript" language="JavaScript">
+        function pageNavByInput(){
+            _pageNo = $("#_pageNo").val();
+            pageNav(_pageNo);
+            return false;
+        }
+        function pageNav(_pageNo){
+            if(!_pageNo || _pageNo<=0 || _pageNo ==""){
+                _pageNo = 1;
+            }
+            _totalPage = $page.getTotalPage();
+            if(_totalPage && _pageNo > _totalPage && _totalPage > 0){
+                _pageNo = _totalPage;
+            }
+    	   $("#pageNo").val(_pageNo);
+    	   $("#pageForm").submit();
+    	}
+    </script>
+  #else
+  	 <div>
+          <div  style="text-align:center">无数据</div></div>
+  #end
+    

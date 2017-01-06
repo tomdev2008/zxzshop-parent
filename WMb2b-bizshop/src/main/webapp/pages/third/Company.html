@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>企业展示</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+	<link href="../../assets/css/admin/third-company.css" rel="stylesheet">
+    <link href="../../assets/css/admin/third-upload.css" rel="stylesheet">
+    <script type="text/javascript" src="../../assets/js/LAB.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+    		<div class="company_title">
+    			企业展示
+    		</div>
+    		<form method="POST" role="form" class="form-horizontal" name="trdEntForm" id="trdEntForm">
+    		<ul class="field_list">
+                <li>
+                 	<label>
+                 		<span class="field_name">LOGO上传：</span>
+	                	<span class="avator imgblock" id="logoShowContainer_logo">
+	                		<img id="logoShow" class="logoShow" src="" width="200px" height="200px">
+                        	 <a id="logoShowContainer_logo_del" class="remove" title="删除" style="display:none;"></a>
+							<input class="field_value" type="file" id="logoUpload" name="_file_logo" style="display:none">
+	                   		 <input type="hidden" id="logo" name="logo" value="">
+	                	</span>
+						<span>LOGO上传尺寸：400*400px，图片大小不超过2M</span>
+                	</label>
+                </li>
+
+
+                <li>
+                    <label><span class="field_name"><span class="highlight ">*</span>公司名称：</span><input class="field_value" type="text" placeholder="请输入公司名称" id="companyName" name="companyName"></label>
+                </li>
+                <li>
+                    <label><span  class="field_name">一句话描述：</span><input  class="field_value" type="text" placeholder="例：专业施工，强大的施工团队，值得信赖" id="description" name="description" maxlength="25"><span class="ml-10">0-25字内</span></label>
+                </li>
+    			<li>
+                    <label><span  class="field_name"><span class="highlight ">*</span>企业联系人：</span><input  class="field_value" type="text" placeholder="请输入企业常用联系人名称" id="contactName" name="contactName"></label>
+                </li>
+    			<li>
+                    <label><span  class="field_name"><span class="highlight ">*</span>联系电话：</span><input  class="field_value" type="text" placeholder="请输入企业常用联系人手机号" id="contactsPhone" name="contactsPhone"></label>
+                </li>
+    			<li>
+                    <label><span  class="field_name"><span class="highlight ">*</span>公司标签：</span>
+    					<span class="labels" id="companyTags">
+    						<button code=100002 class="active">施工<i></i></button>
+    						<button code="100003">安装<i></i></button>
+    						<button code="100004">物流<i></i></button>
+    						<button code="100001">设计<i></i></button>
+    						<button code="100005">国际贸易<i></i></button>
+    					</span>
+    					<input type="hidden" id="dictCode" name="dictCode" value="">
+    				</label>
+    				<label class="company-type">
+    					请选择符合公司业务范围的标签
+    				</label>
+                </li>
+    			<li>
+                    <label><span  class="field_name"><span class="highlight ">*</span>服务范围：</span>
+    					<select id="provinceDiv" name="provinceId" class="min_select">
+	                        <option value="0">请选择</option>
+	                    </select>
+	                    <select id="cityDiv" name="cityId" class="min_select">
+	                        <option value="0">请选择</option>
+	                    </select>
+	                    <select id="countyDiv" name="areaId" class="min_select">
+	                        <option value="0">请选择</option>
+	                    </select>
+	                    <span id="areaNote" class="error-msg" style="display:none">请您选择完整的地区信息</span>
+    				</label>
+                </li>
+    			<li>
+                    <label><span  class="field_name">企业介绍：</span>
+    					<textarea name="remark" id="remark" cols="30" rows="10" placeholder="请输入企业介绍内容" maxlength="5000"></textarea>
+    				</label>
+                </li>
+                <li>
+                    <span class="field_name">&nbsp;&nbsp;</span>
+                    <input type="hidden" id="id" name="id" value="">
+                    <input type="hidden" id="isDefault" name="isDefault" value="">
+                    <button class="submit">提交</button>
+                </li>
+            </ul>
+            </form>
+
+        </div>
+    </div>
+   <script type="text/javascript">
+   $LAB
+   .script("../../assets/js/jquery-1.12.0.min.js").wait()
+   .script("../../assets/js/admin/bootstrap.min.js")
+   .script("../../assets/js/jquery.cookie.js")
+   .script("../../assets/js/jquery.form.js")
+   .script("../../assets/js/admin/jquery.artDialog.js")
+   .script("../../assets/js/admin/artDialog.iframeTools.js")
+   .script("../../assets/js/admin/jquery.linkage.nocreate.js")
+   .script("../../assets/js/admin/CommonJS.js")
+   .script("../../assets/js/admin/custom.js")
+   .script("../../assets/js/admin/Region.js")
+   .script("../../assets/js/admin/inner-custom.js")
+   .script("../../assets/js/wm-common.js")
+   .script("../../assets/js/third/third-common.js")
+   .script("../../assets/js/third/third-company.js")
+	.wait(function(){
+		 try{ 
+			thirdCompanyId = $.getUrlParamVal('thirdCompanyId');
+    		WM.third.company.initUI();
+	    	if(thirdCompanyId && thirdCompanyId!=""){
+	    		$("#id").val(thirdCompanyId);
+	    		WM.third.company.loadMyTrdEntInfo(thirdCompanyId);
+	    	}else{
+	    		WM.third.company.loadMyDefaultTrdEntInfo();
+	    	}
+		}catch(ex){
+			if(console){
+				console.log(ex.stack);
+			}
+		} 
+	   });
+   </script>
+</body>
+</html>

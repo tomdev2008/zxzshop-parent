@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="purchaseprotocol">
+	<!-- 协议条件查询 -->
+		<select id="purchaseprotocol.querylist" parameterType="com.wangmeng.service.bean.Querycontract" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+		    select    a.Id,
+		    		  a.PurchaseNo,
+		    		  a.SignId,
+		    		  a.DocId,
+		    		  (select c.id from wm_orderinfo_t c where c.OrderNo= a.OrderNo limit 1)orderId,
+		    		  a.ProtocolNo,
+			          case a.Status
+			          when 0 then '买家待签约  '
+			          when 1 then '采购方已签 '
+			          when 2 then '供应已签'
+			          when 3 then '系统已审核'
+			          end as status_str
+			          ,
+			          a.Status,
+			          DATE(a.BuyerTime) BuyerTime,
+			          DATE(a.SupplyerTime) SupplyerTime,
+			          a.OrderNo,
+			          a.PurchaseNo,
+			          b.name   projname  
+				from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+				<where>
+					a.PurchaseNo =b.PurchaseNo
+					<if test="querykey!='' and querykey!=null">
+					   	and b.name like '%${querykey}%'
+					</if>
+					<if test="userId!=null and userId!=''">
+						and BuyUser = #{userId}
+					</if>
+					order by BuyerTime desc 
+					<if test="begin!=null and end!=null">
+						<!--  分页 -->
+			    		limit #{begin},#{end}
+					</if>
+					
+				</where>
+		</select>
+		<select id="purchaseprotocol.querylistnum" parameterType="com.wangmeng.service.bean.Querycontract" resultType="java.lang.Integer">
+		  select count(1) numb
+		  	from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+				<where>
+					a.PurchaseNo =b.PurchaseNo
+					<if test="querykey!='' and querykey!=null">
+					   	and b.name like '%${querykey}%'
+					</if>
+					<if test="userId!=null and userId!=''">
+						and BuyUser = #{userId}
+					</if>
+				</where>	
+		</select>
+
+<select id="purchaseprotocol.querylistseller" parameterType="com.wangmeng.service.bean.Querycontract" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+		    select    a.Id,
+		    		  a.PurchaseNo,
+		    		  a.SignId,
+		    		  a.DocId,
+		    		  a.ProtocolNo,
+			          case a.Status
+			          when 0 then '买家待签约  '
+			          when 1 then '采购方已签 '
+			          when 2 then '供应已签'
+			          when 3 then '系统已审核'
+			          end as status_str
+			          ,
+			          a.Status,
+			          DATE(a.BuyerTime) BuyerTime,
+			          DATE(a.SupplyerTime) SupplyerTime,
+			          a.OrderNo,
+			          a.PurchaseNo,
+			          b.name   projname  
+				from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+				<where>
+					a.PurchaseNo =b.PurchaseNo
+					<if test="querykey!='' and querykey!=null">
+					   	and b.name like '%${querykey}%'
+					</if>
+					<if test="userId!=null and userId!=''">
+						and SupplyUser = #{userId}
+					</if>
+					order by SupplyerTime  desc
+					<if test="begin!=null and end!=null">
+						<!--  分页 -->
+			    		limit #{begin},#{end}
+					</if>
+					
+				</where>
+		</select>
+		<select id="purchaseprotocol.querylistsellernum" parameterType="com.wangmeng.service.bean.Querycontract" resultType="java.lang.Integer">
+		  select count(1) numb
+		  	from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+				<where>
+					a.PurchaseNo =b.PurchaseNo
+					<if test="querykey!='' and querykey!=null">
+					   	and b.name like '%${querykey}%'
+					</if>
+					<if test="userId!=null and userId!=''">
+						and SupplyUser = #{userId}
+					</if>
+				</where>	
+		</select>
+
+
+	<insert id="purchaseprotocol.insert" parameterType="com.wangmeng.service.bean.Purchaseprotocol">
+		insert into wm_purchaseprotocol_t(
+		PurchaseNo,
+		OrderNo,
+		ProtocolNo,
+		ProtocolName,
+		BuyCompany,
+		BuyUser,
+		BuySigner,
+		SupplyCompany,
+		SupplyUser,
+		SupplySigner,
+		Invoice,
+		ExpressWay,
+		ShipTo,
+		ReceiverMobile,
+		ReceiveAddr,
+		Status,
+		Additional
+		)values(
+		#{purchaseNo},
+		#{orderNo},
+		#{protocolNo},
+		#{protocolName},
+		#{buyCompany},
+		#{buyUser},
+		#{buySigner},
+		#{supplyCompany},
+		#{supplyUser},
+		#{supplySigner},
+		#{invoice},
+		#{expressWay},
+		#{shipTo},
+		#{receiverMobile},
+		#{receiveAddr},
+		0,
+		#{additional}
+		)
+	</insert>
+
+	<update id="purchaseprotocol.update" parameterType="com.wangmeng.service.bean.Purchaseprotocol">
+		update wm_purchaseprotocol_t 
+			<set>
+				<if test="buySigner!=null and buySigner!='' ">
+					BuySigner=#{buySigner},
+				</if>
+				<if test="supplySigner!=null and supplySigner!=''">
+					SupplySigner=#{supplySigner},
+				</if>
+				<if test="protocolNo!=null and protocolNo!=''">
+					ProtocolNo = #{protocolNo},
+				</if>
+				<if test="docId!=null and docId!=''">
+					DocId = #{docId},
+				</if>
+				<if test="buyerTime!=null and buyerTime!=''">
+					buyerTime = now(),
+				</if>
+				<if test="supplyerTime!=null and supplyerTime!=''">
+					supplyerTime=now(),
+				</if>
+				<if test="status!=null and status!=''">
+					Status=#{status}, 
+				</if>
+				<if test="signId!=null and signId!=''">
+					SignId=#{signId} 
+				</if>
+			</set> 
+		where Id =#{id}
+	</update>
+
+	<select id="purchaseprotocol.querybyId" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+	   select 
+	   		Id,
+			PurchaseNo,
+			OrderNo,
+			SignId,
+			DocId,
+			ProtocolNo,
+			ProtocolName,
+			BuyCompany,
+			BuyUser,
+			BuySigner,
+			SupplyCompany,
+			SupplyUser,
+			SupplySigner,
+			Invoice,
+			ExpressWay,
+			ShipTo,
+			ReceiverMobile,
+			ReceiveAddr,
+			Status,
+			ProtocolModel,
+			ProtocolFile,
+			ProtocolPict,
+			Additional,
+			BuyerTime 
+		from wm_purchaseprotocol_t where Id =#{id} limit 1
+	</select>
+	      
+	<select id="purchaseprotocol.queryExtraInfoByProtocolId" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo">
+	   SELECT * FROM wm_purchaseprotocol_t a 
+                LEFT JOIN wm_protocolextra_t b 
+                ON b.ProtocolCode=a.ProtocolNo
+       WHERE    a.Id =#{protocolId} limit 1
+	</select>  
+	<!-- 根据订单号查询采购协议详情 -->
+	<select id="purchaseprotocol.queryExtraInfoByOrderNo" parameterType="java.lang.String" 
+		resultType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo">
+	   SELECT * 
+	   FROM wm_purchaseprotocol_t a 
+            LEFT JOIN wm_protocolextra_t b 
+            ON a.ProtocolNo = b.ProtocolCode
+       WHERE a.OrderNo = #{orderNo} 
+       limit 1
+	</select>  
+	
+	<select id="purchaseprotocol.querybyorderId" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+		select  Id,
+			PurchaseNo,
+			OrderNo,
+			SignId,
+			DocId,
+			ProtocolNo,
+			ProtocolName,
+			BuyCompany,
+			BuyUser,
+			BuySigner,
+			SupplyCompany,
+			SupplyUser,
+			SupplySigner,
+			Invoice,
+			ExpressWay,
+			ShipTo,
+			ReceiverMobile,
+			ReceiveAddr,
+			Status,
+			ProtocolModel,
+			ProtocolFile,
+			ProtocolPict,
+			Additional,
+			BuyerTime 
+		from wm_purchaseprotocol_t where OrderNo =#{orderNo} limit 1
+
+	</select>
+	<select id="purchaseprotocol.querybyProtocolNo" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+		select  Id,
+			PurchaseNo,
+			OrderNo,
+			SignId,
+			DocId,
+			ProtocolNo,
+			ProtocolName,
+			BuyCompany,
+			BuyUser,
+			BuySigner,
+			SupplyCompany,
+			SupplyUser,
+			SupplySigner,
+			Invoice,
+			ExpressWay,
+			ShipTo,
+			ReceiverMobile,
+			ReceiveAddr,
+			Status,
+			ProtocolModel,
+			ProtocolFile,
+			ProtocolPict,
+			Additional,
+			BuyerTime 
+		from wm_purchaseprotocol_t where ProtocolNo =#{protocolNo} limit 1
+
+	</select>
+
+	<!-- 添加辅助信息 -->
+	<insert id="purchaseprotocol.addExtraInfo" parameterType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo">
+		insert into wm_protocolextra_t
+		(ProtocolCode,ShipTo1,IdNo1,ContanctPhone1,ShipTo2,IdNo2,ContanctPhone2,
+		OpenBank,BankCardNo,BankUserName,RecognizeCode,CompanyPhone,CompanyAddr,TicketName)
+		values(#{protocolNo},#{shipTo1},#{idNo1},#{contanctPhone1},#{shipTo2},
+		#{idNo2},#{contanctPhone2},#{openBank},#{bankCardNo},#{bankUserName},
+		#{recognizeCode},#{companyPhone},#{companyAddr},#{ticketName})
+	</insert>
+	
+	<!-- 修改辅助信息 -->
+	<update id="purchaseprotocol.updateExtraInfo" parameterType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo">
+		update wm_protocolextra_t
+		<set>
+			<if test="shipTo1 != null and shipTo1 != ''">
+			ShipTo1 = #{shipTo1},
+			</if>
+			<if test="idNo1 != null and idNo1 != ''">
+			IdNo1 = #{idNo1},
+			</if>
+			<if test="contanctPhone1 != null and contanctPhone1 != ''">
+			ContanctPhone1 = #{contanctPhone1},
+			</if>
+			<if test="shipTo2 != null and shipTo2 != ''">
+			ShipTo2 = #{shipTo2},
+			</if>
+			<if test="idNo2 != null and idNo2 != ''">
+			IdNo2 = #{idNo2},
+			</if>
+			<if test="contanctPhone2 != null and contanctPhone2 != ''">
+			ContanctPhone2 = #{contanctPhone2},
+			</if>
+			<if test="openBank != null and openBank != ''">
+			OpenBank = #{openBank},
+			</if>
+			<if test="bankCardNo != null and bankCardNo != ''">
+			BankCardNo = #{bankCardNo},
+			</if>
+			<if test="bankUserName != null and bankUserName != ''">
+			BankUserName = #{bankUserName},
+			</if>
+			<if test="recognizeCode != null and recognizeCode != ''">
+				RecognizeCode = #{recognizeCode},
+			</if>
+			<if test="companyPhone != null and companyPhone != ''">
+				CompanyPhone = #{companyPhone},
+			</if>
+			<if test="companyAddr != null and companyAddr != ''">
+				CompanyAddr = #{companyAddr},
+			</if>
+			<if test="ticketName != null and ticketName != ''">
+				TicketName = #{ticketName},
+			</if>
+			ProtocolCode = #{protocolNo}
+		</set>
+		<where>
+		ProtocolCode = #{protocolNo}
+		</where>
+	</update>
+	
+	<!-- 获取协议辅加 -->
+	<select id="purchaseprotocol.getExtraInfo" 
+		parameterType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo" 
+		resultType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo">
+		select * 
+		from wm_protocolextra_t
+		where 1=1
+		<if test="protocolCode != null and protocolCode != ''">
+		and ProtocolCode = #{protocolCode}
+		</if>
+		<if test="id != 0">
+		and Id = #{id}
+		</if>
+	</select>
+	
+	<!-- 查询需要确认的上上签合同 -->
+	<select id="purchaseprotocol.queryContractCodesNeedSigned" parameterType="map" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+	<![CDATA[
+	    select    a.Id,
+	    		  a.PurchaseNo,
+	    		  a.SignId,
+	    		  a.DocId,
+	    		  a.ProtocolNo,
+		          case a.Status
+		          when 0 then '买家待签约  '
+		          when 1 then '采购方已签 '
+		          when 2 then '供应已签'
+		          when 3 then '系统已审核'
+		          end as status_str
+		          ,
+		          a.Status,
+		          DATE(a.BuyerTime) BuyerTime,
+		          DATE(a.SupplyerTime) SupplyerTime,
+		          a.OrderNo,
+		          a.PurchaseNo,
+		          b.name   projname  
+			from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+			 where  a.PurchaseNo =b.PurchaseNo
+				and a.Status in (0, 1, 2) order by BuyerTime desc
+				 limit 300	
+	]]>
+	</select>
+	
+	<!-- 查询需要确认的上上签合同 -->
+	<select id="purchaseprotocol.queryContractCodesNeedSignedRealTime" parameterType="map" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+	<![CDATA[
+		    select    a.Id,
+	    		  a.PurchaseNo,
+	    		  a.SignId,
+	    		  a.DocId,
+	    		  a.ProtocolNo,
+		          case a.Status
+		          when 0 then '买家待签约  '
+		          when 1 then '采购方已签 '
+		          when 2 then '供应已签'
+		          when 3 then '系统已审核'
+		          end as status_str
+		          ,
+		          a.Status,
+		          DATE(a.BuyerTime) BuyerTime,
+		          DATE(a.SupplyerTime) SupplyerTime,
+		          a.OrderNo,
+		          a.PurchaseNo,
+		          b.name   projname  
+			from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+			 where  a.PurchaseNo =b.PurchaseNo
+				and a.Status in (0, 1, 2) 
+				and TIME_TO_SEC(TIMEDIFF(now(),a.BuyerTime)) < 180
+				order by BuyerTime desc
+				 limit 300
+	]]>
+	</select>
+	
+	<!-- 查询需要确认的上上签合同 -->
+	<select id="purchaseprotocol.queryContractCodesNeedSigned15Min" parameterType="map" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+	<![CDATA[
+		    select    a.Id,
+	    		  a.PurchaseNo,
+	    		  a.SignId,
+	    		  a.DocId,
+	    		  a.ProtocolNo,
+		          case a.Status
+		          when 0 then '买家待签约  '
+		          when 1 then '采购方已签 '
+		          when 2 then '供应已签'
+		          when 3 then '系统已审核'
+		          end as status_str
+		          ,
+		          a.Status,
+		          DATE(a.BuyerTime) BuyerTime,
+		          DATE(a.SupplyerTime) SupplyerTime,
+		          a.OrderNo,
+		          a.PurchaseNo,
+		          b.name   projname  
+			from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+			 where  a.PurchaseNo =b.PurchaseNo
+				and a.Status in (0, 1, 2) 
+				and TIME_TO_SEC(TIMEDIFF(now(),a.BuyerTime)) < 900
+				order by BuyerTime desc
+				 limit 300
+	]]>
+	</select>
+	
+	<!-- 查询需要确认的上上签合同 -->
+	<select id="purchaseprotocol.queryContractCodesNeedSignedDay" parameterType="map" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+		<![CDATA[
+			    select    a.Id,
+		    		  a.PurchaseNo,
+		    		  a.SignId,
+		    		  a.DocId,
+		    		  a.ProtocolNo,
+			          case a.Status
+			          when 0 then '买家待签约  '
+			          when 1 then '采购方已签 '
+			          when 2 then '供应已签'
+			          when 3 then '系统已审核'
+			          end as status_str
+			          ,
+			          a.Status,
+			          DATE(a.BuyerTime) BuyerTime,
+			          DATE(a.SupplyerTime) SupplyerTime,
+			          a.OrderNo,
+			          a.PurchaseNo,
+			          b.name   projname  
+				from wm_purchaseprotocol_t  a, wm_purchaseinfo_t b 
+				 where  a.PurchaseNo =b.PurchaseNo
+					and a.Status in (0, 1, 2) 
+					and TIME_TO_SEC(TIMEDIFF(now(),a.BuyerTime)) < 86400
+					order by BuyerTime desc
+					 limit 1000
+		]]>
+	</select>
+	
+	<!--  获取买家签名人 -->
+	<select id="purchaseprotocol.getProtocolSignatory4Buyer" 
+		parameterType="map" 
+		resultType="com.wangmeng.service.bean.vo.ProtocolSignatory">
+		select 
+			CASE t1.Categery 
+			WHEN 1 THEN t1.CompanyName
+			WHEN 0 THEN t1.PersonName
+			END
+			 as name 
+			,
+			CASE t1.Categery 
+			WHEN 1 THEN t1.ContactsPhone 
+			WHEN 0 THEN t1.PersonPhone 
+			END
+			 as mobile 
+		from wm_enterpriseinfo_t t1 where t1.Id=(select BuyCompany from wm_purchaseprotocol_t where SignId= #{signid} limit 1)
+	</select>
+
+	<!-- 获取卖家签名人 -->
+	<select id="purchaseprotocol.getProtocolSignatory4Supply" 
+		parameterType="map" 
+		resultType="com.wangmeng.service.bean.vo.ProtocolSignatory">
+		select t1.CompanyName as name, t1.ContactsPhone as mobile from wm_enterpriseinfo_t t1 where t1.Id=(select SupplyCompany from wm_purchaseprotocol_t where SignId= #{signid} limit 1)
+	</select>
+	
+	<!-- 根据signid查询合同 -->
+	<select id="purchaseprotocol.querybyorderBySignId" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Purchaseprotocol">
+		select  Id,
+			PurchaseNo,
+			OrderNo,
+			SignId,
+			DocId,
+			ProtocolNo,
+			ProtocolName,
+			BuyCompany,
+			BuyUser,
+			BuySigner,
+			SupplyCompany,
+			SupplyUser,
+			SupplySigner,
+			Invoice,
+			ExpressWay,
+			ShipTo,
+			ReceiverMobile,
+			ReceiveAddr,
+			Status,
+			ProtocolModel,
+			ProtocolFile,
+			ProtocolPict,
+			Additional,
+			BuyerTime 
+		from wm_purchaseprotocol_t where SignId =#{signId} limit 1
+	</select>
+</mapper>

@@ -1,0 +1,66 @@
+  <div id="user_add_content">
+      <form id="U_Add_Form" class="form-horizontal" action="$request.getContextPath()/sys/power/add.do">
+        <input type="hidden" name="a" value="3">
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>名称</label>
+            <div class="controls">
+              <input name="powerName" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>链接</label>
+            <div class="controls">
+              <input name="redirectUrl" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+
+            <div class="control-group span8">
+                <label class="control-label"><s>*</s>资源类型</label>
+                <div class="controls">
+                    <select name="sourceType">
+                        <option value="0">功能菜单</option>
+                        <option value="1">页面按钮</option>
+                        <option value="2">数据资源</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+          <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>父级资源</label>
+            <div class="controls">
+				<select name="superid">
+                  <option value="$!{superidNotDefined}">请选择父级资源</option>
+				  #foreach($power in $listPower)
+				     <option value="$power.id">$power.powerName</option>
+				  #end
+                </select>
+            </div>
+          </div>
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>排序</label>
+            <div class="controls">
+              <input name="display" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+
+              <div class="control-group span8">
+                  <label class="control-label"><s>*</s>所属系统</label>
+                  <div class="controls">
+                      <input name="owner" type="text" value="wmb2b.admin" data-rules="{required:true}" class="input-normal control-text" />
+                  </div>
+              </div>
+
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>描述</label>
+            <div class="controls  control-row2"><textarea name="remark"></textarea></div>
+          </div>
+        </div>
+		  
+      </form>
+    </div> 

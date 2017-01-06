@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>买家中心</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/custom.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="top-bar">
+        <div class="warp cl">
+            <span class="top-link">
+                <span class="pc">PC版</span>您好，欢迎来到<a href="../index.html">东方建材网</a>！
+                <span>请拨打<span class="highlight">400-006-5216</span>或者点击<a href="Publish-Purchase.html" target="_blank">我要采购</a>进入</span>
+            </span> 
+            <ul class="quick_list">
+                <li>
+                    <a href="../index.html" title="首页">首页</a>
+                </li>
+                <li><s></s> 
+                    <a href="Account.html?Account" data-id="1650" class="user-name" id="UserInfoName"> </a>
+                    <a href="javascript:logout()">退出</a>
+                </li>
+                <li><s></s>消息<a href="#" class="red">(0)</a></li>
+                <li class="service dropdown">
+                    <s></s> <span class="outline"></span> <span class="blank"></span> <a href="javascript:void(0)">客户中心</a> <b></b>
+                    <div class="dropdown-menu">
+                        <ol>
+                            <li><a href="#">新手指南</a></li>
+                            <li><a href="#">买家帮助</a></li>
+                            <li><a href="#">卖家帮助</a></li>
+                            <li><a href="#">联系客服</a></li>
+                        </ol>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="navbar navbar-static-top navbar-custom">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="logo" href="index.html" title="买家服务中心">买家服务中心</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-left">
+                        <li class="dropdown active">
+                            <a class="dropdown-toggle" data-toggle="dropdown">首页</a>
+                            <ul class="dropdown-menu id_menu">
+                                <li class="current"><a href="Home.html" id="1001" target="iframe">买家中心</a></li>
+                                <li><a href="InquiryManagement.html" target="iframe">询价管理</a></li>
+                                <li class="hide"><a href="AddInquiry.html" target="iframe">发布询价</a></li>
+                                <li><a href="Purchase.html" target="iframe">采购管理</a></li>
+                                <li class="hide"><a href="Publish-Purchase.html" target="iframe">发布询价</a></li>
+                                <li><a href="Order.html" target="iframe">订单管理</a></li>
+                                <li><a href="Contract.html" target="iframe">采购协议</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">账户管理</a>
+                            <ul class="dropdown-menu id_menu">
+                                <li class="current"><a href="Account.html" target="iframe">账户信息</a></li>
+                                <li><a href="Contact.html" target="iframe">企业联系人信息</a></li>
+                                <li><a href="Address.html" target="iframe">收货地址管理</a></li>
+                                <li><a href="Invoice.html" target="iframe">开票信息管理</a></li>
+                                <li><a href="Password.html" target="iframe">修改密码</a></li>
+                            </ul>
+                        </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="aside">
+            <ul class="aside-list">
+            </ul>
+        </div>
+        <div class="content">
+            <iframe id="iframe" name="iframe" frameborder="0" scrolling="auto" src=""></iframe>
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+        <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+     <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/custom.js"></script>
+	<script src="../../assets/js/buyer/buyer_base.js"></script>
+    <script type="text/javascript">
+    /*$(function() {
+    	var user_id = $.cookie("wm_user_id");
+    	if(user_id == null || user_id == ''){
+    		return;
+    	}
+    	publicAjaxRequest("/userinfo/userinfo.do?Id=" + user_id,null,getUserInfo);
+    });
+    /!**
+     * 获取用户信息
+     *!/
+    function getUserInfo(data) {
+        var userinfo = $("#UserInfoName");
+    	if(data.code == '000000' && data.obj != null){
+    		if(data.obj.userType == 0){//是个游客
+	   			$.dialog({
+	   				width:500,
+	   				title:'请先选择用户角色',
+	   				ok:function(){
+	   					window.location.href = "/pages/selectIdentity.html";
+	   				},
+	   				cancel:function(){
+	   					window.location.href = "/pages/redirect-login.html";
+	   				},
+	   				okVal:'确定',
+	   				cancelVal:'退出',
+	   				content:'用户为游客，请选择身份角色，成为采购商，再进入买家中心',
+	   				lock:true
+	   			});
+	   			return;
+	   		}else if(data.obj.userType != 1){//不是个采购商
+   			 $.dialog({
+   		            width:500,
+   		            title:'用户角色异常',
+   		            ok:function(){
+   		            	window.location.href = "/pages/redirect-login.html";
+   		            },
+   		            cancel:function(){
+   		            	window.location.href = "/pages/redirect-login.html";
+   		            },
+   		            okVal:'确定',
+   		            cancelVal:'退出',
+   		            content:'用户为供应商，不能进入买家中心，请重新登录',
+   		            lock:true
+   		        });
+   			 return;
+	   		}
+	   		
+    		
+        	if(data.obj.userName != null){
+    			userinfo.text(data.obj.userName);
+        	}else {
+        		userinfo.text(data.obj.realName);
+    		}
+    	}else {
+    		userinfo.text("请先登录");
+    	}
+    }*/
+    </script>
+</body>
+</html>

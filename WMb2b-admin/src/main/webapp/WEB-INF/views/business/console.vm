@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+    <link href="$request.getContextPath()/Admin_HTML/assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="$request.getContextPath()/Admin_HTML/assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="$request.getContextPath()/Admin_HTML/assets/css/admin/inner-custom.css" rel="stylesheet">
+	<link href="$request.getContextPath()/Admin_HTML/assets/css/admin/admin-home.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+    <script src="$request.getContextPath()/Admin_HTML/assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="module-box admin">
+            <div class="admin_panel fl">
+                <div class="title">企业<span>(已入驻总数：$!{statistic.countEnterprise}家)</span></div>
+				<div class="links">
+					<a href="$request.getContextPath()/enterprise/queryByPagination.do?status=1&user.userType=2">企业资料待审核<span class="highlight">($!{statistic.countEnterpriseWait4Audit})</span></a>
+					<a href="$request.getContextPath()/enterprise/queryByPagination4CA.do?categery=1&certifStatus=1">CA待认证<span class="highlight">($!{statistic.countEnterpriseWait4CA})</span></a>
+					
+					<!-- <a href="$request.getContextPath()/enterprise/queryByPagination.do?beginTime=-1&user.userType=2">今日入驻企业<span class="highlight">($!{statistic.countEnterpriseWait4CA})</span></a>
+					<a href="$request.getContextPath()/enterprise/queryByPagination.do?beginTime=-1&user.userType=3">今日入驻配套服务商<span class="highlight">($!{statistic.countEnterpriseWait4CA})</span></a> -->
+				</div>
+            </div>
+            <div class="admin_panel fr">
+                <div class="title">商品<span>（已发布总数：$!{statistic.countProducts})</span></div>
+				<div class="links">
+					<a href="$request.getContextPath()/product/toProductList.do?status=1">商品待审核<span class="highlight">($!{statistic.countProductsWait4Audit})</span></a>
+					<a href="$request.getContextPath()/Brands/toBrandsapplyList.do?auditStatus=0">品牌待审核<span class="highlight">($!{statistic.countBrandsWait4Audit})</span></a>
+				</div>
+            </div>
+        </div>
+        <div class="module-box">
+            <div class="steps">
+            	<h3>询价管理</h3>
+                <ul>
+                    <li><a href="$request.getContextPath()/inquiry/queryInquerySheet.do">待审核（$!{statistic.countInquirySheetOnChecking}）</a></li>
+                    <li><a href="$request.getContextPath()/inquiry/queryInquerySheet.do">待报价（$!{statistic.countInquirySheetWait4Quote}）</a></li>
+                    <li><a href="$request.getContextPath()/inquiry/queryInquerySheet.do">待评价（$!{statistic.countInquirySheetFinishQuote}）</a></li>
+                    <li><a href="$request.getContextPath()/inquiry/queryInquerySheet.do">询价结束（$!{statistic.countInquirySheetCommented}）</a></li>
+                </ul>
+            </div>
+            <div class="steps">
+            	<h3>采购管理</h3>
+                <ul>
+                    <li><a href="$request.getContextPath()/purchaseinfo/queryPurchaseQuery.do">待审核（$!{statistic.countPurchaseOnChecking}）</a></li>
+                    <li><a href="$request.getContextPath()/purchaseinfo/queryPurchaseQuery.do">待报价（$!{statistic.countPurchaseWait4Quote}）</a></li>
+                    <li><a href="$request.getContextPath()/purchaseinfo/queryPurchaseQuery.do">询价结束（$!{statistic.countPurchaseFinished}）</a></li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>订单管理</h3>
+                <ul>
+                    <li><a href="$request.getContextPath()/orderInfo/queryOrderInfo.do">交易中（$!{statistic.countOrderTrading}）</a></li>
+                    <li><a href="$request.getContextPath()/orderInfo/queryOrderInfo.do">交易完成（$!{statistic.countOrderFinished}）</a></li>
+                    <li><a href="$request.getContextPath()/orderInfo/queryOrderInfo.do">已关闭（$!{statistic.countOrderClosed}）</a></li>
+                </ul>
+            </div>
+        </div>
+        <!--
+        <div class="module-box">
+            <h4>消息列表：</h4>
+            <table id="list" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>消息名称</th>
+                        <th>详情</th>
+                        <th>消息日期</th>
+                    </tr>
+                </thead>
+                <tbody id="msgTbody">
+                    <tr>
+                        <td>新询价单</td>
+                        <td><a href="#">询价单号：X701 /项目名称：xxxxxxxxx/采购商：小南瓜/截止日期2016-08-19 09:27:21</a></td>
+                        <td>2016-08-19 09:27:21</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        -->
+    </div>
+    <script src="$request.getContextPath()/Admin_HTML/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$request.getContextPath()/Admin_HTML/assets/js/admin/bootstrap.min.js"></script>
+    <script src="$request.getContextPath()/Admin_HTML/assets/js/jquery.cookie.js"></script>
+    <script src="$request.getContextPath()/Admin_HTML/assets/js/admin/CommonJS.js"></script>
+    <script src="$request.getContextPath()/Admin_HTML/assets/js/admin/admin-home.js"></script>
+</body>
+</html>

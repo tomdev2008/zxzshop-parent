@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wangmeng.sys.legacy.mapping.SysExtMapper" >
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  
+  <!-- 用户密码 -->
+  <select id="selectUserPwdByExample" resultType="java.lang.String" parameterType="com.wangmeng.sys.legacy.filter.SysUserExample" >
+    select user_pwd from wm_sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  
+  <select id="selectUserPwdByUsername" resultType="java.lang.String">
+    select user_pwd from sys_user where user_name = #{username,jdbcType=VARCHAR} and sta='1' 
+  </select>
+  
+  <!-- 更新用户最后登录时间 -->
+  <update id="updateUserLastLoginTime" parameterType="java.lang.Long" >
+    update wm_sys_user set last_login_time=now() where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 更新用户最后登出时间 -->
+  <update id="updateUserLastLogoutTime" parameterType="java.lang.Long" >
+    update wm_sys_user set last_logout_time=now() where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

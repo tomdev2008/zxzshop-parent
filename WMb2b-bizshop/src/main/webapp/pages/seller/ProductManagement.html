@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>商品管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/seller-productmanagement.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="heading">
+            <h2>商品管理</h2>
+        </div>
+        <div class="search-box" id="search-box">
+            <form role="form">
+                <div class="submit">
+                    <label for="product-name">商品名称：</label>
+                    <input class="form-control input-ssm wide" type="text" id="product-name" placeholder="请输入商品名称">
+                    <label for="product-code">商品编号：</label>
+                    <input class="form-control input-ssm wide" type="text" id="product-code" placeholder="请输入商品编号">
+                    <button type="button" class="btn btn-warning btn-ssm" id="searchButton" onclick="query()">查询</button>
+                </div>
+                <div class="list wide">
+                    <span class="title">商品状态：</span>
+                    <ul>
+                        <li class="active" data-id="0">全部</li>
+                        <li data-id="2" id="">销售中</li>
+                        <li data-id="1">待审核</li>
+                        <li data-id="4">已下架</li>
+                        <li data-id="3">审核失败</li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="box">
+            <table id="list" class="table"></table>
+            <div class="tabel-operate" id="batchOperate"></div>
+        </div> 
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/seller/seller-productmanagement.js"></script>
+</body>
+</html>

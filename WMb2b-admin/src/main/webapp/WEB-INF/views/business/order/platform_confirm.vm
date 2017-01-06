@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+
+
+
+    <link href="$request.getContextPath()/assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/admin/admin-deliver-check.css" rel="stylesheet">
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+
+
+
+
+    <script type="text/javascript">
+  // alert(orderNo);
+  //    $("#btnconfirm").click(function(){
+  //      
+  //    })
+     
+     function btnConfirm(){
+         var orderNo = $("#orderNo").val();
+         $.ajax({
+             url:"$request.getContextPath()/orderInfo/pushOrder.do",
+             type:"post",
+             dataType:"json",
+             data:{
+                 "orderNo":orderNo,
+                 "status":40
+             },
+             success:function(data){
+                 if (data) {
+                     BUI.Message.Alert('操作成功！','success');
+                 } else {
+                     BUI.Message.Alert('操作失败！','success');
+                 }
+             },
+             error:function(){
+                 BUI.Message.Alert('操作失败！','success');
+             }
+         });
+         setTimeout(function(){
+             location.href = "$request.getContextPath()/orderInfo/queryOrderInfo.do";
+         },2000);
+     }
+ </script>
+
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav_title">
+            平台签约
+             <a class="back" href="$request.getContextPath()/purchaseinfo/queryPurchaseQuery.do">返回订单管理</a>
+        </div>
+        <div>
+            <span style="color:red">合同已添加附加条款，请注意确认！</span>
+            #auth($request.getSession().getAttribute("session.user").getId(),"平台签名.确认签名")
+                <div class="span24" align="center">
+                    <input type="hidden" id ="orderNo" value="$!result.obj.orderNo">
+                    <input class="button button-primary" type="button" id="btnconfirm" onClick="btnConfirm();" value="协议确认">
+                </div>
+            #end
+
+            <div> <!-- 协议内容 -->
+                <iframe src="$!result.obj.protocolFile" border="0" width="100%" height="800">
+            </div>
+        </div>
+    </div>
+ </body>
+
+
+</html>
+

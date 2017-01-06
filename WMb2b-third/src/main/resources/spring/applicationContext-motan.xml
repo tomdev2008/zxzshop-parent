@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:motan="http://api.weibo.com/schema/motan"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+   http://api.weibo.com/schema/motan http://api.weibo.com/schema/motan.xsd">
+
+	<!-- 注： third 既是service的client，同时也是独立的server -->
+
+   <!-- 注册中心配置 使用不同注册中心需要依赖对应的jar包。如果不使用注册中心，可以把check属性改为false，忽略注册失败。-->
+    <!--<motan:registry regProtocol="local" name="registry" />-->
+    <!--<motan:registry regProtocol="consul" name="registry" address="127.0.0.1:8500"/>-->
+    <motan:registry regProtocol="zookeeper" name="registry" address="${zookeeper.server}" connectTimeout="2000"/>
+
+                    
+    <motan:protocol default="true" name="motan" haStrategy="failover"
+                    loadbalance="roundrobin" maxClientConnection="200" minClientConnection="5"/>
+ 
+    <!-- 通用referer基础配置 -->
+    <motan:basicReferer connectTimeout="300" requestTimeout="300" accessLog="false"
+                        retries="2" group="motan-wangmeng-service-rpc-${profile.name}" module="motan-wangmeng-service-rpc"
+                        application="WMb2b-service-app" protocol="motan" registry="registry" id="motanWmServiceClientBasicConfig" throwException="false" check="false"/>
+                        
+    <!-- 具体referer配置。使用方通过beanid使用服务接口类 -->
+
+    <!--<motan:referer id="cacheService"-->
+                   <!--interface="com.wangmeng.service.api.ICacheService" basicReferer="motanWmServiceClientBasicConfig"/>-->
+
+    <motan:referer id="cacheExtService"
+                   interface="com.wangmeng.service.api.ICacheExtService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+    <motan:referer id="resultCodeService"
+                   interface="com.wangmeng.service.api.ResultCodeService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+  	<motan:referer id="buyerInquiryService"
+                   interface="com.wangmeng.service.api.BuyerInquiryService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+ 	<motan:referer id="userInfoService"
+                   interface="com.wangmeng.service.api.UserInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+	
+	<motan:referer id="messagesendService"
+                   interface="com.wangmeng.third.api.MessagesendService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+ 	<motan:referer id="thirdentpriseInfoService"
+                   interface="com.wangmeng.service.api.ThirdentpriseInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+  	<motan:referer id="dealQuoteService"
+                   interface="com.wangmeng.service.api.DealQuoteService" basicReferer="motanWmServiceClientBasicConfig"/>
+   
+   	<motan:referer id="buyerPurchaseService"
+                   interface="com.wangmeng.service.api.BuyerPurchaseService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="orderInfoService"
+                   interface="com.wangmeng.service.api.OrderInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="orderTransferService"
+                   interface="com.wangmeng.service.api.OrderTransferService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="areaRegionService"
+                   interface="com.wangmeng.service.api.AreaRegionService" basicReferer="motanWmServiceClientBasicConfig"/>
+    
+    <motan:referer id="messageService"
+                   interface="com.wangmeng.third.api.MessagesendService" basicReferer="motanWmServiceClientBasicConfig"/>
+     
+    <motan:referer id="contractService"
+                   interface="com.wangmeng.service.api.ContractService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="enterpriseInfoService"
+                   interface="com.wangmeng.service.api.EnterpriseInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+    
+    <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口”-->
+    
+    <!-- third service -->  
+    <motan:basicService export="motan:20050"
+                        group="motan-wangmeng-third-rpc-${profile.name}" accessLog="false" shareChannel="true" module="motan-wangmeng-third-rpc"
+                        application="WMb2b-third-app" registry="registry" id="serviceThridConfig"/>
+
+   <!-- 具体rpc服务配置，声明实现的接口类。-->
+	<motan:service id="ssqExpServiceExportor" interface="com.wangmeng.expand.ssq.api.SsqExpService" ref="ssqExpServiceInner" basicService="serviceThridConfig" />	
+ 
+ 	<!-- 以下主要用于motan自动可用,一般和spring mvc混合使用的时候做自动可用标识 -->
+	<!-- motan服务可用初始化  -->
+	<bean id="motanFeaturedContextFirer"
+		class="com.wangmeng.context.FeaturedContextFirer"
+		depends-on="ssqExpServiceExportor">
+		<property name="feature" value="motan"></property>
+		<property name="referBean" value="ssqExpServiceExportor"></property>
+	</bean>
+
+    <aop:config>
+        <aop:aspect id="ssqExpServiceExportorAop" ref="motanFeaturedContextFirer">
+            <aop:after method="fire" pointcut="execution(* com.weibo.api.motan.config.springsupport.ServiceConfigBean.afterExport(..))" />
+        </aop:aspect>
+    </aop:config>
+ 
+ 	<aop:aspectj-autoproxy expose-proxy="true"></aop:aspectj-autoproxy>
+</beans>

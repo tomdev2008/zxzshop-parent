@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>详情页</title>
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet" type="text/css" />
+    <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+</head>
+<body>
+<div class="demo-content">
+    <!-- 详情页 ================================================== -->
+    <div>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+                <ul class="nav-tabs">
+                    <li class=""><a href="$request.getContextPath()/user/showDetail.do?id=$!userId">账户信息</a></li>
+                    <li class=""><a href="$request.getContextPath()/address/list.do?userId=$!userId">收货地址</a></li>
+                    <li class="active"><a href="$request.getContextPath()/invoice/queryByType.do?userId=$!userId&invoiceType=1">开票信息</a></li>
+                    <li class=""><a href="$request.getContextPath()/credits/queryByUserId.do?userId=$!userId">积分管理</a></li>
+                </ul>
+
+                <input type="text" id="path" value="$request.getContextPath()" style="display: none;">
+                <input type="text" id="pathid" value="$!result.obj.id" style="display: none;">
+                <input type="text" id="userid" value="$!userId" style="display: none;">
+
+                <form name="" action="" method="post" id="detailForm">
+                    <div class="pd-15 border-gray" style="height: 750px;">
+                        <div style="clear: both;">
+                            <div style="height: 50px;line-height: 50px;">
+                                <p class="fs-md fw-ber fl-left">开票信息：</p>
+                                <div class="ml-20 fl-left border-active" id="special">增值税（专用发票）</div>
+                                <div class="ml-20 fl-left" id="normal">增值税（普通发票）</div>
+                            </div>
+
+                        ##                专用发票
+                            <div class="fl-right mt-20 mb-40 pd-20-40 border-gray-2" id="specialSize" style="margin-right:186px;width: 76%;">
+                                <table class="address">
+                                    <tr>
+                                        <td class="fl-left">单位名称：</td>
+                                        <td>$!result.obj.companyName</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fl-left">注册地址：</td>
+                                        <td>$!result.obj.companyAddress</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fl-left">注册电话：</td>
+                                        <td>$!result.obj.mobile</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fl-left">单位税号：</td>
+                                        <td>$!result.obj.identificationNo</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fl-left">开户银行：</td>
+                                        <td>$!result.obj.depositBank</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fl-left">银行账户：</td>
+                                        <td>$!result.obj.bankAccount</td>
+                                    </tr>
+                                </table>
+                                #auth($request.getSession().getAttribute("session.user").getId(),"增值税专用发票.修改")
+                                    <span class="submit-btn fl-right" id="changeInfo">修改</span>
+                                #end
+                            </div>
+                        ##                普通发票
+                            <div class="fl-right mt-20 mb-40 pd-20-40 border-gray-2" id="normalSize" style="margin-right:186px;width: 76%;display: none;">
+                                <div class="fs-md fw-ber" style="padding: 50px 120px;">
+                                    <p class="fl-left">单位名称：</p>
+                                    <input type="text" class="inptxt" id="norinvo" value="$!result.obj.companyName" name="companyName">
+                                </div>
+                                #auth($request.getSession().getAttribute("session.user").getId(),"增值税普通发票.修改")
+                                    <span class="submit-btn fl-right" id="norchange">修改</span>
+                                #end
+                            </div>
+
+                        ##修改弹出框
+                            <div id="changeSize" class="digSize4" style="display: none;">
+                                <div class="xSize">
+                                    <span class="fl-left fs-md" style="position: relative">修改开票信息</span>
+                                    <span class="fl-right fs-md fw-ber" id="closebtn1" style="position: relative">X</span>
+                                </div>
+                                <div class="tl-center" style="margin: 38px auto;padding: 0 25px;">
+                                    <div class="fs-sm">
+                                        <span class="">单位名称：</span>
+                                        <input type="text" class="inptxt" id="companyName" value="$!result.obj.companyName"/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">注册地址：</span>
+                                        <input type="text" class="inptxt" id="companyAddress" value="$!result.obj.companyAddress"/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">注册电话：</span>
+                                        <input type="text" class="inptxt" id="mobile" value="$!result.obj.mobile"/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">单位税号：</span>
+                                        <input type="text" class="inptxt" id="identificationNo" value="$!result.obj.identificationNo"/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">开户银行：</span>
+                                        <input type="text" class="inptxt" id="depositBank" value="$!result.obj.depositBank"/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">银行账户：</span>
+                                        <input type="text" class="inptxt" id="bankAccount" value="$!result.obj.bankAccount"/>
+                                    </div>
+                                </div>
+                                <div class="tl-center" style="margin:0 auto;display:block;">
+                                    <span class="submit-btn" id="submitbtn">提交</span>
+                                </div>
+                            </div>
+
+                        ##发票寄送地址
+                            <div class=" fs-md fw-ber" style="clear: both;">
+                                <p>发票寄送地址：</p>
+                            </div>
+                            <div class="pd-20-40 fl-right border-gray-2" style="margin-right:186px;width: 76%;">
+                                <div>
+                                    <p class="fl-left fs-md fw-ber pr-10">小南瓜</p>
+                                    <p class="fs-md fw-ber">浙江</p>
+                                </div>
+                                <div>
+                                    <p class="fl-left">收货人：</p>
+                                    <p>小南瓜</p>
+                                </div>
+                                <div>
+                                    <p class="fl-left">收货地址：</p>
+                                    <p>浙江省杭州市上城区滨河区长河街道50号</p>
+                                </div>
+                                <div>
+                                    <p class="fl-left">手机号码：</p>
+                                    <p>13738067706</p>
+                                </div>
+                                <div>
+                                    <p class="fl-left">固定电话：</p>
+                                    <p>0571-38274311</p>
+                                </div>
+                                <div>
+                                    <p class="fl-left">电子邮箱：</p>
+                                    <p class="">xiaonangua@qq.com</p>
+                                    #auth($request.getSession().getAttribute("session.user").getId(),"发票寄送地址.修改")
+                                        <span class="submit-btn fl-right" id="changeAddr">修改</span>
+                                    #end
+                                </div>
+                            </div>
+
+                            <div id="changeS" class="digSize4" style="display: none;">
+                                <div class="xSize">
+                                    <span class="fl-left fs-md" style="position: relative">修改发票寄送地址</span>
+                                    <span class="fl-right fs-md fw-ber" id="closebtn2" style="position: relative">X</span>
+                                </div>
+                                <div class="tl-center" style="margin: 38px auto;padding: 0 25px;">
+                                    <div class="fs-sm">
+                                        <span class="mr-15">收货人：</span>
+                                        <input type="text" class="inptxt" id="" value=""/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">收货地址：</span>
+                                        <input type="text" class="inptxt" id="" value=""/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">手机号码：</span>
+                                        <input type="text" class="inptxt" id="" value=""/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">固定电话：</span>
+                                        <input type="text" class="inptxt" id="" value=""/>
+                                    </div>
+                                    <div class="fs-sm mt-10">
+                                        <span class="">电子邮箱：</span>
+                                        <input type="text" class="inptxt" id="" value=""/>
+                                    </div>
+                                </div>
+                                <div class="tl-center" style="margin:0 auto;display:block;">
+                                    <span class="submit-btn" id="">提交</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="maskLayer" style="display: none;"></div>
+</div>
+<script type="text/javascript" language="JavaScript">
+    var path = $("#path").val()+'/invoice/update.do',
+            pathid = $("#pathid").val(),
+            userid = $("#userid").val();
+
+//    特殊发票修改
+    function changeInfo(){
+        var companyName = $("#companyName").val(),
+                companyAddress = $("#companyAddress").val(),
+                mobile = $("#mobile").val(),
+                identificationNo = $("#identificationNo").val(),
+                depositBank = $("#depositBank").val(),
+                bankAccount = $("#bankAccount").val();
+
+        $.ajax({
+            url:path,
+            type:"get",
+            dataType:"json",
+            data:{
+                "id":pathid,
+                "userId":userid,
+                "companyName":companyName,
+                "companyAddress":companyAddress,
+                "mobile":mobile,
+                "identificationNo":identificationNo,
+                "depositBank":depositBank,
+                "bankAccount":bankAccount,
+                "invoiceType":"1"
+            },
+            success:function(data){
+                if(data == true){
+                    BUI.Message.Alert('提交成功！','success');
+                    $("#changeSize").slideUp(1000);
+                }else{
+                    BUI.Message.Alert('提交失败！','error');
+                }
+            },
+            error:function(){
+                BUI.Message.Alert('提交失败！','error');
+            }
+        });
+
+    }
+
+    $("#special").click(function(){
+        if($(this).hasClass("border-active")) return;
+        $(this).addClass("border-active");
+        $("#normal").removeClass("border-active");
+        $("#specialSize").slideDown(1000);
+        $("#normalSize").slideUp(1000);
+    });
+    $("#normal").click(function(){
+        if($(this).hasClass("border-active")) return;
+        $(this).addClass("border-active");
+        $("#special").removeClass("border-active");
+        $("#specialSize").slideUp(1000);
+        $("#normalSize").slideDown(1000);
+    });
+
+
+    $("#changeInfo").click(function(){
+        $("#maskLayer").slideDown(500);
+        $("#changeSize").animate({width: 'toggle', opacity: 'toggle'}, "slow");
+    });
+    $("#closebtn1").click(function(){
+        $("#changeSize").animate({width:'toggle',opacity: 'toggle'}, "slow");
+        $("#maskLayer").slideUp(500);
+    });
+    $("#submitbtn").click(function(){
+        changeInfo();
+    });
+
+//    普通发票修改
+    $("#norchange").click(function(){
+        var compname = $("#norinvo").val();
+        $.ajax({
+            url:path,
+            type:"get",
+            dataType:"json",
+            data:{
+                "id":pathid,
+                "userId":userid,
+                "companyName":compname,
+                "invoiceType":"0"
+            },
+            success:function(data){
+                if(data == true){
+                    BUI.Message.Alert('提交成功！','success');
+                }else{
+                    BUI.Message.Alert('提交失败！','error');
+                }
+            },
+            error:function(){
+                BUI.Message.Alert('提交失败！','error');
+            }
+        })
+    });
+
+//    发票寄送地址修改
+    $("#changeAddr").click(function(){
+        $("#maskLayer").slideDown(500);
+        $("#changeS").animate({width:'toggle',opactity:'toggle'},'slow');
+    });
+    $("#closebtn2").click(function(){
+        $("#maskLayer").slideUp(500);
+       $("#changeS").animate({width:'toggle',opactity:'toggle'},'slow');
+    });
+
+
+</script>
+</body>
+</html>         

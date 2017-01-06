@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ThirdentpriseInfo">
+
+	<!--  resultMap : ThirdenterpriseBaseInfo -->
+	 <resultMap id="ThirdenterpriseBaseInfoResultMap" type="com.wangmeng.service.bean.ThirdenterpriseBaseInfo" >
+	    <result column="Id" property="id" jdbcType="BIGINT" />
+	     <result column="UserId" property="userId" jdbcType="BIGINT" />
+	    <result column="CompanyName" property="companyName" jdbcType="VARCHAR" />
+	    <result column="logo" property="logo" jdbcType="VARCHAR" />
+	    <result column="Description" property="description" jdbcType="INTEGER" />
+	    <result column="DictCode" property="dictCode" jdbcType="VARCHAR" />
+	    <result column="Adpath" property="adpath" jdbcType="VARCHAR" />
+	    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+	    <result column="ContactsPhone" property="contactsPhone" jdbcType="VARCHAR" />
+	    <result column="ContactName" property="contactName" jdbcType="VARCHAR" />
+	    <result column="RegionId" property="regionId" jdbcType="INTEGER" />
+	    <result column="RegionName" property="regionName" jdbcType="VARCHAR" />
+	    <result column="IsDefault" property="isDefault" jdbcType="SMALLINT" />
+	    <result column="EnterpriseType" property="enterpriseType" jdbcType="INTEGER" />
+	    <result column="Status" property="status" jdbcType="SMALLINT" />
+
+		<association property="user" javaType="com.wangmeng.service.bean.User" resultMap="userResultMap"/>
+	 </resultMap>
+
+	<!-- 企业关联账号结果集 -->
+	<resultMap id="userResultMap" type="com.wangmeng.service.bean.User">
+		<id property="id" column="u_id" />
+		<result property="userName" column="u_username"/>
+		<result property="nick" column="u_nick"/>
+		<result property="email" column="u_email"/>
+		<result property="realName" column="u_realname"/>
+		<result property="cellPhone" column="u_cellphone"/>
+		<result property="photo" column="u_photo"/>
+		<result property="registerWay" column="u_way"/>
+		<result property="telphone" column="u_telphone"/>
+		<result property="userType" column="u_usertype"/>
+		<result property="sex" column="u_sex"/>
+	</resultMap>
+
+
+
+	<!--  resultMap : ThirdenterpriseTipInfo -->
+	<resultMap id="ThirdenterpriseTipInfoResultMap" type="com.wangmeng.service.bean.ThirdenterpriseTipInfo" >
+	 	<result column="Id" property="id" jdbcType="BIGINT" />
+	    <result column="CompanyName" property="companyName" jdbcType="VARCHAR" />
+	    <result column="Status" property="status" jdbcType="SMALLINT" />
+	 </resultMap>
+
+	
+	<!--  resultMap : ThirdentpriseAuditInfo -->
+	 <resultMap id="ThirdentpriseAuditInfoResultMap" type="com.wangmeng.service.bean.ThirdentpriseAuditInfo" >
+	    <result column="Id" property="id" jdbcType="BIGINT" />
+	     <result column="UserId" property="userId" jdbcType="BIGINT" />
+	    <result column="CompanyName" property="companyName" jdbcType="VARCHAR" />
+	    <result column="entLic" property="entLic" jdbcType="VARCHAR" />
+	    <result column="entBizLic" property="entBizLic" jdbcType="VARCHAR" />
+	    <result column="entOrgCodeLic" property="entOrgCodeLic" jdbcType="VARCHAR" />
+	    <result column="entTaxRegLic" property="entTaxRegLic" jdbcType="VARCHAR" />
+	    <result column="entBrandLic" property="entBrandLic" jdbcType="VARCHAR" />
+	    <result column="personIdtFront" property="personIdtFront" jdbcType="VARCHAR" />
+	    <result column="personIdtBg" property="personIdtBg" jdbcType="VARCHAR" />
+	    <result column="personAttorneyLetter" property="personAttorneyLetter" jdbcType="VARCHAR" />
+	    
+	    <result column="IdCardNo" property="idCardNo" jdbcType="VARCHAR" />
+	    <result column="CardType" property="cardType" jdbcType="VARCHAR" />
+	    <result column="EnterpriseType" property="enterpriseType" jdbcType="INTEGER" />
+	    <result column="Status" property="status" jdbcType="SMALLINT" />
+	    <result column="IsDefault" property="isDefault" jdbcType="SMALLINT" />
+	    <result column="LegalPerson" property="legalPerson" jdbcType="VARCHAR" />
+	 </resultMap>	
+
+
+	 <select id="ThirdentpriseInfo.querylist" parameterType="com.wangmeng.service.bean.QueryThirdInfo" resultType="com.wangmeng.service.bean.ThirdenterpriseInfo">
+	     select  Id           ,
+				 UserId       ,
+				 CompanyName  ,
+				 logo         ,
+				 Description  ,
+				 DictCode     ,
+				 Adpath       ,
+				 Remark       ,
+				 ContactsPhone,
+				 ContactName  ,
+				 RegionId  ,
+				 Status,
+				(SELECT  CONCAT(provincename,' ',cityname) from wm_region_t  where id = RegionId) as regionName
+		  from 	 wm_thridenterpriseinfo_t
+		  <where>
+		  	<if test="code!=null and code!=''"> DictCode in (${code})</if>
+		  	and Status =2
+		  </where>
+          <!--  分页 -->
+		    limit #{begin},#{end}
+		    
+	 </select>
+	 
+	 
+	  <select id="ThirdentpriseInfo.querylistnumb" parameterType="com.wangmeng.service.bean.QueryThirdInfo" resultType="java.lang.Integer">
+	     select  count(1)  numb   
+		  from 	 wm_thridenterpriseinfo_t
+         <where>
+		  	<if test="code!=null and code!=''"> DictCode in (${code})</if>
+		  	and Status =2
+		  </where>
+	 </select>
+	 
+	 
+	 <select id="ThirdentpriseInfo.querycode" parameterType="java.lang.String" resultType="java.lang.String">
+	
+	       select Code from wm_dictionary_t where FatherCode = #{querycode} 
+	 
+	 </select>
+	 
+	 <!-- 查询该类型的所有区县 -->
+	  <select id="ThirdentpriseInfo.queryRegionByType" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Region">
+		select  wmr.* From wm_region_t  wmr left join wm_thridenterpriseinfo_t  wmtd
+		on wmr.id = wmtd.RegionId where wmtd.DictCode = #{type}
+	 </select>
+	
+	 <!-- 查询指定用户的默认第三方配套服务企业信息 -->
+ 	<select id="ThirdentpriseInfo.queryUserDefault" parameterType="java.lang.Long"  resultMap="ThirdenterpriseBaseInfoResultMap">
+	     select  Id           ,
+				 UserId       ,
+				 CompanyName  ,
+				 logo         ,
+				 Description  ,
+				 DictCode     ,
+				 Adpath       ,
+				 Remark       ,
+				 ContactsPhone,
+				 ContactName  ,
+				 RegionId  ,
+				 IsDefault ,
+				 Status,
+				(SELECT  CONCAT(provincename,' ',cityname) from wm_region_t  where id = RegionId) as regionName
+		  from 	 wm_thridenterpriseinfo_t
+		  where UserId=#{userId} and IsDefault=1 limit 1
+	 </select>
+	 
+	 <!-- 查询指定用户的第三方配套服务企业信息 -->
+ 	<select id="ThirdentpriseInfo.queryByUserId" resultMap="ThirdenterpriseBaseInfoResultMap">
+	     select  Id           ,
+				 UserId       ,
+				 CompanyName  ,
+				 logo         ,
+				 Description  ,
+				 DictCode     ,
+				 Adpath       ,
+				 Remark       ,
+				 ContactsPhone,
+				 ContactName  ,
+				 RegionId  ,
+				 IsDefault ,
+				 Status,
+				(SELECT  CONCAT(provincename,' ',cityname) from wm_region_t  where id = RegionId) as regionName
+		  from 	 wm_thridenterpriseinfo_t
+		  where UserId=#{userId} and Id=#{id} limit 1
+	 </select>
+	 
+	 
+	 <!-- 查询指定用户的相关第三方配套服务企业信息 -->
+	<select id="ThirdentpriseInfo.queryListByUserId" parameterType="java.lang.Long" resultMap="ThirdenterpriseBaseInfoResultMap">
+	     select  Id           ,
+				 UserId       ,
+				 CompanyName  ,
+				 logo         ,
+				 Description  ,
+				 DictCode     ,
+				 Adpath       ,
+				 Remark       ,
+				 ContactsPhone,
+				 ContactName  ,
+				 RegionId  ,
+				 IsDefault ,
+				 Status,
+				(SELECT  CONCAT(provincename,' ',cityname) from wm_region_t  where id = RegionId) as regionName
+		  from 	 wm_thridenterpriseinfo_t
+		  where UserId=#{userId} 
+	 </select>
+	
+	<!-- 取消用户默认的第三方配套服务企业 -->
+	<update id="ThirdentpriseInfo.cancelUserDefaultThirdentprise" parameterType="java.lang.Long">
+		update wm_thridenterpriseinfo_t set IsDefault=0 where UserId=#{userId}
+	</update>
+	
+	<!-- 设置用户默认的第三方配套服务企业  -->
+	<update id="ThirdentpriseInfo.updateUserDefaultThirdentprise">
+		update wm_thridenterpriseinfo_t set IsDefault=1 where Id=#{entId} AND UserId=#{userId}
+	</update>
+	 
+	<!-- 分页查询 -->
+	<select id="ThirdentpriseInfo.selectThirdenterpriseInfoList" parameterType="map" resultMap="ThirdenterpriseBaseInfoResultMap">
+		     select  Id           ,
+				 UserId       ,
+				 CompanyName  ,
+				 logo         ,
+				 Description  ,
+				 DictCode     ,
+				 Adpath       ,
+				 Remark       ,
+				 ContactsPhone,
+				 ContactName  ,
+				 RegionId  ,
+				(SELECT  CONCAT(provincename,' ',cityname) from wm_region_t  where id = RegionId) as RegionName
+		  from 	 wm_thridenterpriseinfo_t where Status=2
+		     <if test="dictCode!=null and dictCode!=''"> AND DictCode=${dictCode}</if>
+		   order by AuditTime asc
+	</select>
+	
+	<!-- count -->
+	<select id="ThirdentpriseInfo.countThirdenterpriseInfoList" parameterType="map" resultType="java.lang.Long">
+		     SELECT count(1) FROM  wm_thridenterpriseinfo_t WHERE Status=2
+		     <if test="dictCode!=null and dictCode!=''"> AND DictCode=${dictCode}</if>
+	</select>
+	
+	<!--  获得用户默认的第三方配套服务企业的状态 -->
+	<select id="ThirdentpriseInfo.selectUserDefaultThirdenterpriseStatus" parameterType="java.lang.Long" resultType="java.lang.Short">
+		     SELECT Status FROM wm_thridenterpriseinfo_t WHERE UserId=#{userId} AND IsDefault=1
+	</select>
+	 	
+	<!--  获得用户默认的第三方配套服务企业的精简信息 -->
+	<select id="ThirdentpriseInfo.selectUserDefaultThirdenterpriseTip" parameterType="java.lang.Long" resultMap="ThirdenterpriseTipInfoResultMap">
+		     SELECT Id, CompanyName,Status FROM wm_thridenterpriseinfo_t WHERE UserId=#{userId} AND IsDefault=1 order by Id asc limit 1
+	</select>
+	
+	<!-- 新增第三方配套服务企业  -->
+	<insert id="ThirdentpriseInfo.insertThirdenterpriseInfo" useGeneratedKeys="true" keyColumn="Id" keyProperty="id">
+		INSERT INTO `wm_thridenterpriseinfo_t` (`UserId`, `CompanyName`, `logo`, `Description`, `DictCode`, `Remark`, `ContactsPhone`, `ContactName`, `RegionId`, `IsDefault`, `Status`)
+			VALUES
+		(#{userId}, #{companyName}, #{logo}, #{description}, #{dictCode}, #{remark}, #{contactsPhone}, #{contactName}, #{regionId}, #{isDefault}, 0)
+	</insert>
+	
+	<!-- 保存第三方配套服务企业  -->
+	<update id="ThirdentpriseInfo.updateThirdenterpriseInfo">
+		update wm_thridenterpriseinfo_t set CompanyName= #{companyName}, logo= #{logo}, Description=#{description}, DictCode=#{dictCode}, Remark=#{remark}, ContactsPhone=#{contactsPhone}, ContactName=#{contactName}, RegionId=#{regionId} 
+		 where Id=#{id} AND UserId=#{userId}
+	</update>
+	 
+	 <!-- count 默认第三方配套服务企业 -->
+	<select id="ThirdentpriseInfo.countMyDefaultThirdenterpriseInfo" parameterType="java.lang.Long" resultType="java.lang.Long">
+		 SELECT count(1) FROM  wm_thridenterpriseinfo_t WHERE UserId=#{userId} AND IsDefault=1
+	</select>
+
+	<!-- 查询第三方配套服务企业审核信息 -->
+	<select id="ThirdentpriseInfo.selectScalarThirdentpriseAuditInfoById" parameterType="java.lang.Long" resultMap="ThirdentpriseAuditInfoResultMap">
+		SELECT Id           ,
+				 UserId       ,
+				 CompanyName  ,
+				 IsDefault,
+				 LegalPerson,
+				 IdCardNo,
+				 CardType,
+				 EnterpriseType,
+				 Status,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200001 limit 1)entBizLic,	
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200002 limit 1)entOrgCodeLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200003 limit 1)entTaxRegLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200004 limit 1)entLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200008 limit 1)entBrandLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200005 limit 1)personIdtFront,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200006 limit 1)personIdtBg,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200007 limit 1)personAttorneyLetter
+			from wm_thridenterpriseinfo_t where Id =#{id}
+	</select>
+	
+	<!-- 查询用户第三方配套服务企业审核信息 -->
+	<select id="ThirdentpriseInfo.selectScalarThirdentpriseAuditInfo" resultMap="ThirdentpriseAuditInfoResultMap">
+		SELECT Id, UserId,  CompanyName, IsDefault, LegalPerson, IdCardNo, CardType, EnterpriseType, Status,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200001 limit 1)entBizLic,	
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200002 limit 1)entOrgCodeLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200003 limit 1)entTaxRegLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200004 limit 1)entLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200008 limit 1)entBrandLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200005 limit 1)personIdtFront,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200006 limit 1)personIdtBg,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200007 limit 1)personAttorneyLetter
+			from wm_thridenterpriseinfo_t where UserId =#{userId} and Id=#{id} LIMIT 1
+	</select>
+	
+	<!-- 查询用户默认第三方配套服务企业审核信息 -->
+	<select id="ThirdentpriseInfo.selectDefaultThirdentpriseAuditInfo" resultMap="ThirdentpriseAuditInfoResultMap">
+		SELECT Id, UserId,  CompanyName, IsDefault, LegalPerson, IdCardNo, CardType, EnterpriseType, Status,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200001 limit 1)entBizLic,	
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200002 limit 1)entOrgCodeLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200003 limit 1)entTaxRegLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200004 limit 1)entLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200008 limit 1)entBrandLic,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200005 limit 1)personIdtFront,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200006 limit 1)personIdtBg,
+			(select OrgPath from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and DictCode=200007 limit 1)personAttorneyLetter
+			from wm_thridenterpriseinfo_t where UserId =#{userId} and IsDefault=1 LIMIT 1
+	</select>
+	
+	<!-- 选择第三方配套服务企业状态 -->
+	<select id="ThirdentpriseInfo.selectThirdenterpriseStatus" parameterType="java.lang.Long" resultType="java.lang.Short">
+		 SELECT Status FROM  wm_thridenterpriseinfo_t WHERE Id=#{id}
+	</select>
+
+	<!-- 保存第三方配套服务企业审核信息  -->
+	<update id="ThirdentpriseInfo.updateThirdentpriseAuditInfo">
+		update wm_thridenterpriseinfo_t
+		 set CompanyName= #{companyName}
+		 , EnterpriseType= #{enterpriseType}
+		 , CardType= #{cardType}
+		 , Status= #{status}
+		 where Id=#{id} AND UserId=#{userId}
+	</update>
+
+	<!-- 分页查询 -->
+	<select id="ThirdentpriseInfo.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.ThirdenterpriseBaseInfo"
+			resultMap="ThirdenterpriseBaseInfoResultMap" >
+		SELECT enterprise.*,
+		u.Id u_id, u.UserName u_username, u.CellPhone u_cellphone,u.RealName u_realname,u.UserType u_usertype,
+		u.Telphone u_telphone, u.Nick u_nick, u.RegisterWay u_way, u.Email u_email, u.Photo u_photo, u.Sex u_sex
+		FROM wm_thridenterpriseinfo_t enterprise
+		LEFT JOIN wm_user_t u ON (enterprise.UserId=u.Id)
+		WHERE 1=1
+		<if test="param.status>0">
+			and enterprise.Status = #{param.status}
+		</if>
+		ORDER BY enterprise.PostTime DESC , enterprise.CompanyName DESC
+	</select>
+
+	<!-- 更新配套服务商 -->
+	<update id="ThirdentpriseInfo.update" parameterType="com.wangmeng.service.bean.ThirdenterpriseBaseInfo">
+		UPDATE wm_thridenterpriseinfo_t
+		<set>
+			<if test="status>=0"> Status=#{param.status}, </if>
+			<if test="status>=0"> AuditTime=#{param.auditTime} </if>
+		</set>
+		WHERE Id = #{param.id}
+	</update>
+
+
+
+</mapper>

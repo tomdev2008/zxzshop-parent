@@ -1,0 +1,118 @@
+html{
+    height: 100%;
+}
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-image: url("../images/login_bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.content{
+    width: 1000px;
+    margin: 0 auto;
+}
+.content_box{
+    position: absolute;
+    left: 50%;
+    margin-left:-135px;
+    width: 270px;
+}
+.logo{
+    margin: 0 auto;
+    display: block;
+    margin-top: 200px;
+}
+.detail{
+    width: 270px;
+    height: 200px;
+    background: url("../images/bar_bg.png") no-repeat;
+    margin: 0 auto;
+    margin-top: 18px;
+    /*position: absolute;*/
+    /*left: 50%;*/
+    /*top: 50%;*/
+    /*margin-left:-135px;*/
+    /*margin-top:-100px;*/
+}
+.c_info{
+    padding-top: 28px;
+}
+.user{
+    width: 230px;
+    height: 30px;
+    background-color: #fff;
+    margin: 0 auto;
+}
+.user input{
+    width: 195px;
+    height: 28px;
+    border:0;
+    outline: none;
+    padding-left: 8px;
+}
+
+.user img{
+    vertical-align:middle;
+}
+
+.password{
+    width: 230px;
+    height: 30px;
+    background-color: #fff;
+    margin: 0 auto;
+    margin-top: 12px;
+}
+.password input{
+    width: 195px;
+    height: 28px;
+    border:0;
+    outline: none;
+    padding-left: 8px;
+}
+
+.password img{
+    vertical-align:middle;
+}
+
+.remember{
+    width: 230px;
+    margin: 0 auto;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #999;
+}
+
+#submitLogin{
+    width: 230px;
+    height: 30px;
+    background-color: #7dd39c;
+    border: 0;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #fff;
+    margin-left: 20px;
+    outline: none;
+    cursor:pointer;
+}
+.foot{
+    position:absolute;
+    bottom:5%;
+    width: 540px;
+    left: 50%;
+    margin-left:-270px;
+}
+.foot p{
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    line-height: 20px;
+    letter-spacing: 2px;
+}
+ .errorMsg{
+    color:red;
+ }

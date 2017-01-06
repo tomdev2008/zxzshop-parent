@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CA编辑</title>
+  <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+  <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="../assets/css/admin-prise-style.css" rel="stylesheet">
+</head>
+<body>
+ <div class="demo-content">
+<!-- 详情页 ================================================== -->
+ <div>
+  <div class="row">
+    <div class="span24 doc-content" style="width:90%">
+        <ul class="nav-tabs">
+          <li class="active"><a href="$request.getContextPath()/enterprise/showCADetail.do?id=$!result.obj.id&viewType=2">CA编辑</a></li>
+        </ul>
+            <div class="mt-30 ml-43" style="display:inline-block;width: 60%;height:50px;line-height:50px;border-bottom: 2px solid #eee;">
+                <span class="fl-left fs-lg" style="display: block;">个人认证</span>
+                <span class="fl-right fs-xxxlg fw-ber closehtml" style="display: block;" >X</span>
+            </div>
+            <div class="ml-43" style="width: 60%;height:400px;border: 1px solid #000000;">
+                <div class="mt-20 mb-15" style="height: 315px;">
+                    <div class="fl-left pd-15 ml-50" style="display: inline;width: 20%;">
+                        <p class="mb-30">认证类型：</p>
+                        <p class="mb-30">姓名：</p>
+                        <p class="mb-30">手机号码：</p>
+                        <p class="mb-30">证件号码：</p>
+                        <p class="mb-30">个人邮箱：</p>
+                        <p class="mb-30">身份证地址：</p>
+                    </div>
+                    <div class="fl-left"  style="display: inline;width: 25%;padding-bottom: 20px;">
+                        <input type="hidden" id="companyId" value="$!result.obj.id">
+                        <p class="ft-gray mb-25">个人</p>
+                        <input class="ft-gray mb-25" id="personName" value="$!result.obj.PersonName">
+                        <input class="ft-gray mb-25" id="personPhone" value="$!result.obj.PersonPhone">
+                        <input class="ft-gray mb-25" id="idCardno" value="$!result.obj.idCardNo">
+                        <input class="ft-gray mb-25" id="personEmail" value="$!result.obj.PersonEmail">
+                        <input class="ft-gray mb-25" id="companyAddress" value="$!result.obj.companyAddress">
+                    </div>
+                    <div class="fl-right" style="width:40%;margin-right: -65px;">
+                        #foreach($enterpphoto in $result.obj.enterprisephotoList)
+                            #if($enterpphoto.orgPath!="" && $enterpphoto.dictCode=='200005')
+                                <div class="mb-3">
+                                    <img src="$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)" alt="身份证正面照" style="width: 200px;height: 120px;display: block;"/>
+                                    <span class="ft-orange">身份证正面照</span>
+                                </div>
+                            #elseif($enterpphoto.orgPath!="" && $enterpphoto.dictCode=='200006')
+                                <div class="mb-3">
+                                    <img src="$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)" alt="身份证反面照" style="width: 200px;height: 120px;display: block;"/>
+                                    <span class="ft-orange">身份证反面照</span>
+                                </div>
+                            #end
+                        #end
+                    </div>
+                </div>
+                <div class="tl-center">
+                    <span class="submit-btn ft-orange" id="saveInfo">保存信息</span>
+                </div>
+            </div>
+    </div>
+  </div>
+ </div>
+<script src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+<script src="$request.getContextPath()/assets/js/bui-min.js"></script>
+<script type="text/javascript" language="JavaScript">
+$(".closehtml").click(function(){
+  window.history.back();
+});
+
+$("#saveInfo").click(function(){
+    var cid = $("#companyId").val();
+    var personName = $("#personName").val(),
+        personPhone = $("#personPhone").val(),
+        idCardno = $("#idCardno").val(),
+        personEmail = $("#personEmail").val(),
+        companyAddress = $("#companyAddress").val();
+    var data = "personName="+encodeURIComponent(personName)+"&personPhone="+personPhone+"&idCardNo="+idCardno+"&personEmail="+personEmail+"&companyAddress="+encodeURIComponent(companyAddress);
+    $.ajax({
+        url:'$request.getContextPath()/enterprise/updateCA4Person.do?id='+cid,
+        type:'get',
+        dataType:'json',
+        data:data,
+        success:function(data){
+            if(data.code=="000000"){
+                BUI.Message.Alert("保存成功!","success");
+            }else{
+                BUI.Message.Alert("保存失败!","error")
+            }
+        },
+        error:function(){
+
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>         

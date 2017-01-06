@@ -1,0 +1,11 @@
+<script type="text/javascript">
+function xsuccess(msg){
+    BUI.Message.Alert(msg,'success');
+}
+function xerror(msg){
+    BUI.Message.Alert(msg,'error');
+}
+function xwarning(msg){
+    BUI.Message.Alert(msg,'warning');
+}
+</script>

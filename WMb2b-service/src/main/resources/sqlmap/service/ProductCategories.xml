@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProductCategoriesInfo">
+	
+	<select id="ProductCategoriesInfo.queryProductCategoryList" parameterType="map" resultType="com.wangmeng.service.bean.CategoryKeyValue">
+		select id, name,depth,IsIndexShow from wm_productcategory_t
+		<where>
+			<if test="parentid != null and parentid >0"> and parentid = #{parentid}</if>
+			<if test="depth != null and depth != ''"> and depth = #{depth} </if>
+			<if test="supportingservid != null and supportingservid > 0"> and id  != #{supportingservid} </if>
+		</where>
+	</select>
+	<select id="ProductCategoriesInfo.getCategoryByParentId" parameterType="int" resultType="com.wangmeng.service.bean.CategoryKeyValue">
+		select id, name,depth from wm_productcategory_t
+		<where>
+			parentid = #{parentid}
+		</where>
+	</select>
+	
+	<select id="ProductCategoriesInfo.queryProductBrandList"  parameterType="map" resultType="com.wangmeng.service.bean.CategoryKeyValue">
+		select a.Id,a.Name 
+		from wm_brands_t a ,wm_categorybrands_t b 
+	   where a.Id=b.BrandId  
+	     and b.CategoryId= #{categoryId}
+	</select>
+	
+	<select id="ProductCategoriesInfo.queryBrandListByInpId" parameterType="java.lang.Integer" resultType="com.wangmeng.service.bean.Brands">
+		select a.* from wm_brands_t a ,wm_enpriinfobrands_t b where b.BrandId=a.Id and b.EnterPrInfoId = #{id}
+	</select>
+	
+	<select id="ProductCategoriesInfo.querythirdCategoryList" parameterType="map" resultType="com.wangmeng.service.bean.CategoryKeyValue">
+		select id, name,depth from wm_productcategory_t where  depth =#{depth}
+	</select>
+	<!-- 查询用户是否有经营类目 -->
+	<select id="ProductCategoriesInfo.byuserid" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from 
+		wm_enterprise_category_t a 
+	    where (select e.Id from wm_enterpriseinfo_t e where e.UserId =#{userId} and IsDefault =1 and Categery=1 limit  1)= a.EnterpriseId
+		and CategoryId =#{categoryId}
+	</select>
+
+
+
+	<!-- 新建企业经营类目  -->
+	<insert id="ProductCategoriesInfo.insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wangmeng.service.bean.BusinessCategory">
+		insert into wm_enterprise_category_t(EnterpriseId,CategoryId,CommissionPercent,CreateTime)
+		values(#{enterpriseId},#{categoryId},#{commissionPercent},#{createTime})
+	</insert>
+
+	<!-- 删除企业经营类目  -->
+	<delete id="ProductCategoriesInfo.delete" parameterType="com.wangmeng.service.bean.BusinessCategory">
+		DELETE FROM wm_enterprise_category_t WHERE Id=#{param.id} AND EnterpriseId=#{param.enterpriseId}
+	</delete>
+
+	<!-- 批量删除企业经营类目  -->
+	<delete id="ProductCategoriesInfo.batchDelete" parameterType="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		DELETE FROM wm_enterprise_category_t WHERE EnterpriseId=#{param.id}
+	</delete>
+
+	<!-- 查询企业经营类目 -->
+	<select id="ProductCategoriesInfo.queryCategoryByEnterpriseId" resultType="com.wangmeng.service.bean.vo.EnterpriseInfoVo"
+			resultMap="enterprise4BusinessCategoryResultMap" >
+		SELECT  enterp.* , photo.OrgPath licensePicPath,
+		enterpcateg.Id enterpcateg_id,enterpcateg.CommissionPercent enterpcateg_percent,enterpcateg.CategoryId enterpcateg_categid
+		from wm_enterpriseinfo_t enterp
+		LEFT JOIN wm_enterprise_category_t enterpcateg ON (enterpcateg.EnterpriseId=enterp.Id)
+		LEFT JOIN wm_enterprisephoto_t photo ON (enterp.Id=photo.EnterpriseinfoId AND photo.DictCode='200001')
+		WHERE enterp.Id=#{param.id}
+	</select>
+
+	<!-- 企业部分结果集 -->
+	<resultMap id="enterprise4BusinessCategoryResultMap" type="com.wangmeng.service.bean.vo.EnterpriseInfoVo">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId" />
+		<result property="companyName" column="CompanyName" />
+		<result property="companyAddress" column="CompanyAddress" />
+		<result property="licensePicPath" column="licensePicPath" />
+		<collection property="businessCategoryList" ofType="com.wangmeng.service.bean.BusinessCategory" resultMap="businessCategoryResultMap"/>
+	</resultMap>
+
+	<!-- 企业关联的经营类目 -->
+	<resultMap id="businessCategoryResultMap" type="com.wangmeng.service.bean.BusinessCategory">
+		<id property="id" column="enterpcateg_id"/>
+		<result property="categoryDescription" column="categoryDescription"/>
+		<result property="commissionPercent" column="enterpcateg_percent"/>
+		<result property="categoryId" column="enterpcateg_categid"/>
+	</resultMap>
+	
+	<!-- 查出所有的商品分类 -->
+	<select id="ProductCategoriesInfo.queryAllProductCategory" resultType="com.wangmeng.service.bean.ProductCategory">
+		select id, 
+		       name,
+		       icon,
+		       displayOrder,
+		       parentId,
+		       depth,
+		       Path,
+		       metaTitle,
+		       metaDescr,
+			   metaKeyword
+		from wm_productcategory_t
+        ORDER BY id DESC
+	</select>
+	
+	<!-- 根据父分类ID查出子商品分类 -->
+	<select id="ProductCategoriesInfo.querySubProductCategoryByByParentId" resultType="com.wangmeng.service.bean.ProductCategory">
+		select id, 
+		       name,
+		       icon,
+		       displayOrder,
+		       parentId,
+		       depth,
+		       Path,
+		       metaTitle,
+		       metaDescr,
+			   metaKeyword
+		from wm_productcategory_t
+		where parentId = #{parentId}
+		ORDER BY id DESC
+	</select>
+
+	<!-- 根据商品分类Id删除商品分类 -->
+	<delete id="ProductCategoriesInfo.delProductCategoryById" parameterType="java.lang.Integer">
+		delete from wm_productcategory_t where ID = #{id}
+	</delete>
+	
+	<!-- 根据分类ID查出商品分类 -->
+	<select id="ProductCategoriesInfo.findProductCategoryById" resultType="com.wangmeng.service.bean.vo.ProductCategoryVo">
+		select id, 
+		       name,
+		       icon,
+		       displayOrder,
+		       parentId,
+		       depth,
+		       Path,
+		       metaTitle,
+		       metaDescr,
+			   metaKeyword
+		from wm_productcategory_t
+		where id = #{id}
+	</select>
+	
+	<!-- 根据example查出商品分类 -->
+	<select id="ProductCategoriesInfo.queryProductCategoryByExample" resultType="com.wangmeng.service.bean.ProductCategory" parameterType="com.wangmeng.service.bean.ProductCategory">
+		select id, 
+		       name,
+		       icon,
+		       displayOrder,
+		       parentId,
+		       depth,
+		       Path,
+		       metaTitle,
+		       metaDescr,
+			   metaKeyword
+		from wm_productcategory_t
+		<where>
+ 		<if test="id!=null" >and id = #{id}</if>
+ 		<if test="name!=null and name !=''"> and name = #{name}</if>
+ 		<if test="icon!=null and icon !=''"> and icon = #{icon}</if>
+ 		<if test="displayOrder!=null" >and displayOrder = #{displayOrder}</if>
+ 		<if test="parentId!=null" >and parentId = #{parentId}</if>
+ 		<if test="depth!=null" >and depth = #{depth}</if>
+ 		<if test="Path!=null and Path !=''"> and Path = #{Path}</if>
+ 		<if test="metaTitle!=null and metaTitle !=''"> and metaTitle = #{metaTitle}</if>
+ 		<if test="metaDescr!=null and metaDescr !=''"> and metaDescr = #{metaDescr}</if>
+ 		<if test="metaKeyword!=null and metaKeyword !=''"> and metaKeyword = #{metaKeyword}</if>
+ 		</where>
+ 		ORDER BY id DESC
+	</select>
+
+	<!-- 根据example查出企业和分类关联关系 -->
+	<select id="ProductCategoriesInfo.queryEnterpriseCategoryByExample" resultType="com.wangmeng.service.bean.EnterpriseCategory" parameterType="com.wangmeng.service.bean.EnterpriseCategory">
+		select id, 
+	           enterpriseId,
+			   categoryId,
+               commissionPercent,
+	           createTime
+		from wm_enterprise_category_t
+		<where>
+ 		<if test="id!=null" >and id = #{id}</if>
+ 		<if test="enterpriseId!=null"> and enterpriseId = #{enterpriseId}</if>
+ 		<if test="categoryId!=null"> and categoryId = #{categoryId}</if>
+ 		</where>
+ 		ORDER BY id DESC
+	</select>
+	
+	<!-- 保存商品分类 -->
+	<insert id="ProductCategoriesInfo.saveProductCategory" parameterType="com.wangmeng.service.bean.ProductCategory" useGeneratedKeys="true" keyProperty="id">
+			<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+		      SELECT LAST_INSERT_ID()
+		    </selectKey>
+			insert into wm_productcategory_t(
+			   id, 
+		       name,
+		       icon,
+		       displayOrder,
+		       parentId,
+		       depth,
+		       Path,
+		       metaTitle,
+		       metaDescr,
+			   metaKeyword
+			) 
+			values(
+			   null,
+			   #{name},
+			   #{icon},
+			   #{displayOrder},
+			   #{parentId},
+			   #{depth},
+			   #{Path},
+			   #{metaTitle},
+			   #{metaDescr},
+			   #{metaKeyword}
+			)
+	</insert>
+	
+	<!-- 更新商品分类 -->
+	<update id="ProductCategoriesInfo.updateProductCategory" parameterType="com.wangmeng.service.bean.ProductCategory" >
+		UPDATE wm_productcategory_t SET name = #{name},icon = #{icon},displayOrder=#{displayOrder},parentId=#{parentId},depth=#{depth},Path=#{Path},metaTitle=#{metaTitle},metaDescr=#{metaDescr},metaKeyword=#{metaKeyword}
+		 WHERE id = #{id}
+	</update>
+	
+	<!-- 根据企业ID查出该企业绑定的分类的父分类 -->
+	<select id="ProductCategoriesInfo.queryProductCategoryVoByEnterpriseId" resultType="com.wangmeng.service.bean.vo.ProductCategoryVo" parameterType="java.lang.Long">
+		SELECT * FROM wm_productcategory_t WHERE id in
+		 (
+			SELECT distinct ParentId from wm_productcategory_t WHERE id in(
+				SELECT CategoryId from wm_enterprise_category_t  WHERE EnterpriseId = #{enterpriseId}
+            )
+         )
+ 		ORDER BY id DESC
+	</select>
+	
+	<!-- 根据企业ID查出该企业绑定的分类-->
+	<select id="ProductCategoriesInfo.queryBindindProductCategoryVoByEnterpriseId" resultType="com.wangmeng.service.bean.vo.ProductCategoryVo" parameterType="java.lang.Long">
+		SELECT distinct * from wm_productcategory_t WHERE id in(
+		SELECT CategoryId from wm_enterprise_category_t  WHERE EnterpriseId = #{enterpriseId}
+		)
+ 		ORDER BY id DESC
+	</select>
+	
+	<!-- 根据父分类ID和绑定的分类 -->
+	<select id="ProductCategoriesInfo.queryProductCategoryListByParentIdAndBindindCategoryId" parameterType="java.util.Map" resultType="com.wangmeng.service.bean.CategoryKeyValue">
+		select id, name,depth from wm_productcategory_t
+		<where>
+			<if test="parentid != null"> and parentid = #{parentid}</if>
+			<if test="ids != null">
+			  and id in
+			  <foreach collection="ids" item="employeeId" index="index"
+	            open="(" close=")" separator=",">
+	            #{employeeId}
+	         </foreach>
+	        </if>
+		</where>
+	</select>
+	
+	<!-- 查首頁 -->
+	<select id="ProductCategoriesInfo.queryIndexShow" parameterType="map" resultType="com.wangmeng.service.bean.CategoryKeyValue">
+		select id, name, depth,icon from wm_productcategory_t
+		<where>
+			<if test="depth != null and depth != ''"> and depth = #{depth} </if>
+			and IsIndexShow =1
+		</where>
+			ORDER by DisplayOrder 
+	</select>
+	
+	<resultMap type="com.wangmeng.service.bean.vo.ProductCategoryVo"  id="carMap">
+			<id column="id" property="id" />
+			<result column="name" property="name" />
+			<result column="parentId" property="parentId" />
+			<collection property="subProductCategorys" ofType="com.wangmeng.service.bean.vo.ProductCategoryVo" column="{parentId=id}" select="selectCarChilds" />
+	</resultMap>	
+	
+	<select id="ProductCategoriesInfo.queryProductCategoryVoForNewAdmin" parameterType="java.util.Map"  resultMap="carMap">
+		 select id,
+	            name,
+	            parentId
+		from wm_productcategory_t 
+		WHERE depth =#{depth} ORDER BY displayorder asc
+	</select>
+	
+	<select id="selectCarChilds" parameterType="java.util.HashMap" resultType="com.wangmeng.service.bean.vo.ProductCategoryVo">
+	     select id,
+	            name,
+	            parentId
+		from wm_productcategory_t 
+		WHERE parentId =#{parentId} ORDER BY displayorder asc
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,214 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>品牌管理</title>
+    
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-brand-add.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin-purchase-check.css" rel="stylesheet">
+    
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.datagrid.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/inner-custom.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-brandsapply-add.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-brandsapply-add1.js"></script>
+    <script type="text/javascript" language="JavaScript">
+     function saveBrandsapply(){
+     
+	    	//将老的品牌id回传
+	    	var _oldIds = $("input[name^='oldCateId_']");
+	    	var _oldBrandIds = [];
+	    	_oldIds.each(function(){
+				_oldBrandIds.push($(this).val());
+			});
+			$("#oldProductCategoryIds").val(_oldBrandIds);
+     
+     		var _checked =  $('.brand-group .selected input[type=checkbox]:checked');
+			var _checkedIds = [];
+			_checked.each(function(){
+				_checkedIds.push($(this).val());
+			});
+	    	$("#productCategoryIds").val(_checkedIds);
+			
+			var _imgs = [];
+			$('#authCerti .uploadpic').each(function(){
+				_imgs.push($(this).find('input[name=authCertificate]').val());
+			});
+			$("#authCertificateList").val(_imgs);
+			//校验输入的品牌名是否重复
+			var inputBrandsName = $("#brandName_span").text();
+			if(inputBrandsName.indexOf("品牌名称已经存在!!") >= 0 ){
+				return;
+	        }
+			//校验品牌名称
+        	var brandName = $.trim($("#brandName").val());
+        	if(brandName==""){
+        		$("#brandName_span").text("品牌名称不能为空!");
+        		return;
+        	}else{
+        		$("#brandName_span").text("");
+        	}
+	    	Brandsapply_Add_Form.submit();
+    	}
+		
+		//校验品牌名
+		function checkBrandsName(obj){
+		     var brandsName = $(obj).val();
+			 var brandId = $("#brandId").val();
+			 $.ajax({
+			 type:"POST",
+				url:'$request.getContextPath()/Brands/api/queryBrandsExist.do',
+				data:"brandsName=" + brandsName,
+				success:function(data){
+					if( typeof data.id != "undefined" && data.id!=brandId){
+						$("#brandName_span").text("品牌名称已经存在!!已经存在的品牌id为："+data.id);
+					}else{
+						$("#brandName_span").text("");
+					}
+			    }
+		     });
+		}
+		
+		function goback(){
+		   window.location.href=document.referrer; 
+		}
+    </script>
+    </head>
+    <body>
+    
+      <div class="container">
+        <div class="account_mgr_nav">
+           <span ><font size="5px">品牌编辑</font></span>
+		</div>
+		<form id="Brandsapply_Add_Form" name="Brandsapply_Add_Form" class="form-horizontal" method="POST" action="$request.getContextPath()/Brands/updateBrandsapply.do">
+        <input id="productCategoryIds" name="productCategoryIds" type="hidden">
+        <input id="oldProductCategoryIds" name="oldProductCategoryIds" type="hidden">
+        #foreach( $oldId in $!brandsApplay.oldProductCategoryIds )
+			<input name="oldCateId_$oldId" type="hidden" value="$oldId">	
+		#end
+        <input name="enterPrInfoId" type="hidden" value="$!brandsApplay.enterPrInfoId">
+        <input id="brandId" name="brandId" type="hidden" value="$!brandsApplay.brandId">
+        <input name="authCertificateList" type="hidden" id="authCertificateList">
+        <input name="id" type="hidden" value="$!brandsApplay.id">
+        <input name="oldBrandName" type="hidden" value="$!brandsApplay.brandName">
+        <div class="module-box mt20">
+            <div class="entry row">
+                <label for="" class="field_label">
+                   <span class="highlight">*</span>
+                    供应商：
+                </label>
+                <div class="field_value">
+                    <input type="text" class="text" value="$!brandsApplay.enterPrInfoName" readonly="readonly">
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label"><span class="highlight">*</span>
+                    品牌名称：
+                </label>
+                <div class="field_value">
+                    <input type="text" id="brandName" name="brandName" class="text" value="$!brandsApplay.brandName" onblur="checkBrandsName(this)">
+					<span id="brandName_span" style="color:red"></span>
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label"><span class="highlight">*</span>
+                    LOGO：
+                </label>
+                <div class="cert_item">
+                    <div class="uploadpic" id="businessimg">
+                        <input class="id" id="businessid" type="hidden" name="enterprisephotoList[0].id" value="0" />
+                        #if($!brandsApplay.logo == '')
+                        	<input class="path" id="bussinesspath" type="hidden" name="logo" value=""/>
+                        #else
+                        	<input class="path" id="bussinesspath" type="hidden" name="logo" value="$!serverPath$!brandsApplay.logo"/>
+                        	<img src="$!serverPath$!brandsApplay.logo"> 
+                        	<span class="remove"></span>
+                        #end
+                        <input class="code" type="hidden" name="enterprisephotoList[0].dictCode" value="200001" />
+                        <input type='file' name="_file" class="uploadFilebtn">
+                    </div>
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label"><span class="highlight">*</span>
+                    品牌授权证书：
+                </label>
+                <div class="field_value" id="authCerti">
+	                 #foreach( $src in $!brandsApplay.authCertificateList )
+						<div class="uploadpic">
+	                        <input class="id" type="hidden" name="enterprisephotoList[0].id" value="0" />
+	                         #if($src != 1)
+		                        <input class="path" type="hidden" name="authCertificate" value="$!serverPath$!src"/>
+		                        <img src="$!serverPath$!src"> 
+		                        <span class="remove"></span>
+	                        #else
+	                       		<input class="path" type="hidden" name="authCertificate" value=""/>
+	                        #end
+	                        <input class="code" type="hidden" name="enterprisephotoList[0].dictCode" value="200001" />
+	                        <input type='file' name="_file" class="uploadFilebtn">
+                   		</div>	
+					#end
+                </div>
+            </div>
+            
+             <div class="entry row">
+            	 <label for="" class="field_label">
+                 </label>
+             		最多上传三个附件
+             </div>
+            
+           <div id="divNew" class="entry row">
+             	<label for="" class="field_label">
+                   <span class="highlight">*</span>
+                   绑定类型：
+                </label>
+                <div class="form-group">
+                    <div class="col-sm-10 brand-letter select-list">
+
+                    </div>
+                    <div class="col-sm-10 brand-group">
+                        <div class="checkbox-group">
+                        </div>
+                        <div class="choose-category selected">
+                            <span>已选择：</span>
+                             #foreach( $productCategory in $brandsApplay.productCategoryList )
+								<label  class="checkbox-inline">
+                            	<input type="checkbox" checked="true" value="$!productCategory.id" class="brandCheckbox">
+                            	$!productCategory.name
+                            	</label>
+							#end
+                        </div>
+                    </div>
+                </div>
+            </div>
+         
+         
+            <div class="entry row">
+                <label for="" class="field_label"><span class="highlight">*</span>
+                    品牌简介：
+                </label>
+                <div class="field_value">
+                    <textarea name="remark" id="" class="textarea" style="height:200px;" maxlength="1000" placeholder="最多输入1000个字">$!brandsApplay.remark</textarea>
+                </div>
+            </div>
+        </div>
+      </form> 
+	  <button onclick="saveBrandsapply()" style="margin-left:190px;background:white;color:#EE7700;height:34px;font-size:16px;width:100px">提交</button>
+	  <button onclick="goback()" style="margin-left:20px;background:white;color:#EE7700;height:34px;font-size:16px;width:100px">取消</button>
+	  <br/><br/><span style="margin-left:170px;color:#EE7700;height:34px;font-size:16px;width:100px">提示：提交完成后，状态为审核通过</span>
+    </div>
+    </body>
+    </html>       

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>审核</title>
+<link href="$!{request.getContextPath()}/assets/code/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+       <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+     <link href="$!{request.getContextPath()}/Admin_HTML/assets/css/admin/inner-custom.css" rel="stylesheet">
+</head>
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bui-min.js"></script> 
+    <script src="$!{request.getContextPath()}/assets/js/sea.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/config.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+<body>
+ <div>
+    <div class="demo-content">
+    <div class="row" style="padding: 20px;">
+    <div class="span24 doc-content" style="width:90%">
+        <ul class="nav-tabs">
+          <li><a href="$request.getContextPath()/inquiry/queryInquerySheet.do">普通询价</a></li>
+          <li class="active"><a href="#">审核</a></li>
+          <a href="$request.getContextPath()/inquiry/queryInquerySheet.do" style="color: #888;float: right;padding-left: 30px;background-position: left center;background-repeat: no-repeat;font-size: 16px;margin-top: 10px;"><<返回询价管理</a>
+        </ul>
+      <form name="" action="$request.getContextPath()/inquiry/updateInquiry.do" method="post" id="detailForm">
+        <input type="hidden" id="inquirySheetCode" name="inquirySheetCode" value="$!result.obj.inquirySheetCode"/>
+        <h3>询价信息</h3>
+        <div class="row detail-row form-horizontal well">
+          <div class="span24">
+            <span style="color:red">*</span><label>工程名称：</label><input name="title" type="text" value="$!result.obj.title">
+          </div>
+          <div class="span24">
+            <label>企业名称：</label><input name="companyName" type="text" value="$!result.obj.companyName">
+          </div>
+          <div class="span24">
+            <span style="color:red">*</span> <label>联系人手机号码：</label><input name="phone" type="text" value="$!result.obj.phone">
+          </div>
+          <div class="span24">
+             <span style="color:red">*</span><label >联系人：</label><input name="name" type="text" value="$!result.obj.name">
+          </div>
+          <div class="span24">
+            <span style="color:red">*</span><label >询价截止时间：</label>
+            <input name="endDate" class="date" type="text" value="$dateUtil.formatDate($!result.obj.quotationEndDate,'yyyy-MM-dd')">
+          </div>
+        <!--     <div class="span24 row detail-row">
+             <label>附件：</label>
+              <div class="demo-content">
+                 <div>
+                  <div id="J_Uploader"></div>
+                </div>
+                </div>
+            </div> -->
+
+
+                <div class="span24">
+                        <div>
+                        #if($result.obj.photos)
+                          #foreach($!InquirySheetPhoto in $!result.obj.photos)
+                                <div class="pic" style="width:200px;height:200px">
+                                    #if($InquirySheetPhoto.OrgPath)
+                                        <a id="imgPreview" href="#" onclick="preview();return false;" target="_blank"><img id="provImg" src="${mediaPath}$!InquirySheetPhoto.OrgPath" alt="点击查看详情" width="200px" height="200px"></a>
+                                    #else
+                                        <img id="provImgid"  src="" width="200" height="200" alt="">
+                                    #end
+                                    <i></i>
+                                </div>
+                       
+                          #end
+                          #else
+                               <div class="pic" style="width:200px;height:200px">
+                                     <a id="imgPreview" href="#" onclick="preview();return false;" target="_blank"><img id="provImg" src="" width="200px" height="200px"></a>
+                                     <i></i>
+                                </div>
+                          #end
+                            <span id="uploadpic" class="btn btn-info">
+                                上传询价单
+                            </span>
+                        
+                    </div>
+              </div>  
+         
+         
+              <h3 class="span24">询价商品：</h3>
+          
+             <table cellspacing="0" class="table table-bordered" id="product-list">
+                  <thead>
+                    <tr class="form-horizontal well" >
+                      <th></th>
+                      <th>材料名称</th>
+                      <th>材料品牌</th>
+                      <th>规格</th>
+                      <th>型号</th>
+                      <th>数量</th>
+                      <th>单位</th>
+                    </tr>
+                  </thead>
+                   <tbody>
+                    #foreach($SheetProduct in $result.obj.products)
+                     #set($index = ${velocityCount} - 1) 
+                        <tr data-id="$!SheetProduct.id">
+                          <td><button type="button" class="remove">删除</button><input name="products[$index].id" class="pid" type="hidden" value="$!SheetProduct.id"></td>
+                          <td><input name="products[$index].productName" type="text" value="$!SheetProduct.productName"></td>
+                          <td><input name="products[$index].brandNames" type="text" value="$!SheetProduct.brandNames"></td>
+                          <td><input name="products[$index].sku" type="text" value="$!SheetProduct.sku"></td>
+                          <td><input name="products[$index].model" type="text" value="$!SheetProduct.model"></td>
+                          <td><input name="products[$index].quantity" type="text" value="$!SheetProduct.quantity"></td>
+                          <td><input name="products[$index].unit" type="text" value="$!SheetProduct.unit"></td>
+                        </tr>
+                    #end
+                  </tbody>
+               </table>   
+               <div class="btns">
+                  <button type="button" id="add-product">添加商品</button>
+               </div>
+           
+         <div class="detail-row">
+              <div class="span24">
+                <label>收货方式：</label><span class="detail-text">
+
+                    <input value="1" type="radio" name="receiving"
+                        #if($!result.obj.receiving == "1")
+                           checked="checked"
+                        #end
+                    > 自取</input>
+                    <input value="2" type="radio" name="receiving"
+                        #if($!result.obj.receiving =="2")
+                           checked="checked"
+                        #end
+                    > 物流配送</input>
+                </span>
+              </div>
+              <div class="span24">
+                <label>收货地址：</label><input type="text" name="address" style="width:350px;" value="$!result.obj.address"/>
+              </div>
+              <div class="span24">
+                <label>发票类型：</label><span class="detail-text">
+                      <input type="radio" name="invoice" value="1"
+                          #if($!result.obj.invoice == "1")
+                             checked="checked"
+                          #end
+                      >增值税普通发票</input>
+                      <input type="radio" name="invoice" value="2"
+                          #if($!result.obj.invoice =="2")
+                            checked="checked"
+                          #end
+                      >增值税专用发票</input>
+                </span>
+              </div>
+              <div class="span24">
+                <label>询价备注：</label> 
+                    <div class="control-row4"><textarea class="span12" name="remark" >$!result.obj.remark</textarea></div>
+              </div>
+        </div>
+        
+        
+         <div class="form-actions span24">
+             #auth($request.getSession().getAttribute("session.user").getId(),"询价审核.保存")
+               <button id="btnSave" type="button" class="button button-primary">保存</button>
+             #end
+             #auth($request.getSession().getAttribute("session.user").getId(),"询价审核.通过")
+               <button id="btnAuditing" type="button" class="button button-primary">审核通过</button>
+             #end
+          </div>
+
+
+          <input type="hidden" name="inquiryPhoto" id="sendProv" value="">
+          <input type='file' id="provPicFile" name="_file" style="display:none">
+
+      </form>
+      </div>
+    </div>
+  </div>
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/wm-common.js?v=1"></script>
+
+<script type="text/javascript" src="$request.getContextPath()/assets/js/business/inquiry-view.js"></script>
+<script type="text/javascript" language="JavaScript">
+    business.inquiry.init();
+
+
+      function preview(){
+            $("#imgPreview").attr("href", "#");
+            if($("#provImg").attr("src") == ""){
+                $.dialog.errorTips("未上传附件");
+            }else{
+                $("#imgPreview").attr("href", $("#provImg").attr("src"));
+                $("#imgPreview").click();
+            }
+        }
+    
+        $(function() {
+            $('.date').datetimepicker();
+            
+            $("#uploadpic").click(function(){
+                $("#provPicFile").click();
+            });
+            //_callbackImgId, _hiddenImgFileId, _uploadImgFileName, _uploadImgFileId, _filePath, _callbackBefore, _callbackAfter, _callbackImgDelId, _callbackDelete
+            $('#provPicFile').change(function(){
+                WM.uploadPic("provImg", "sendProv", "path", "provPicFile", "inquiry/store"
+                    , function(){}
+                    , function(){}
+                    , ''
+                    , function(){
+                        $("#provImg").attr("src", "");
+                        $("#provImg").hide();
+                        $("#provPicFile").val('');
+                        $("#sendProv").val('');
+                    }
+                );
+            });
+        });
+
+</script>
+  </div>
+</body>
+</html>         

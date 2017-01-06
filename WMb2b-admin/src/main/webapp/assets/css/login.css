@@ -1,0 +1,86 @@
+body{
+	font-family:微软雅黑;
+	font-size: 12px;
+	background-color:#295a85;
+	margin:0px;
+	padding:0px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+}
+.container{
+	background: url(../img/bgimg.png) no-repeat center 20%;
+	width:100%;
+	min-height:768px;
+	border:1px solid #295a85;
+}
+.login_bar{
+	height: 98px;
+	line-height: 98px;
+	background: url(../img/nav_bgimg.png) no-repeat center center;
+	margin-top:400px;
+}
+
+.username_container{
+	position:absolute;
+	float:left;
+	width: 220px;
+	height: 98px;
+	line-height: 98px;
+	left: 37%;
+}
+
+.username_container>input{
+	width:210px;
+	height: 43px;
+	line-height: 43px;
+	margin-top: 25px;
+	background: url(../img/button_bgimg.png);
+	border:0px;
+}
+
+.password_container{
+	position:absolute;
+	float: left;
+	width: 220px;
+	height: 98px;
+	line-height: 98px;
+    left:49%;
+}
+
+.password_container>input{
+	width:210px;
+	height: 43px;
+	line-height: 43px;
+	margin-top: 25px;
+	background: url(../img/button_bgimg.png);
+	border:0px;
+}
+.submit_container{
+	position:absolute;
+	float: left;
+    left:62%;
+}
+.submit_btn{
+	margin-top: 25px;
+	background: url(../img/login_button_bgimg.png) no-repeat;
+	width: 78px;
+	height: 43px;
+	border: 0px;
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: bold;
+	cursor:pointer;
+}
+.errorMsg{
+	  clear:both;
+	  color:red;
+	  text-align: center;
+      height:25px;
+}
+.bottom{
+	width:100%;
+	position:absolute;
+	bottom:0%;
+	text-align: center;
+	color:#ffffff;
+} 

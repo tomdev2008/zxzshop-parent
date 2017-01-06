@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="photo">
+
+	<!-- 增加 -->
+	<insert id="photo.add" useGeneratedKeys="true" keyProperty="id" parameterType="com.wangmeng.service.bean.Enterprisephoto">
+		INSERT INTO wm_enterprisephoto_t (EnterpriseinfoId,OrgPath,MaxPath,MinPath,DictCode,Description,Category)
+		VALUES (#{enterpriseinfoId},#{orgPath},#{maxPath},#{minPath},#{dictCode},#{description},#{category})
+	</insert>
+
+	<!-- 根据企业id查询 -->
+	<select id="photo.queryByEnterpriseId" resultType="com.wangmeng.service.bean.Enterprisephoto">
+		SELECT * FROM wm_enterprisephoto_t WHERE EnterpriseinfoId=#{enterpriseinfoId}
+	</select>
+
+	<!-- 更新 -->
+	<update id="photo.update" parameterType="com.wangmeng.service.bean.Enterprisephoto">
+		UPDATE wm_enterprisephoto_t
+		<set>
+			<if test="enterpriseinfoId>0"> EnterpriseinfoId = #{enterpriseinfoId}, </if>
+			<if test="orgPath != null and orgPath!=''"> OrgPath = #{orgPath}, </if>
+			<if test="maxPath != null and maxPath != ''"> MaxPath = #{maxPath}, </if>
+			<if test="minPath != null and minPath != ''"> MinPath = #{minPath}, </if>
+			<if test="dictCode != null and dictCode != ''"> DictCode = #{dictCode}, </if>
+			<if test="description != null and description != ''"> Description = #{description} </if>
+		</set>
+		where Id=#{id}
+	</update>
+
+
+
+</mapper>

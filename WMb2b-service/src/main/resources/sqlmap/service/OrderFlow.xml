@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderFlow">
+	<!-- 添加订单的流水记录 -->
+	<insert id="OrderFlow.addFlow" parameterType="com.wangmeng.service.bean.OrderFlowModel">
+		insert into wm_orderflow_t(UserId,OrderNo,PayMoney,OrderTime,Status,Type,Subject,Cost)
+		values(#{userId},#{orderNo},#{payMoney},#{orderTime},#{status},#{type},#{subject},#{cost})
+	</insert>
+	
+	<!-- 更新订单的流水记录 -->
+	<update id="OrderFlow.updateFlow" parameterType="com.wangmeng.service.bean.OrderFlowModel">
+		update wm_orderflow_t
+		<set>
+			OrderNo = #{orderNo}
+			<if test="payPlat != null and payPlat != ''">
+			,PayPlat = #{payPlat}
+			</if>
+			<if test="payMoney != 0">
+			,PayMoney = #{payMoney}
+			</if>
+			<if test="cost != 0">
+			,Cost = #{cost}
+			</if>
+			<if test="flowNo != null and flowNo != ''">
+			,FlowNo = #{flowNo}
+			</if>
+			<if test="payTime != null">
+			,PayTime = #{payTime}
+			</if>
+			<if test="status != 0">
+			,Status = #{status}
+			</if>
+			<if test="payNo != null and payNo != ''">
+			,PayNo = #{payNo}
+			</if>
+		</set>
+		<where>
+			OrderNo = #{orderNo}
+		</where>
+	</update>
+	<!-- 更新订单的流水记录 -->
+	<update id="OrderFlow.updateFlowByPayNo" parameterType="com.wangmeng.service.bean.OrderFlowModel">
+		update wm_orderflow_t
+		<set>
+			PayNo = #{payNo}
+			<if test="payPlat != null and payPlat != ''">
+			,PayPlat = #{payPlat}
+			</if>
+			<if test="payMoney != 0">
+			,PayMoney = #{payMoney}
+			</if>
+			<if test="cost != 0">
+			,Cost = #{cost}
+			</if>
+			<if test="flowNo != null and flowNo != ''">
+			,FlowNo = #{flowNo}
+			</if>
+			<if test="payTime != null">
+			,PayTime = #{payTime}
+			</if>
+			<if test="status != 0">
+			,Status = #{status}
+			</if>
+		</set>
+		<where>
+			PayNo = #{payNo}
+		</where>
+	</update>
+	
+	<!-- 查询订单流水记录 -->
+	<select id="OrderFlow.getFlowListByPage" parameterType="map"
+		resultType="com.wangmeng.service.bean.OrderFlowModel">
+		select * 
+		from wm_orderflow_t
+		where 1=1
+		<if test="param.userId != 0">
+		and UserId = #{param.userId}
+		</if>
+		<if test="param.id != 0">
+		and Id = #{param.id}
+		</if>
+		<if test="param.orderNo != null and param.orderNo != ''">
+		and OrderNo = #{param.orderNo}
+		</if>
+		<if test="param.flowNo != null and param.flowNo != ''">
+		and FlowNo = #{param.flowNo}
+		</if>
+		<if test="param.status != 0">
+		and Status = #{param.status}
+		</if>
+		<if test="param.type != 0">
+		and Type = #{param.type}
+		</if>
+		<if test="param.payNo != null and param.payNo != ''">
+		and PayNo = #{param.payNo}
+		</if>
+		order by orderTime desc
+	</select>
+</mapper>

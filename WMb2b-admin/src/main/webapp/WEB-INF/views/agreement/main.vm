@@ -1,0 +1,135 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>协议管理</title>
+      <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+	  <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+       <!-- 配置文件 -->
+    <script type="text/javascript" src="$request.getContextPath()/assets/utf8-jsp/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="$request.getContextPath()/assets/utf8-jsp/ueditor.all.min.js"></script>
+	 </head>
+    <body>
+		#parse("include/page_detect.vm")
+      <div class="demo-content">
+		  <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/agreement/main.do" class="form-horizontal well" id="pageForm">
+				<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+				<input type="hidden" name="pageNo" id="pageNo" value="$!page.pageNo"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">协议名称：</label>
+                    <div class="controls">
+                      <input type="text" name="title" value="$!{qryForm.title}" class="control-text">
+                    </div>
+                    <label class="control-label">协议类型：</label>
+                    <div class="controls">
+                        <select name="categery">
+	                        <option name="" value="" selected="selected">请选择</option>
+	                        <option name="" value="0">会员注册协议</option>
+	                        <option name="" value="1">卖家入驻协议</option>
+	                        <option name="" value="2">附件保密协议</option>
+	                        <option name="" value="4">方配套协议</option>
+	                    </select>
+                    </div>
+                  </div>
+               
+                  <div class="form-actions span5 offset3">
+                    <button type="submit" class="button button-primary">搜索</button>
+                  </div>
+                </div>
+              </form>
+			
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr><th colspan="9">
+                <ul class="toolbar">
+                    #auth($request.getSession().getAttribute("session.user").getId(),"协议模板.添加")
+				        <li><button class="button button-primary" id="addBtnShow">添加</button></li>
+                    #end
+                </ul>
+                </th></tr>
+                <tr>
+                  <th>编码</th>
+                  <th>协议类型</th>
+                  <th>协议名称</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+				#foreach($entity in $page.getDataList())
+                    <tr>
+                      <td>$!entity.id</td>
+                      <td>  #if($!{entity.atype}==0)
+                      		会员注册协议
+                      		#elseif($!{entity.atype}==1)卖家入驻协议
+                      		#elseif($!{entity.atype}==2)附件保密协议
+                      		#elseif($!{entity.atype}==4)方配套协议
+                      		#end
+                      </td>
+                      <td>$!entity.title</td>
+                      <td>$!entity.createDate</td>
+                      <td>
+                          #auth($request.getSession().getAttribute("session.user").getId(),"协议模板.编辑")
+                            <a href="#" title="编辑协议信息" onClick="javascript:edit_entity($entity.id);" tab="$entity.id">编辑</a>
+                          #end
+									&nbsp;&nbsp;
+                          #auth($request.getSession().getAttribute("session.user").getId(),"协议模板.删除")
+					    	<a href="#" title="删除协议信息" onclick="javascript:del_entity($entity.id);">删除</a>
+                          #end
+              </td>
+                    </tr>
+				#end
+              </tbody>
+            </table>
+			
+            #parse("include/page.vm")
+			
+          </div>
+        </div> 
+    <!-- script end -->
+      </div>
+    </body>
+		
+	<script>
+	      $('#addBtnShow').on('click',function () {
+            location.href= '$request.getContextPath()/agreement/to_add.do';
+          });
+	 
+		 //修改协议信息
+		 function edit_entity(id){
+            location.href= '$request.getContextPath()/agreement/to_edit.do?id='+id;
+		 }
+		 
+		//删除协议信息
+		function del_entity(id) {
+            BUI.Message.Confirm('确认要删除么？',function(){
+			   $.ajax({
+                  type: 'post',
+                  url: '$request.getContextPath()/agreement/delete.do',
+				  data:{id:id},
+				  dataType:'json', 
+				  success: function(data){
+				      if(data && data.resultCode && data.resultCode == '1000'){
+					     BUI.Message.Alert('删除成功！','success');
+					     location.reload();
+					  }else{
+					  	BUI.Message.Alert('删除失败！','success');
+					  }
+				  },
+				  error : function() {    
+                      BUI.Message.Alert('删除出错！','error'); 
+                  }   
+                });
+				
+            },'question');
+        }
+    </script>
+	
+    </html>       

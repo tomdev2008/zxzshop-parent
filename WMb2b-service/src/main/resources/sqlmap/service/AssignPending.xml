@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AssignPending">
+   
+        <!-- 分配客服 -->
+		 <select id="AssignPending.queryCutomer" parameterType="com.wangmeng.service.bean.QueryAssignCustomer"
+		             resultType="com.wangmeng.service.bean.vo.AssignCustomerVo">
+			SELECT * FROM
+			    ((SELECT tuser.id as sysUserId, -1 AS assignCount
+			        FROM wm_sys_user tuser
+			        LEFT JOIN wm_sys_user_role tusrole ON tuser.id = tusrole.userid
+			        LEFT JOIN wm_sys_role trole ON tusrole.roleid = trole.id
+			        WHERE tuser.sta=1 and trole.id = #{roleId}
+			        <if test="onlineUsers != null and onlineUsers != ''">
+			         AND find_in_set(tuser.id, #{onlineUsers}) 
+			        </if>
+			        AND NOT EXISTS (SELECT 1 FROM  wm_assigncount_t wast  WHERE wast.sysuserid = tuser.id)
+			        LIMIT 1)
+			        UNION
+			      (SELECT sysuserid as sysUserId, (
+		                 CASE
+		                 WHEN 1 = ${type} THEN
+		                     min(inqueryPending)
+		                 WHEN 2 = ${type} THEN
+		                     min(purchasePending)
+		                 ELSE
+		                     min(orderPending)
+		                 END
+		              ) AS assignCount
+		           FROM wm_assigncount_t wact
+		            <if test="onlineUsers != null and onlineUsers != ''">
+		                  WHERE  find_in_set(wact.sysuserid,#{onlineUsers})
+		           </if>
+		           GROUP BY  sysuserid
+		           ORDER BY assignCount LIMIT 1)
+			    ) t
+			ORDER BY assignCount LIMIT 1
+		 </select>
+        
+        <!-- 随机获取人员  -->
+        <select id="queryCutomerRandom" parameterType="map" resultType="com.wangmeng.service.bean.vo.AssignCustomerVo">
+            SELECT tuser.id as sysUserId, -1 AS assignCount
+                    FROM wm_sys_user tuser
+                    LEFT JOIN wm_sys_user_role tusrole ON tuser.id = tusrole.userid
+                    LEFT JOIN wm_sys_role trole ON tusrole.roleid = trole.id
+                    WHERE tuser.sta=1 and trole.id = #{roleid}
+        </select>
+        
+        <!-- 通過用戶查詢 該用戶處理量 -->
+       <select id="AssignPending.queryAssginCount" parameterType="map" resultType="com.wangmeng.service.bean.AssignCount">
+            select * from wm_assigncount_t where SysUserId=#{sysUserId}
+       </select>
+       
+       <!-- 插入用戶信息 -->
+       <select id="insertAssginCount" parameterType="com.wangmeng.service.bean.AssignCount">
+       insert into wm_assigncount_t(sysUserId,inqueryCount,purchaseCount,orderCount,inqueryPending,purchasePending,orderPending,createDate)
+         select * FROM (select #{sysUserId} as sysUserId,#{inqueryCount} as inqueryCount,#{purchaseCount} as purchaseCount,#{orderCount} as orderCount,#{inqueryPending} as inqueryPending,#{purchasePending} as purchasePending,#{orderPending} as orderPending,now() as createDate) AS A 
+         where not exists (select 1 from wm_assigncount_t where sysUserId=#{sysUserId})
+       </select>
+        
+        <!-- 更新指派数量 -->
+        <update id="updateAssginCount" parameterType="com.wangmeng.service.bean.AssignCount">
+         update wm_assigncount_t
+	         <set>
+	            updateDate = now()
+	            <if test="inqueryCount != null and inqueryCount >0"> ,inqueryCount=#{inqueryCount}</if>
+	            <if test="purchaseCount != null and purchaseCount >0">, purchaseCount=#{purchaseCount}</if>
+	            <if test="orderCount != null and orderCount >0"> , orderCount=#{orderCount}</if>
+	            <if test="inqueryPending != null and inqueryPending >0"> ,inqueryPending=#{inqueryPending}</if>
+	            <if test="purchasePending != null and purchasePending >0"> , purchasePending=#{purchasePending}</if>
+	            <if test="orderPending != null and orderPending >0"> , orderPending=#{orderPending}</if>
+	         </set>
+	         
+	         where sysUserId = #{sysUserId}
+        </update>
+   
+        <!-- 插入客服和订单的关系 -->
+        <insert id="insertDistributionOrder" parameterType="com.wangmeng.service.bean.DistributionOrder">
+             insert into wm_distributionorder_t(RelationNo,SysUserId,Type) 
+             values(#{relationNo},#{sysUserId},#{type})
+        </insert>
+    
+</mapper>

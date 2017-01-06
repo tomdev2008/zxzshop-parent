@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CA认证</title>
+      <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+      <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+      <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet">
+	  <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+	  <script type="text/javascript" src="$request.getContextPath()/assets/js//jquery.form.js"></script>
+</head>
+<body>
+    #parse("include/page_normal_detect.vm")
+<div class="demo-content">
+    <div class="doc-content">
+        <ul class="nav-tabs">
+            <li class="active"><a href="$request.getContextPath()/enterprise/queryByPagination4CA.do?categery=-1&certifStatus=-1">CA认证</a></li>
+        </ul>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+				<input type="hidden" name="nullFlag" id="nullFlag" value="$!nullFlag"/>
+                <form method="GET" action="$request.getContextPath()/enterprise/queryByPagination4CA.do" class="form-horizontal well" name="pageForm" id="pageForm">
+                    <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+                    <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+                    <div class="row">
+                        <div class="control-group span24">
+                            <label class="control-label">客户：</label>
+                            <div class="controls">
+                                <input type="text" name="companyName" placeholder="企业名/用户名/手机号码/姓名/CA编号" value="$!enterpriseInfoVo.companyName" style="width:210px;" class="control-text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span24">
+                            <label class="control-label">认证类型：</label>
+                            <div class="controls">
+                                <select name="categery">
+                                    <option name="" value="-1" #if($!enterpriseInfoVo.categery==-1) selected="selected" #end >请选择</option>
+                                    <option name="" value="0" #if($!enterpriseInfoVo.categery==0) selected="selected" #end >个人</option>
+                                    <option name="" value="1" #if($!enterpriseInfoVo.categery==1) selected="selected" #end >企业</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span24">
+                            <label class="control-label">状态：</label>
+                            <div class="controls">
+                                <select name="certifStatus">
+                                    <option name="" value="-1" #if($!enterpriseInfoVo.certifStatus==-1) selected="selected" #end >请选择</option>
+                                    <option name="" value="2" #if($!enterpriseInfoVo.certifStatus==2) selected="selected" #end >已认证</option>
+                                    <option name="" value="1" #if($!enterpriseInfoVo.certifStatus==1) selected="selected" #end >待认证</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="control-group span10">
+                            <label class="control-label">提交日期：</label>
+                            <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                                <input name="beginTime" value="$!enterpriseInfoVo.beginTime" data-tip="{text : '起始日期'}" data-rules="{required:true}" data-messages="{required:'起始日期不能为空'}" class="input-small calendar" type="text"><label>&nbsp;-&nbsp;</label>
+                                <input name="endTime" value="$!enterpriseInfoVo.endTime" data-rules="{required:true}" data-messages="{required:'截止日期不能为空'}" class="input-small calendar" type="text">
+                            </div>
+                        </div>
+                        <div class="form-actions span5">
+                            <button id="btnSearch" type="submit" class="button button-primary">搜索</button>
+                        </div>
+                    </div>
+                </form>
+
+                <table cellspacing="0" class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="15">选择</th>
+                        <th>企业名称/姓名</th>
+                        <th>认证类型</th>
+                        <th>账户</th>
+                        <th>手机号码</th>
+                        <th>认证日期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($enterpriseQueryResult in $result.obj.data)
+                        <tr>
+                            #if($!enterpriseQueryResult.categery=="0")
+                                <input type="hidden" id="categery-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.categery"/>
+                                <input type="hidden" id="personName-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.PersonName"/>
+                                <input type="hidden" id="personPhone-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.PersonPhone"/>
+                                <input type="hidden" id="idCardNo-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.idCardNo"/>
+                                <input type="hidden" id="personEmail-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.PersonEmail"/>
+                                <input type="hidden" id="companyAddress-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.companyAddress"/>
+                            #else
+                                <input type="hidden" id="companyName-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.companyName"/>
+                                <input type="hidden" id="companyAddress-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.companyAddress"/>
+                                <input type="hidden" id="contactName-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsName"/>
+                                <input type="hidden" id="contactsPhone-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.contactsPhone"/>
+
+                            #end
+                            <input type="hidden" id="certifNo-$!enterpriseQueryResult.id" value="$!enterpriseQueryResult.certifNo"/>
+                            <td><input type="checkbox" name="oneCheck" value="$enterpriseQueryResult.id"></td>
+                            <td>
+                                #if($enterpriseQueryResult.companyName)
+                                    $!enterpriseQueryResult.companyName
+                                #else
+                                    $!enterpriseQueryResult.PersonName
+                                #end
+                            </td>
+                            <td>
+                                #if($!enterpriseQueryResult.categery == 0)
+                                    个人
+                                #elseif($!enterpriseQueryResult.categery == 1)
+                                    企业
+                                #end
+                            </td>
+                            <td>$!enterpriseQueryResult.user.userName</td>
+                            <td>$!enterpriseQueryResult.user.cellPhone</td>
+                            <td>$dateUtil.formatDate($!enterpriseQueryResult.certifDate,"yyyy-MM-dd")</td>
+
+                            #if($!enterpriseQueryResult.certifStatus == 1)
+                                <td>待认证</td>
+                            #elseif($!enterpriseQueryResult.certifStatus == 2)
+                                <td>已认证
+									 #if($!enterpriseQueryResult.categery == 1)
+									 #if($!enterpriseQueryResult.sealStatus == 0)
+										&nbsp;&nbsp;公章未上传
+								     #elseif($!enterpriseQueryResult.sealStatus == 1)
+										&nbsp;&nbsp;公章已上传
+									 #end
+									#end
+								</td>
+                            #else
+                                <td></td>
+                            #end
+
+                            <td nowrap>
+                                #auth($request.getSession().getAttribute("session.user").getId(),"CA认证.查看")
+                                    <a class="button button-primary viewCA" href="$request.getContextPath()/enterprise/showCADetail.do?id=$enterpriseQueryResult.id&viewType=1" title="查看" class="viewCA" tab="$enterpriseQueryResult.id">查看</a>
+                                    &nbsp;&nbsp;
+                                #end
+
+                                #if($!enterpriseQueryResult.categery == 0)
+                                    <a class="button button-primary editCA" href="$request.getContextPath()/enterprise/showCADetail.do?id=$enterpriseQueryResult.id&viewType=2" title="编辑" tab="$enterpriseQueryResult.id">编辑</a>
+                                #elseif($!enterpriseQueryResult.categery == 1)
+                                    <a class="button button-primary editCA" href="$request.getContextPath()/enterprise/showCADetail.do?id=$enterpriseQueryResult.id&viewType=3" title="编辑" tab="$enterpriseQueryResult.id">编辑</a>
+                                #end
+                                &nbsp;&nbsp;
+                                #if($!enterpriseQueryResult.certifStatus == 1)
+
+                                    #auth($request.getSession().getAttribute("session.user").getId(),"CA认证.申请")
+                                        <a class="button button-primary applyCA" href="#" title="申请CA" onClick="javascript:apply_ca('$enterpriseQueryResult.id');" tab="$enterpriseQueryResult.id">申请CA</a>
+                                        &nbsp;&nbsp;
+                                    #end
+
+                                #elseif($!enterpriseQueryResult.certifStatus == 2)
+                                    <a class="button button-primary viewCA" href="#" title="CA证书" onClick="javascript:view_ca('$enterpriseQueryResult.id');" tab="$enterpriseQueryResult.id">CA证书</a>
+ 									 #if($!enterpriseQueryResult.categery == 1)
+									#if($!enterpriseQueryResult.sealStatus == 0)
+										&nbsp;&nbsp;<a class="button button-primary" href="#" title="公章" onClick="javascript:upload_seal('$enterpriseQueryResult.id');" tab="$enterpriseQueryResult.id">上传公章</a>
+									 #end
+									#end
+                                #end
+
+                            </td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>
+                #parse("include/page_normal.vm")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="CAsq" style="display: none;border: 1px solid #000000;width: 600px;height: 240px;position: absolute;top: 360px;left: 400px;z-index:201;background-color: #fff;"></div>
+<div id="CAck" style="display: none;border: 1px solid #000000;width: 600px;height: 240px;position: absolute;top: 360px;left: 400px;z-index:201;background-color: #fff;"></div>
+<div id="maskLayer" style="display: none;"></div>
+<script type="text/javascript" language="JavaScript">
+    BUI.use('bui/calendar',function(Calendar){
+        var datepicker = new Calendar.DatePicker({
+            trigger:'.calendar',
+            autoRender : true
+        });
+    });
+	var dialog_upload_seal;
+	BUI.use('bui/overlay',function(Overlay){
+    	    dialog_upload_seal = new Overlay.Dialog({
+                    title:'上传公章',
+                    width:330,
+                    height:300,
+                    loader : {
+                      url : '$request.getContextPath()/enterprise/uplaodSeal.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    cancel:function () {
+                    	  this.close();
+                    },
+                    mask:false,
+					success:function () { 
+						
+		$("#uploadSealForm").ajaxSubmit({
+			success: function (data) {
+				var data = JSON.parse(data);
+				if (data && data.code == "000000") {
+					BUI.Message.Alert('提交成功！','success');
+					dialog_upload_seal.close();
+					self.location.reload();
+				}else{
+					if(data && data.desc && data.desc!=""){
+						BUI.Message.Alert(data.desc,'error');
+					}else{
+						BUI.Message.Alert('提交失败！','error');
+					}
+					//dialog_upload_seal.close();
+					
+				}
+			}
+		});
+                    }
+                  });
+    	 });
+
+    function act(data){
+        $("#status").val(data);
+        $("#pageForm").submit();
+    }
+
+	function upload_seal(id){
+ 		dialog_upload_seal.show();
+        dialog_upload_seal.get('loader').load({id:id});
+	}
+    var compid="";
+    //申请ca
+    function apply_ca(data){
+        compid = data;
+        //判断类型字段
+        var cateid = "categery-"+data;
+        var categery = $("#"+cateid).val();
+
+        var pnid = "personName-"+data,ppid = "personPhone-"+data,cardid = "idCardNo-"+data,peid = "personEmail-"+data,cpid = "companyAddress-"+data;
+        var personName = $("#"+pnid).val(),personPhone = $("#"+ppid).val(),idcardNo = $("#"+cardid).val(),personEmail = $("#"+peid).val(),companyAddress = $("#"+cpid).val();
+        if(categery=="0"){//个人ca认证
+            if(personName==""||personPhone==""||idcardNo==""||personEmail==""||companyAddress==""){
+                BUI.Message.Alert("请输入完整的认证信息","warning");
+            }else{
+                //todo ca认证申请逻辑，回调显示申请结果
+                $.ajax({
+                    url: "$request.getContextPath()/enterprise/applyCA.do?id="+compid,
+                    type: 'get',
+                    success: function(data){
+                        if(data.code == '000000'){
+                            var certifno = data.value;
+                            $("#maskLayer").show();
+                            $("#CAsq").append('<div class="tl-center fs-md fw-ber mt-30">'+
+                            '<p>恭喜您！您的CA申请已通过</p>'+
+                            '<p class="mt-20">证书编号：<span>'+certifno+'</span></p>'+
+                            '</div>'+
+                            '<div class="mt-90 tl-center">'+
+                            '<span class="submit-btn" id="closeb">关闭</span>'+
+//                   '<span class="submit-btn ml-15" id="">复制证书编号</span>'+
+                            '</div>').show();
+                        }else {
+                            BUI.Message.Alert("认证失败！"+data.value,'error');
+                        }
+                    },
+                    error : function() {
+                        BUI.Message.Alert('认证失败！','error');
+                    }
+                });
+            }
+        }else{//企业ca认证
+            $.ajax({
+                url: "$request.getContextPath()/enterprise/applyCA.do?id="+compid,
+                type: 'get',
+                success: function(data){
+                    if(data.code == '000000'){
+                        var certifno = data.value;
+                        $("#maskLayer").show();
+                        $("#CAsq").append('<div class="tl-center fs-md fw-ber mt-30">'+
+                        '<p>恭喜您！您的CA申请已通过</p>'+
+                        '<p class="mt-20">证书编号：<span>'+certifno+'</span></p>'+
+                        '</div>'+
+                        '<div class="mt-90 tl-center">'+
+                        '<span class="submit-btn" id="closeb">关闭</span>'+
+//                   '<span class="submit-btn ml-15" id="">复制证书编号</span>'+
+                        '</div>').show();
+                    }else {
+                        BUI.Message.Alert("认证失败！"+data.value,'error');
+                    }
+                },
+                error : function() {
+                    BUI.Message.Alert('认证失败！','error');
+                }
+            });
+        }
+    }
+
+    function callback(){
+        var cid = "certifNo-" + compid;
+        var certifno = $("#"+cid).val();
+        $("#maskLayer").show();
+        $("#CAsq").append('<div class="tl-center fs-md fw-ber mt-30">'+
+        '<p>恭喜您！您的CA申请已通过</p>'+
+        '<p class="mt-20">证书编号：<span>'+certifno+'</span></p>'+
+        '</div>'+
+        '<div class="mt-90 tl-center">'+
+        '<span class="submit-btn" id="closeb">关闭</span>'+
+//        '<span class="submit-btn ml-15" id="">复制证书编号</span>'+
+        '</div>').show();
+    }
+
+    //查看ca
+    function view_ca(data){
+        var cid = "certifNo-" + data;
+        var certifno = $("#"+cid).val();
+        $("#maskLayer").show();
+        $("#CAck").append(' <div class="tl-center fs-md fw-ber mt-30">'+
+        '<p>您的CA申请已通过</p>'+
+        '<p class="mt-20">证书编号：<span>'+certifno+'</span></p>'+
+        '</div>'+
+        '<div class="mt-90 tl-center">'+
+        '<span class="submit-btn" id="closebtn">关闭</span>'+
+//        '<span class="submit-btn ml-15">复制证书编号</span>'+
+        '</div>').show();
+    }
+
+    $(document).on("click","#closebtn", function(e){
+        e.stopPropagation();
+       $("#CAck").empty().hide();
+       $("#maskLayer").hide();
+    });
+    $(document).on("click","#closeb", function(e){
+        e.stopPropagation();
+        $("#CAsq").empty().hide();
+        $("#maskLayer").hide();
+        location.reload();
+    });
+
+
+</script>
+ <script type="text/javascript" language="JavaScript">
+    	$(function(){
+    		var nullFlag = $('#nullFlag').val();
+    		if(nullFlag==1){
+    			$('#pageSize').removeAttr('value');
+    			$('#currentPage').removeAttr('value');
+    			$('#pageSize').val("10");
+    			$('#currentPage').val("1");
+    		}
+    	})
+    </script>
+</body>
+</html>

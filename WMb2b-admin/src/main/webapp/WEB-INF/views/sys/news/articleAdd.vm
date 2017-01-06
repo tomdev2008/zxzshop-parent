@@ -1,0 +1,274 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>管理</title>
+    
+    
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin-purchase-check.css" rel="stylesheet">
+    
+    
+    <link href="$!{request.getContextPath()}/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/artdilog.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/inner-custom.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-article-add.css" rel="stylesheet">
+      
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+	<script src="$!{request.getContextPath()}/assets/js/wm-common.js?v=1"></script>
+    
+	<script src="$!{request.getContextPath()}/assets/js/bui-min.js"></script>
+	<script src="$!{request.getContextPath()}/assets/js/Region.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-productCategories-add.js"></script>    
+      
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="$request.getContextPath()/assets/utf8-jsp/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="$request.getContextPath()/assets/utf8-jsp/ueditor.all.min.js"></script>
+      <script type="text/javascript" language="JavaScript">
+		  //查询二级分类
+		  function firstCateChange() {
+		    var parentId = $("#firstCateId").val();
+			$.ajax({
+				type:"POST",
+				url:'$request.getContextPath()/News/getCate.do',
+				data:"parentId=" + parentId,
+				success:function(data){
+					$("#secondCateId option:not(:first)").remove();
+					for(i=0;i<data.length;i++){
+						var opHTML = "";
+						opHTML += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+		                $("#secondCateOp").after(opHTML);    
+					}
+					
+			    }
+		    });
+		  }
+		  //查询三级分类
+		  function secondCateChange(){
+		  	var parentId = $("#secondCateId").val();
+		  	$.ajax({
+				type:"POST",
+				url:'$request.getContextPath()/News/getCate.do',
+				data:"parentId=" + parentId,
+				success:function(data){
+					$("#thirdCateId option:not(:first)").remove();
+					for(i=0;i<data.length;i++){
+						var opHTML = "";
+						opHTML += '<option value="'+data[i].id+'">'+data[i].name+'</option>';
+		                $("#thirdCateOp").after(opHTML);    
+					}
+					
+			    }
+		    });
+		  }
+		  //保存文章
+		  function saveArticle(){
+			var reg = new RegExp("^[1-9][0-9]*$");
+			$("#content").val(_ueditor.getContent());
+			//校验标题
+			var title = $("#title").val(); 
+			if(title == ""){
+				$("#title_span").text("标题不能为空");
+				return;
+			}else{
+				$("#title_span").text("");
+			}
+			//校验分类
+			var firstCateId = $("#firstCateId").val();
+			var secondCateId = $("#secondCateId").val();
+			var thirdCateId = $("#thirdCateId").val();
+			if(firstCateId=="" && secondCateId=="" && thirdCateId==""){
+				$("#cate_span").text("请选择分类！");
+				return;
+			}else{
+				$("#cate_span").text("");
+			}
+			//校验显示顺序
+			var displayOrder = $("#displayOrder").val();
+			if(displayOrder == ""){
+				$("#displayOrder_span").text("显示顺序不能为空");
+				return;
+			}else{
+				if(!reg.test(displayOrder)){
+            		$("#displayOrder_span").text("显示顺序只能为数字");
+					return;
+            	}
+				$("#displayOrder_span").text("");
+			}
+			//校验显示位置
+			var location = $("#location").val();
+			if(location == ""){
+				$("#location_span").text("显示位置不能为空");
+				return;
+			}else{
+				if(!reg.test(location)){
+            		$("#location_span").text("显示位置只能为数字");
+					return;
+            	}
+				$("#location_span").text("");
+			}
+			Article_Add_Form.submit();
+		}
+	  </script>
+    </head>
+    <body>
+       <div class="container">
+        <div class="account_mgr_nav">
+       		 <a href="$request.getContextPath()/News/page.do">文章管理</a>
+		     <a href="$request.getContextPath()/News/to_add.do" class="active">新增文章</a>
+        </div>
+        <input type="hidden" name="serverPath" id="serverPath" value="/Storage/Articles" class="text">
+        <form id="Article_Add_Form" name="Article_Add_Form" method="post" action="$request.getContextPath()/News/save.do" class="form-horizontal well">
+        <div class="module-box mt20 ">
+            <div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    标题：
+                </label>
+                <div class="field_value">
+                    <input type="text" name="title" id="title" class="text">
+					<span id="title_span" style="color:red"></span>
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    来源：
+                </label>
+                <div class="field_value">
+                    <input type="text" name="source" class="text">
+                </div>
+            </div>
+          	 <div class="entry row">
+          	    <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    选择分类：
+                </label>
+                <div class="field_value">一级分类：
+                    <select name="firstCateId" id="firstCateId" onchange="firstCateChange()">
+					    <option value="">请选择</option>
+                      	#foreach( $cate in $catelist )
+							<option value="$cate.id">$cate.name</option>
+						#end
+				   	 </select>
+				   	 二级分类：
+    			   	  <select name="secondCateId" id="secondCateId" onchange="secondCateChange()">
+    				    <option value="" id="secondCateOp">请选择</option>
+    			   	  </select>
+			    	三级分类：
+				   	  <select name="thirdCateId" id="thirdCateId" >
+					    <option value="" id="thirdCateOp">请选择</option>
+				   	  </select>
+					  <span id="cate_span" style="color:red"></span>
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    内容：
+                </label>
+                <div class="field_value">
+                    <textarea id="content" name="content" style="width: 700px;"></textarea>
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    图片上传：
+                </label>
+                <div class="field_value">
+                
+                	<div class="cert_item">
+			                    <div class="uploadpic" style="height:178px; float:left;" id="businessimg">
+			                        <input class="id" id="businessid" type="hidden" name="enterprisephotoList[0].id" value="0" />
+			                        <input class="path" id="bussinesspath" type="hidden" name="iconUrl" value=""/>
+			                        <input class="code" type="hidden" name="enterprisephotoList[0].dictCode" value="200001" />
+			                        <input type='file' name="_file" class="uploadFilebtn">
+			                    </div>
+			            </div>
+                
+                    <p class="clearfix desc">
+                        说明：最多只能上传一张图片请保证上传图片清晰
+                    </p>
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    摘要：
+                </label>
+                <div class="field_value">
+                    <textarea id="simpleDetail" name="simpleDetail" style="width:700px;"></textarea>
+                </div>
+            </div>
+			<div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    显示顺序：
+                </label>
+                <div class="field_value">
+                    <input type="text" name="displayOrder" id="displayOrder" class="text">
+					<span id="displayOrder_span" style="color:red"></span>
+                </div>
+            </div>
+			<div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    显示位置：
+                </label>
+                <div class="field_value">
+                    <input type="text" name="location" placeholder="只能输入数字，默认请输入1" id="location" class="text">
+					<span id="location_span" style="color:red"></span>
+                </div>
+            </div>
+			<div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    是否推荐：
+                </label>
+                <div class="field_value">
+                    <div class="entry_radio">
+						<input type="radio" name="isRecommend" value="1" checked>是
+						<input type="radio" name="isRecommend" value="0">否
+                    </div>
+
+                </div>
+            </div>
+            <div class="entry row">
+                <label for="" class="field_label">
+                    <span class="highlight">*</span>
+                    是否显示：
+                </label>
+                <div class="field_value">
+                    <div class="entry_radio">
+						<input type="radio" name="isShow" value="1" checked>是
+						<input type="radio" name="isShow" value="0">否
+                    </div>
+
+                </div>
+            </div>
+ 		</form>
+           #auth($request.getSession().getAttribute("session.user").getId(),"文章管理.发布")
+		        <button class="submit" type="button" onclick="saveArticle();" style="margin-top:20px;margin-left:30px;border-radius:2px;color:white;height:34px;font-size:16px;width:160px;background-color:#515663">发布</button>
+           #end
+	</div>
+    <script type="text/javascript" language="JavaScript">
+	 	var _ueditor;
+    	$(function() {
+    	   _ueditor = UE.getEditor('content');
+    	});
+	</script>
+    </body>
+		
+    </html>       

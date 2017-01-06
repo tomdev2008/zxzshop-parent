@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MessageInfo">
+	
+ 	<!-- 查询该用户总数量 -->
+	<select id="MessageInfo.queryCount"  parameterType="int" resultType="int">
+		select Count(Id) from wm_Message_t where userId =#{UserId} 
+	</select>
+	
+	<!-- 查询未读消息数 -->
+	<select id="MessageInfo.queryUnReadCount"  parameterType="int" resultType="long">
+		select Count(Id) from wm_Message_t where userId =#{UserId} and IsRead=0
+	</select>
+	
+	<!-- 查询列表  -->
+	<select id="MessageInfo.queryMessageList"  parameterType="map" resultType="com.wangmeng.service.bean.Messages">
+		select * from wm_Message_t where userId=#{UserId} limit #{begin},#{end}
+	</select>
+	
+	<!-- 查询消息单条信息 -->
+	<select id="MessageInfo.queryMessageById"  parameterType="map" resultType="com.wangmeng.service.bean.Messages">
+		select * from wm_Message_t where userId=#{UserId} and Id=#{Id}
+	</select>
+	
+	<!-- 更新消息诚已读信息 -->
+	<update id="MessageInfo.updateMessageById"  parameterType="map" > 
+		update wm_Message_t set IsRead=1 where userId=#{UserId} and Id=#{Id}
+	</update>
+	
+	<!-- 删除信息 -->
+	<delete id="MessageInfo.remove" parameterType="map">
+		delete from wm_Message_t where UserID=#{UserId} and ID=#{Id}
+	</delete>
+	
+	<!-- 添加消息中心消息 -->
+	<insert id="MessageInfo.addMessage" parameterType="com.wangmeng.service.bean.Messages" useGeneratedKeys="true" keyProperty="Id">
+			insert into  wm_Message_t(UserId,Message,IsRead,UserType,CreateDate,LinkType) 
+			values(#{UserId},#{Message},0,#{UserType},now(),#{LinkType})
+	</insert>
+
+</mapper>

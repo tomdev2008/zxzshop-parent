@@ -1,0 +1,226 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>角色管理</title>
+    <meta charset="utf-8">
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+
+        <style>
+            .bui-dialog{max-height:560px!important; overflow: auto!important;}
+        </style>
+
+        <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+      <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+    </head>
+    <body>
+		
+      <div class="demo-content">
+		  <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/sys/role/page.do" class="form-horizontal well" id="roleSearchForm">
+				<input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+				<input type="hidden" name="pageNo" id="pageNo" value="$!page.pageNo"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">用户名：</label>
+                    <div class="controls">
+                      <input type="text" name="roleName" value="" class="control-text">
+                    </div>
+                  </div>
+                  <div class="form-actions span5 offset3">
+                    <button type="submit" class="button button-primary">搜索</button>
+                  </div>
+                </div>
+              </form>
+			
+            <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr><th colspan="7">
+                <ul class="toolbar">
+                  <li><label class="checkbox"><input type="checkbox" id="batchCheck"><a href="#">全选</a></label></li>
+                  <li><button class="button button-danger" id="userBatchDelete"><i class="icon-white icon-trash"></i>批量删除</button></li>
+				  <li><button class="button button-primary" id="addBtnShow">添加</button></li>
+                </ul>
+                </th></tr>
+                <tr>
+                  <th width="15"></th>
+                  <th>编码</th>
+                  <th>角色名称</th>
+                  <th>角色描述</th>
+                  <th>创建时间</th>
+				  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+				#foreach($role in $page.getDataList())
+                    <tr>
+                      <td><input type="checkbox" name="oneCheck" value="$!role.id"></td>
+                      <td>$!role.id</td>
+                      <td>$!role.roleName</td>
+                      <td>$!role.remark</td>
+                      <td>$!role.createTime</td>
+					  <td>
+						  #if($!role.sta=="1")
+						     <span class="label label-success">正常</span>
+						  #else
+							 <span class="label label-important">注销</span>
+						  #end
+					  </td>
+                      <td>
+                        <a class="button button-primary" href="#" title="编辑学生信息" onClick="javascript:edit_user($!role.id);" tab="$role.id">编辑</a>
+						&nbsp;&nbsp;
+					    <a class="button button-primary" href="#" title="删除学生信息" onclick="javascript:delUser($!role.id);">删除</a>
+					  </td>
+                    </tr>
+				#end
+              </tbody>
+            </table>
+			
+           #parse("include/page.vm")
+			
+          </div>
+        </div> 
+    <!-- script end -->
+      </div>
+    </body>
+
+
+    <script type="text/javascript" language="JavaScript">
+	   //全选
+	   $("#batchCheck").change(function() {
+	      var batchCheck = document.getElementById('batchCheck');
+		  if(batchCheck.checked==true){
+		    $("[name = oneCheck]:checkbox").attr("checked", true);
+		  }else{
+		     $("[name = oneCheck]:checkbox").attr("checked", false);
+		  }
+         
+        });
+		
+
+	    //添加角色信息
+    	BUI.use('bui/overlay',function(Overlay){
+    	  var  dialog_add = new Overlay.Dialog({
+                    title:'添加角色信息',
+                    width:1020,
+                    height:560,
+                    loader : {
+                      url : '$request.getContextPath()/sys/role/to_add.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'   //加载的数据类型
+                    },
+                    mask:false,
+					success:function () {
+						  $("#U_Add_Form").submit();
+                          this.close();
+                    }
+                  });
+				  
+				   $('#addBtnShow').on('click',function () {
+		            //window.location.href="$request.getContextPath()/sys/role/to_add.do";
+                    dialog_add.show();
+                    dialog_add.get('loader').load();
+                });
+              
+    	 });
+		 
+		
+			  
+		
+		 
+		 //修改角色信息
+		 var dialog_edit
+		 BUI.use('bui/overlay',function(Overlay){
+    	    dialog_edit = new Overlay.Dialog({
+                    title:'添加角色信息',
+                    width:1020,
+                    height:560,
+                    loader : {
+                      url : '$request.getContextPath()/sys/role/to_edit.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    mask:false,
+					success:function () {
+						  $("#U_Edit_Form").submit();
+                          this.close();
+                    }
+                  });
+    	 });
+		 
+		 //修改角色信息
+		 function edit_user(userId){
+            dialog_edit.show();
+            dialog_edit.get('loader').load({id:userId});
+		 }
+		 
+		//删除角色信息
+		function delUser(id) {
+            BUI.Message.Confirm('确认要删除么？',function(){
+			   $.ajax({
+                  type: 'post',
+                  url: '$request.getContextPath()/sys/role/delete.do',
+				  data:{id:id},
+				  dataType:'json', 
+				  success: function(data){
+				      
+				      if(data==1){
+					     location.reload();
+					    //BUI.Message.Alert('修改成功！','success');
+					  }
+				  },
+				  error : function() {    
+                      BUI.Message.Alert('删除出错！','error'); 
+                  }   
+                });
+				
+            },'question');
+        }
+	   
+	   //批量删除用户信息
+	   $("#userBatchDelete").click(function() {
+	        var idStr="";
+            $("input[name='oneCheck']:checkbox").each(function(){ 
+                if($(this).attr("checked")){
+                    idStr += $(this).val()+","
+                }
+            })
+			
+			if(!isNaN(idStr)){
+			    BUI.Message.Alert('请选中您要删除的选项！','warning');
+				return;
+			}
+			
+			BUI.Message.Confirm('确认要删除么？',function(){
+			   $.ajax({
+                  type: 'post',
+                  url: '$request.getContextPath()/sys/role/batchDelete.do',
+				  data:{idStr:idStr},
+				  dataType:'json', 
+				  success: function(data){
+				      if(data==1){
+					     //$("[name = oneCheck]:checkbox").attr("checked", false);
+					     location.reload();
+					  }
+				  },
+				  error : function() {    
+                      BUI.Message.Alert('批量删除出错！','error'); 
+                  }   
+                });
+				
+            },'question');
+        });
+		
+	
+	  
+    </script>
+	
+    </html>       

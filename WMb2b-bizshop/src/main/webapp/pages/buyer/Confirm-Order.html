@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit|ie-stand">
+<meta name="viewport" content="width=device-width">
+<title>买家中心-核对订单信息</title>
+<link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+<link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+<link href="../../assets/css/admin/custom.css" rel="stylesheet">
+<link href="../../assets/css/admin/buyer-confirm-order.css" rel="stylesheet">
+</head>
+<body>
+	<div id="buyer-header"></div>
+	<div class="container">
+		<div class="breadcrumb">
+            <a href="index.html">买家服务中心</a>
+            <i></i>
+            <a href="index.html?to=Purchase">采购管理</a>
+        </div>
+		<div class="order_title">核对订单信息</div>
+		<div class="box">
+			<div class="box_title">
+				<span class="bold">货品清单</span>
+				<div id="SupplyName"></div>
+				材料种类：<span class="bold" id="Kinds">0</span>种
+			</div>
+			<div class="wrapper">
+				<table class="table table-bordered" id="TableTdContent">
+					<tr>
+						<th>材料名称</th>
+						<th>材料品牌</th>
+						<th>规格</th>
+						<th>型号</th>
+						<th>数量</th>
+						<th>单位</th>
+						<th>单价(元)</th>
+					</tr>
+				</table>
+			</div>
+			<div class="table_desc">备注说明：价格10天有效</div>
+		</div>
+			<div class="box">
+				<div class="box_title">收货地址</div>
+				<div class="adr_wrap">
+					<div class="adr" id="RecevingAddress"></div>
+				</div>
+			</div>
+			<div class="box">
+				<div class="box_title">指定收货人</div>
+				<div class="adr_wrap">
+					<div class="item">
+						<label class="title"><em>*</em>第一收货人：</label> 
+						<label>姓名：<input type="text" id="FirstReceiverName" class="required" name="fullname1" placeholder="请输入指定收货人姓名"></label> 
+						<label>身份证号码：<input type="text" name="id-no1" class="id-no required" placeholder="请输入指定收货人身份证号"></label> 
+						<label>联系号码：<input type="text" name="mobile-num1" class="phone-number required" placeholder="请输入收货人联系号码"></label>
+						<span class="error-msg">第一收货人不能为空</span>
+					</div>
+					<div class="item">
+						<label class="title">第二收货人：</label> 
+						<label>姓名：<input type="text" name="fullname2" placeholder="请输入指定收货人姓名"></label> 
+						<label>身份证号码：<input type="text" name="id-no2" class="id-no" placeholder="请输入指定收货人身份证号"></label> 
+						<label>联系号码：<input type="text" name="mobile-num2" class="phone-number" placeholder="请输入收货人联系号码"></label>
+					</div>
+				</div>
+			</div>
+			<div class="box">
+				<div class="box_title">配送方式</div>
+				<div class="deliver">
+					<label><input name="ExpressWay" type="radio" value="1"
+						disabled="disabled">自取</label> <label><input
+						name="ExpressWay" type="radio" value="2" disabled="disabled">供应方配送</label>
+				</div>
+			</div>
+			<div class="box">
+				<div class="box_title">发票类型</div>
+				<div class="deliver">
+					<label><input name="InvoiceType" type="radio" value="1"
+						disabled="disabled">普通发票(增值税)</label> <label><input
+						name="InvoiceType" type="radio" value="2" disabled="disabled">专用发票(增值税)</label>
+				</div>
+			</div>
+			<div class="box">
+				<div class="box_title">开户行信息&amp;开票信息</div>
+				<div class="invoice-wrap">
+					<div class="item-field">
+						<label>
+							开户银行：
+							<input type="text" id="bank-name" placeholder="请输入您公司对公/个人银行名称">
+						</label>
+					</div>
+					<div class="item-field">
+						<label>账户名称：
+						<input type="text" id="company-name" placeholder="请输入您的账户名称"></label>
+					</div>
+					<div class="item-field">
+						<label>银行账号：
+						<input type="text" id="bank-account" placeholder="请输入您公司对公/个人银行账号"></label>
+						<span class="error-msg">请输入您公司正确的对公银行/个人账号</span>
+					</div>
+				</div>
+			</div>
+			<div class="box">
+				<div class="box_title">第三方协议确认</div>
+				<div class="third">
+					<a href="#">查看第三方协议模板</a> <a href="#">下载模板</a>
+				</div>
+				<div class="third_input">
+					<label for=""> 添加附加条款： </label>
+					<textarea name="" id="Additional"
+						placeholder="只能输入文本，为方便您日后日后查阅，请您尽量以123….条目方式输入，允许输入1400个汉字。"
+						maxlength="1400"></textarea>
+				</div>
+			</div>
+			<div class="tool">
+				<button onclick="cancelOrder()">取消</button>
+				<button onclick="sendOrder()">确认订单信息去签约</button>
+			</div>
+	</div>
+	<div id="inner-footer"></div>
+	<script src="../../assets/js/jquery-1.12.0.min.js"></script>
+	<script src="../../assets/js/admin/bootstrap.min.js"></script>
+	<script src="../../assets/js/jquery.cookie.js"></script>
+	<script src="../../assets/js/admin/jquery.artDialog.js"></script>
+	<script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+	<script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+	<script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script src="../../assets/js/admin/jquery.datagrid.js"></script>
+	<script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+	<script src="../../assets/js/admin/CommonJS.js"></script>
+	<script src="../../assets/js/buyer/buyer_base.js"></script>
+	<script src="../../assets/js/admin/custom.js"></script>
+	<script src="../../assets/js/admin/inner-custom.js"></script>
+	<script src="../../assets/js/buyer/buyer-confirm-order.js"></script>
+</body>
+</html>

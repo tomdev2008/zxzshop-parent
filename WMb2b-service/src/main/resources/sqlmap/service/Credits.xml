@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="credits">
+
+	<resultMap id="creditsResultMap" type="com.wangmeng.service.bean.Credits">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId"/>
+		<result property="availableCredits" column="AvailableCredits"/>
+		<result property="expiration" column="Expiration"/>
+		<result property="createDate" column="CreateDate"/>
+		<result property="updateDate" column="UpdateDate" />
+	</resultMap>
+
+	<resultMap id="creditsDetailResultMap" type="com.wangmeng.service.bean.CreditsDetail">
+		<id property="id" column="Id" />
+		<result property="userId" column="UserId"/>
+		<result property="orderNo" column="OrderNo"/>
+		<result property="exchangeType" column="ExchangeType"/>
+		<result property="credits" column="Credits"/>
+		<result property="remark" column="Remark"/>
+		<result property="createDate" column="CreateDate" />
+	</resultMap>
+
+	<!-- 查询积分 -->
+	<select id="credits.query" parameterType="com.wangmeng.service.bean.Credits" resultType="com.wangmeng.service.bean.Credits">
+  		SELECT  * from wm_credits_t credit WHERE 1=1
+		<if test="null != id and id>0"> and credit.Id = #{id} </if>
+		<if test="null != userId and userId > 0"> and credit.UserId = #{userId} </if>
+	</select>
+
+
+	<!-- 分页查询积分详情 //todo 是否需要加上ListByPage后缀  -->
+	<select id="credits.queryDetailsByPagination" parameterType="com.wangmeng.service.bean.CreditsDetail"
+			resultMap="creditsDetailResultMap">
+		SELECT * from wm_credits_detail_t WHERE 1=1
+		<if test="param.userId!=null and param.userId>0" >
+			and UserId = #{param.userId}
+		</if>
+	</select>
+
+	<!-- 更新积分信息 -->
+	<update id="credits.update" parameterType="com.wangmeng.service.bean.Credits">
+		update wm_credits_t
+		<set>
+			<if test="availableCredits != null"> AvailableCredits = #{availableCredits}, </if>
+			<if test="expiration != null"> Expiration = #{expiration}, </if>
+			<if test="updateDate != null="> UpdateDate = #{updateDate} </if>
+		</set>
+		where UserId=#{userId}
+	</update>
+
+	<!-- 新增积分  -->
+	<insert id="credits.add" parameterType="com.wangmeng.service.bean.Credits" useGeneratedKeys="true" keyProperty="id">
+		insert into wm_credits_t (CreateDate,UpdateDate,,UserId,AvailableCredits,Expiration)
+		values(now(),now(),#{userId},#{availableCredits},#{expiration})
+	</insert>
+
+	<!-- 新增积分明细  -->
+	<insert id="credits.addDetail" parameterType="com.wangmeng.service.bean.CreditsDetail" useGeneratedKeys="true" keyProperty="id">
+		insert into wm_credits_detail_t (CreateDate,UserId,OrderNo,ExchangeType,Credits,Remark)
+		values(now(),#{userId},#{orderNo},#{exchangeType},#{credits},#{remark})
+	</insert>
+	
+
+</mapper>

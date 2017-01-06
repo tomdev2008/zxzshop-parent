@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>详情页</title>
+<!-- 此文件为了显示Demo样式，项目中不需要引入 -->
+    <link href="$!{request.getContextPath()}/assets/code/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+    <style type="text/css">
+    .quote-list .table-wrapper{display: none;}
+  </style>
+</head>
+<body>
+ <div class="demo-content">
+<!-- 详情页 ================================================== -->
+ <div>
+  <div class="row">
+    <div class="span24 doc-content" style="width:90%">
+        <ul class="nav-tabs">
+          <!-- <li><a href="$request.getContextPath()/quotedeal/queryQuoteDealList.do">普通报价</a></li> -->
+          <li class="active"><a href="#">继续报价</a></li>
+        </ul>
+      <form name="" action="$request.getContextPath()/quotedeal/platformQuoteInquiry.do" method="post" id="detailForm">
+        <h3>询价信息</h3>
+        <div class="row detail-row form-horizontal well">
+          <div class="span8">
+          <label>询价单号：</label>
+                 <input class="detail-text no-border" readonly="readonly" type="text" name ="dealNo" value="$!result.obj.inquirySheetCode"/>
+          </div>
+          <div class="span8">
+          <label>提交时间：</label><span class="detail-text">
+          <!-- $!result.obj.publishDate -->
+           $dateUtil.formatDate($!result.obj.publishDate,"yyyy-MM-dd HH:mm")
+           </span>
+          </div>
+          <div class="span8">
+          <label>询价截止时间：</label><span class="detail-text">
+          <!-- $!result.obj.quotationEndDate -->
+                $dateUtil.formatDate($!result.obj.quotationEndDate,"yyyy-MM-dd HH:mm")
+          </span>
+          </div>
+        </div>    
+          
+         <div class="form-horizontal well">
+        <div class="row detail-row">
+          <div class="span8">
+            <label>工程名称：</label><span class="detail-text">$!result.obj.title</span>
+          </div>
+          <div class="span8">
+            <label>收货方式：</label><span class="detail-text">
+            #if($!result.obj.receiving == "1")
+                                                        自取
+            #else
+                                                        物流配送
+             #end 
+            </span>
+          </div>
+        </div>    
+        <div class="row detail-row">
+           <div class="span8">
+            <label>企业名称：</label><span class="detail-text">$!result.obj.companyName</span>
+          </div>
+          <div class="span8">
+            <label>收货地址：</label><span class="detail-text">$!result.obj.address</span>
+          </div>
+        </div>    
+          <div class="row detail-row">      
+             <div class="span8">
+                <label >联系人：</label><span class="detail-text">$!result.obj.name</span>
+              </div>
+              <div class="span8">
+               #if($result.obj.invoice)
+                   <input type="hidden" class="detail-text" name="invoiceType" value="$!result.obj.invoice"/>
+                #else
+                    <input type="hidden" class="detail-text" name="invoiceType" value="2"/>
+                #end
+                <label>发票类型：</label><span class="detail-text">
+                 #if($!result.obj.invoice == "0")
+                                                               无需发票
+                #elseif($!result.obj.invoice == "1")
+                                                                普通发票（增值税）
+                  #else
+                                                                专用发票（增值税）
+                 #end 
+                </span>
+              </div>
+          </div>
+        <div class="row detail-row">      
+          <div class="span8">
+            <label>联系人手机号码：</label><span class="detail-text">$!result.obj.phone</span>
+          </div>
+          <div class="span8">
+            <label>询价备注：</label><span class="detail-text">$!result.obj.remark</span>
+          </div>
+        </div>    
+        </div>
+        
+        <h3>货品信息</h3> 
+
+        <div class="span24">
+          <label>选择品牌：</label>
+         #foreach($MapEntity in $result.obj.brands)
+             #if($MapEntity.key)
+             #if($brandNameList.contains($MapEntity.value))
+                 <input type="radio" disabled class="auxiliary-text" value="$!MapEntity.key" name="brandNames" onclick="javaScript:ChooseBrands('$!result.obj.inquirySheetCode','$!MapEntity.key','$!MapEntity.value')" >$MapEntity.value
+                 #else
+                 <input type="radio"  class="auxiliary-text" value="$!MapEntity.key" name="brandNames" onclick="javaScript:ChooseBrands('$!result.obj.inquirySheetCode','$!MapEntity.key','$!MapEntity.value')" >$MapEntity.value
+            #end
+             #else
+              #if($brandNameList.contains($MapEntity.value))
+                 <input type="radio" disabled class="auxiliary-text" value="$!MapEntity.value" name="brandNames" onclick="javaScript:ChooseBrands('$!result.obj.inquirySheetCode','$!MapEntity.key','$!MapEntity.value')"  >$MapEntity.value</input>
+                #else
+                <input type="radio" class="auxiliary-text" value="$!MapEntity.value" name="brandNames" onclick="javaScript:ChooseBrands('$!result.obj.inquirySheetCode','$!MapEntity.key','$!MapEntity.value')"  >$MapEntity.value</input>
+            #end
+          #end
+         #end
+
+          <a style="float:right;" href="$request.getContextPath()/ReadFile/querySellerQuoteList.do">价格库</a>
+
+             <div class="quote-btns">            
+             #foreach($i in [1..$quotesTimes])
+                <a type="button">第 $i 次报价</a>
+             #end
+           </div>
+
+        </div>
+
+<div class="quote-list">
+    #foreach($!QuoteStatistic in $result.obj.quotes)
+        <div class="table-wrapper">
+           <table cellspacing="0" class="table table-bordered quote">
+                  <thead>
+                    <tr class="form-horizontal well" >
+                      <th>材料名称</th>
+                      <th>材料品牌</th>
+                      <th>规格</th>
+                      <th>型号</th>
+                      <th>数量</th>
+                      <th>单位</th>
+                      <th>单价</th>
+                    </tr>
+                  </thead>
+                   <tbody>
+                    #foreach($SheetProduct in $!QuoteStatistic.quoteList)
+                        #set($index = ${velocityCount} - 1) 
+                        <tr>
+                          <input type="hidden"  readonly  value="$!SheetProduct.id" readonly/>
+                          <td><input type="text" readonly  value="$!SheetProduct.productName" readonly/></td>
+                          <td><input type="text" readonly value="$!QuoteStatistic.brandNames" readonly/></td>
+                          <td><input type="text" readonly  value="$!SheetProduct.model" readonly/></td>
+                          <td><input type="text" readonly  value="$!SheetProduct.sku" readonly/></td>
+                          <td><input type="text" readonly value="$!SheetProduct.quantity" readonly/></td>
+                          <td><input type="text" readonly  value="$!SheetProduct.unit" readonly/></td>
+                          <td><input type="text" readonly   value="$!SheetProduct.price"/></td>
+                        </tr>
+                    #end
+                  </tbody>
+            </table>
+                  <div class="control-group">
+                  <label class="control-label">选择企业：</label>
+                     <div class="controls">
+                      <select>
+                        <option value="0">$!QuoteStatistic.companyName</option>
+                      </select>
+                  </div>
+                </div>
+              <div class="span24 doc-content">
+               <div class="control-group">
+                  <label class="control-label">运费价格：</label>
+                   #if(!$quoteStatistic.expressFee )
+                       <div class="controls"><input class="input-normal control-text" name="expressFee" type="text"  value="0"></div>
+                   #else
+                       <div class="controls"><input class="input-normal control-text" name="expressFee" type="text"  value="$quoteStatistic.expressFee"></div>
+                   #end
+                </div>
+                <div class="control-group">
+                  <label class="control-label">备注：</label>
+                  <div class="controls  control-row4"><textarea>$!QuoteStatistic.remark</textarea></div>
+                </div>
+              </div>
+          </div>
+        #end
+
+    <div class="table-default">
+         <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr class="form-horizontal well" >
+                  <th>材料名称</th>
+                  <th>材料品牌</th>
+                  <th>规格</th>
+                  <th>型号</th>
+                  <th>数量</th>
+                  <th>单位</th>
+                  <th>单价</th>
+                </tr>
+              </thead>
+               <tbody id="tbodyid">
+                #foreach($SheetProduct in $result.obj.products)
+                      #set($index = ${velocityCount} - 1) 
+                    <tr>
+                      <input type="hidden" name="quotes[$index].inquiryId" value="$!SheetProduct.id" readonly/>
+                      <td><input type="text no-border" name="quotes[$index].productName" value="$!SheetProduct.productName" readonly/></td>
+                      <td><input type="text no-border" name="quotes[$index].brandNames" value="$!SheetProduct.brandNames" readonly/></td>
+                      <td><input type="text no-border" name="quotes[$index].sku" value="$!SheetProduct.sku" readonly/></td>
+                      <td><input type="text no-border" name="quotes[$index].model" value="$!SheetProduct.model" readonly/></td>
+                      <td><input type="text no-border" name="quotes[$index].quantity" value="$!SheetProduct.quantity" readonly/></td>
+                      <td><input type="text no-border" name="quotes[$index].unit" value="$!SheetProduct.unit" readonly/></td>
+                      <td><input type="text no-border" name="quotes[$index].price" value="$!SheetProduct.price"/></td>
+                    </tr>
+                #end
+              </tbody>
+           </table>   
+
+            <div class="control-group">
+            <label class="control-label">选择企业：</label>
+               <div class="controls">
+                <select id="company-list" name="companyId">
+                  <option value="0">请选择</option>
+                </select>
+            </div>
+          </div>
+        <div class="span24 doc-content">
+         <div class="control-group">
+            <label class="control-label">运费价格：</label>
+             #if(!$quoteStatistic.expressFee )
+                 <div class="controls"><input class="input-normal control-text" id="expressFee" name="expressFee" type="text"  value="0"></div>
+             #else
+                 <div class="controls"><input class="input-normal control-text" id="expressFee" name="expressFee" type="text"  value="$quoteStatistic.expressFee"></div>
+             #end
+          </div>
+          <div class="control-group">
+            <label class="control-label">备注：</label>
+            <div class="controls  control-row4" ><textarea name="remark" ></textarea></div>
+          </div>
+        </div>
+    </div>
+  </div>
+         <div class="form-actions span24" style="padding:20px;">
+               <button id="btnSave" type="button" class="button button-primary">提交</button>
+         </div>
+
+      </form>
+      </div>
+    </div>
+  </div>
+
+
+<script type="text/javascript">
+  
+  function ChooseBrands(purchaseCode,key,value){
+      $.ajax({
+              type: 'get',
+              url: "../inquiry/queryInquiryProductByCode.do",
+              data:{inquiryCode:purchaseCode,brandsId:key,brandsName:value},
+               dataType: "json",
+              success: function(data){
+                  if(data.code == '000000'){//返回成功
+                    $("#tbodyid").html('');
+                    var htl = '';
+                    var objdata = data.obj;
+                    for(var i=0;i<objdata.length;i++){
+                        htl = htl + '<tr>\
+                           <input type="hidden" name="quotes['+i+'].inquiryId" value="'+objdata[i].id+'" />\
+                          <td><input type="text" name="quotes['+i+'].productName" value="'+objdata[i].productName+'" readonly/></td>\
+                       <td><input type="text" name="quotes['+i+'].brandNames" value="'+objdata[i].brandNames+'" readonly/></td>\
+                       <td><input type="text" name="quotes['+i+'].sku" value="'+objdata[i].sku+'" readonly/></td>\
+                       <td><input type="text" name="quotes['+i+'].model" value="'+objdata[i].model+'" readonly/></td>\
+                       <td><input type="text" name="quotes['+i+'].quantity" value="'+objdata[i].quantity+'" readonly/></td>\
+                       <td><input type="text" name="quotes['+i+'].unit" value="'+objdata[i].unit+'" readonly/></td>\
+                       <td><input type="text" name="quotes['+i+'].price" value="'+objdata[i].price+'" /></td>\
+                       </tr>';
+                    }
+                    $("#tbodyid").html(htl);
+                  }
+              },
+              error : function() {    
+                  BUI.Message.Alert('获取该品牌下的产品数据失败，稍候重试！','error'); 
+              }   
+      });
+
+
+       $.ajax({
+              type: 'get',
+              url: "../quotedeal/queryEnterByBrands.do",
+              data:{brandsId:key,brandName:value},
+               dataType: "json",
+              success: function(data){
+                  if(data.code == '000000'){//返回成功
+                      var _html = '<option value="0">请选择</option>', _len = data.obj.length;
+                      for(var i=0;i<_len; i++){
+                        _html+='<option value="'+data.obj[i].id+'">'+data.obj[i].companyName+'</option>'
+                      }
+                      $('#company-list').empty().append(_html);
+                  }
+              },
+              error : function() {    
+                  BUI.Message.Alert('获取该品牌下的企业信息失败，稍候重试！','error'); 
+              }   
+      });
+
+      return false;
+  }
+
+  $('.quote-btns a').click(function(){
+    var _index = $(this).index();
+    $('.quote-list > div:eq('+_index+')').show().siblings().hide();
+  });
+  $('input.auxiliary-text').click(function(){
+    $('.quote-list .table-default').show().siblings().hide();
+  });
+ 
+  $("#btnSave").click(function(){
+      var chocomp = $("#company-list option:selected").val();
+      var _tr = $("#tbodyid > tr");
+      var _bool = true;
+      var expressFee = $("#expressFee").val();
+      _tr.each(function(index, element){
+          var price = $(this).find('td:eq(5) input').val();
+          if(price=="" || price==undefined || price==null || price==0) {
+              BUI.Message.Alert("请输入材料单价！", "warning");
+              _bool = false;
+              return;
+          }
+      });
+      if(chocomp=="0"){
+          BUI.Message.Alert("请选择企业","warning");
+          _bool = false;
+          return;
+      }
+      if(expressFee=="" || expressFee==null || expressFee==undefined){
+          BUI.Message.Alert("请填写运费价格（可0元！！！）","warning");
+          _bool = false;
+          return;
+      }
+      if(!_bool) return;
+      $('#detailForm').submit();
+  });
+
+  </script>
+
+  </div>
+</body>
+</html>         

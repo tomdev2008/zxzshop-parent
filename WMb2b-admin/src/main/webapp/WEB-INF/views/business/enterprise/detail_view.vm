@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../assets/css/artdilog.css" rel="stylesheet">
+    <link href="../assets/css/inner-custom.css" rel="stylesheet">
+    <link href="../assets/css/admin-purchase-check.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="container">
+    <div class="nav_title">
+        企业审核
+        <a id="goback" class="back">返回企业管理</a>
+    </div>
+    <div class="box module-box mt20 base">
+        <div class="box_title">
+            企业基本信息
+        </div>
+        <div id="compid" data-id="$!result.obj.id" style="display: none;">企业id</div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>
+                企业名称：
+            </label>
+            <div class="field_value">
+                <input type="text" value="$!result.obj.companyName" name="companyName" id="compname" readonly>
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>
+                企业证件：
+            </label>
+            <div class="field_value cert">
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="businessimg" src="">
+                    </div>
+                    <div>
+                        营业执照证件
+                    </div>
+                    <input type="text" id="bussinesscode" value="" placeholder="*工商注册号码" readonly>
+                </div>
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="organizationimg" src="">
+                    </div>
+                    <div>
+                        组织机构代码证
+                    </div>
+                    <input type="text" id="organizationcode" value="" placeholder="*组织机构代码证号码" readonly>
+                </div>
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="taximg" src="">
+                    </div>
+                    <div>
+                        税务登记证
+                    </div>
+                    <input type="text" id="taxcode" value="" placeholder="*税务登记证号码" readonly>
+                </div>
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="creditimg" src="">
+                    </div>
+                    <div>
+                        社会机构信用代码证
+                    </div>
+                    <input type="text" id="creditcode" value="" placeholder="社会机构信用代码证" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>
+                注册资金：
+            </label>
+            <div class="field_value">
+                <input type="text" value="$!result.obj.registeredCapital" name="registeredCapital" readonly>
+                <span>万元</span>
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>
+                注册地址：
+            </label>
+            <input type="hidden" id="provid" value="$!result.obj.region.provinceId" name="$!result.obj.region.provinceName"/>
+            <input type="hidden" id="citid" value="$!result.obj.region.cityId" name="$!result.obj.region.cityName"/>
+            <input type="hidden" id="counid" value="$!result.obj.region.areaId" name="$!result.obj.region.areaName"/>
+            <div class="field_value address_value">
+                <select id="provinceDiv" disabled>
+                    <option value="0">请选择</option>
+                </select>
+                <select id="cityDiv" disabled>
+                    <option value="0">请选择</option>
+                </select>
+                <select id="countyDiv" disabled>
+                    <option value="0">请选择</option>
+                </select>
+                <span id="areaNote" class="error-msg">请您选择完整的地区信息</span>
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                &nbsp;
+            </label>
+            <div class="field_value">
+                <input type="text" name="companyAddress" value="$!result.obj.companyAddress" readonly>
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>联系人姓名：
+            </label>
+            <div class="field_value">
+                <input type="text" class="min" value="$!result.obj.contactsName" name="contactsName" readonly>
+            </div>
+            <label for="" class="field_label">
+                <span>*</span>手机号码：
+            </label>
+            <div class="field_value">
+                <input type="text" class="min" value="$!result.obj.contactsPhone" name="contactsPhone" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="box module-box mt20 base">
+        <div class="box_title">
+            完善更多信息
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>申请人身份：
+            </label>
+        <div class="field_value apply">
+            #if( $!result.obj.cardType == "1")
+                <label for="">委托代理人</label>
+                <label class="active" for="">企业法人</label>
+            #else
+                <label class="active" for="">委托代理人</label>
+                <label for="">企业法人</label>
+            #end
+        </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                <span>*</span>
+                身份证件：
+            </label>
+            <div class="field_value cert">
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="identityfrontimg" src="" >
+                    </div>
+                    <div>
+                        身份证正面
+                    </div>
+                </div>
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="identitybackimg" src="" >
+                    </div>
+                    <div>
+                        身份证反面
+                    </div>
+                </div>
+            #if( $!result.obj.cardType == "1")
+                <div class="cert_item" style="display: none;">
+                    <div class="uploadpic">
+                        <img src="" >
+                    </div>
+                    <div>
+                        委托书
+                    </div>
+                </div>
+            #else
+                <div class="cert_item">
+                    <div class="uploadpic">
+                        <img id="attorneyimg" src="" >
+                    </div>
+                    <div>
+                        委托书
+                    </div>
+                </div>
+            #end
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                姓名：
+            </label>
+            <div class="field_value">
+                <input type="text" value="$!result.obj.legalPerson" name="legalPerson" readonly>
+            </div>
+        </div>
+        <div class="row entry">
+            <label for="" class="field_label">
+                证件号码：
+            </label>
+            <div class="field_value">
+                <input type="text" value="$!result.obj.idCardNo" name="idCardNo" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="box module-box record">
+        <div class="box_title">
+            客服回访记录
+        </div>
+        <table class="table table-bordered">
+            <tr>
+                <th>回访日期</th>
+                <th>回访内容</th>
+            </tr>
+            #foreach($visitor in $!result.obj.visitVoList)
+                <tr>
+                    <td>$!visitor.createdTime</td>
+                    <td>$!visitor.content</td>
+                </tr>
+            #end
+        </table>
+    </div>
+    <div class="box module-box record">
+        <div class="box_title">
+            审核记录
+        </div>
+        <table class="table table-bordered">
+            <tr>
+                <th>提交时间</th>
+                <th>审核人</th>
+                <th>审核时间</th>
+            </tr>
+            <tr>
+                <td>$dateUtil.formatDate($!result.obj.commitDate,"yyyy-MM-dd HH:mm:ss")</td>
+                <td></td>
+                <td>$dateUtil.formatDate($!result.obj.auditDate,"yyyy-MM-dd HH:mm:ss")</td>
+            </tr>
+        </table>
+    </div>
+
+    <input type="hidden" value="$request.getContextPath()" id="path">
+
+</div>
+<script src="../assets/js/jquery-1.12.0.min.js"></script>
+<script src="../assets/js/jquery.cookie.js"></script>
+<script src="../assets/js/jquery.artDialog.js"></script>
+<script src="../assets/js/artDialog.iframeTools.js"></script>
+<script src="../assets/js/bui-min.js"></script>
+<script src="../assets/js/bootstrap-datetimepicker.js"></script>
+<script src="../assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../assets/js/jquery.form.js"></script>
+<script src="../assets/js/Region.js"></script>
+<script src="../assets/js/jquery.imgUploadPreview.js"></script>
+<script src="../assets/js/CommonJS.js"></script>
+<script src="../assets/js/admin-purchase-check.js"></script>
+<script type="text/javascript" language="JavaScript">
+    $(document).ready(function(){
+        var pid = $("#provid").val(),
+                cid = $("#citid").val(),
+                cuid = $("#counid").val();
+        $('#provinceDiv').children().each(function () {
+            if ($(this).val() == pid) {
+                $(this).parent().val('').val(pid);
+                city = fnSelect(province, pid, 'city');
+                cityDiv.html('<option value="0">请选择</option>');
+                countyDiv.html('<option value="0">请选择</option>');
+                createElem(city, cityDiv, pid);
+                $('#cityDiv').children().each(function () {
+                    if ($(this).val() == cid) {
+                        $(this).parent().val(cid);
+                        city = fnSelect(province, pid, 'city');
+                        county = fnSelect(city, cid, 'county');
+                        countyDiv.html('<option value="0">请选择</option>');
+                        createElem(county, countyDiv);
+                        $('#countyDiv').children().each(function () {
+                            if ($(this).val() == cuid) {
+                                $(this).parent().val(cuid);
+                            }
+                        });
+                        return;
+                    }
+                });
+                return;
+            }
+        });
+    });
+</script>
+<script type="text/javascript" language="JavaScript">
+		$(function() {
+		   var u = document.referrer;
+		   $("#goback").attr("href",u);
+        });
+</script>
+<div>
+    #foreach($enterpphoto in $result.obj.enterprisephotoList)
+        #if($enterpphoto.orgPath!='' && $enterpphoto.dictCode=='200001')
+            <script type="text/javascript" language="JavaScript">
+                $("#businessimg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+                $("#bussinesscode").attr("value","$!enterpphoto.description");
+            </script>
+        #elseif($enterpphoto.orgPath!=''&& $enterpphoto.dictCode=='200002')
+            <script type="text/javascript" language="JavaScript">
+                $("#organizationimg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+                $("#organizationcode").attr("value","$!enterpphoto.description");
+            </script>
+        #elseif($enterpphoto.orgPath!=''&& $enterpphoto.dictCode=='200003')
+            <script type="text/javascript" language="JavaScript">
+                $("#taximg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+                $("#taxcode").attr("value","$!enterpphoto.description");
+            </script>
+        #elseif($enterpphoto.orgPath!=''&& $enterpphoto.dictCode=='200004')
+            <script type="text/javascript" language="JavaScript">
+                $("#creditimg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+                $("#creditcode").attr("value","$!enterpphoto.description");
+            </script>
+        #elseif($enterpphoto.orgPath!=''&& $enterpphoto.dictCode=='200005')
+            <script type="text/javascript" language="JavaScript">
+                $("#identityfrontimg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+            </script>
+        #elseif($enterpphoto.orgPath!=''&& $enterpphoto.dictCode=='200006')
+            <script type="text/javascript" language="JavaScript">
+                $("#identitybackimg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+            </script>
+        #elseif($enterpphoto.orgPath!=''&& $enterpphoto.dictCode=='200007')
+            <script type="text/javascript" language="JavaScript">
+                $("#attorneyimg").attr("src","$wmStringUtils.getUrlFullDefault($!enterpphoto.orgPath)");
+            </script>
+        #end
+    #end
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>商品管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/seller-brandmanagement.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <ul class="nav nav-tabs-custom">
+            <strong>品牌</strong>
+            <li><a href="./BrandManagement.html">申请列表</a></li>
+            <li class="active">新增申请</li>
+            <em class="primary-btn">
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <div class="primary">
+                    <h3>温馨提示：</h3>
+                    <span>*</span><p>商家可申请品牌，待管理员审核后商家才可正常使用</p>
+                </div>
+            </em>
+        </ul>
+        <div id="id_band">
+            <div>
+                <form role="form" class="form-horizontal" id="brandform">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"><span class="red">*</span>新增分类：</label>
+                        <div class="col-sm-6">
+                            <label class="sub checked">
+                                <input id="radExist" name="mode" type="radio" value="1" checked="checked" />平台已有品牌
+                            </label>
+                            <label class="sub">
+                                <input id="radNew" name="mode" type="radio" value="2" />新品牌
+                            </label>
+                        </div>
+                    </div>
+                    <div id="divExist">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"><span class="red">*</span>选择品牌：</label>
+                            <div class="col-sm-10 brand-letter select-list">
+
+                            </div>
+                            <div class="col-sm-10 brand-group">
+                                <div class="checkbox-group">
+                                </div>
+                                <div class="choose-brand selected">
+                                    <span>已选择：</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="brandLetter" class="form-group upload-img"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="">备注：</label>
+                            <div class="col-sm-10"><textarea rows="4" cols="50" class="form-control" id="band_remark"></textarea></div>
+                        </div>
+                    </div>
+                    <div id="divNew" style="display:none;">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"><span class="red">*</span>名称：</label>
+                            <div class="col-sm-6"><input type="text" class="form-control input-sm" id="band_name"></div>
+                            <div class="col-sm-4"><span class="field-validation-error" id="brandNameTip"></span></div>
+                        </div>
+                        <div id="brandPic" class="form-group upload-img"></div>
+                        <div id="brandAuthPic" class="form-group upload-img"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"><span class="red">*</span>绑定分类：</label>
+                            <div class="col-sm-10 brand-letter select-list">
+
+                            </div>
+                            <div class="col-sm-10 brand-group">
+                                <div class="checkbox-group">
+                                </div>
+                                <div class="choose-category selected">
+                                    <span>已选择：</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for=""><span class="red">*</span>简介：</label>
+                            <div class="col-sm-10"><textarea rows="4" cols="50" class="form-control" id="band_des"></textarea></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" onclick="return AddApply();" class="btn btn-primary">提 交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <input id="hdId" type="hidden" value="0" />
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/jquery.form.js"></script>
+    <script src="../../assets/js/jquery.upload.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/seller/brand-add.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>详情页</title>
+    <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin-prise-style.css" rel="stylesheet" type="text/css" />
+    <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+    <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+</head>
+<body>
+<div class="demo-content">
+    <!-- 详情页 ================================================== -->
+    <div>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+                <ul class="nav-tabs">
+                    <li class="active"><a href="$request.getContextPath()/user/showDetail.do?id=$!result.obj.id">账户信息</a></li>
+                    <li class=""><a href="$request.getContextPath()/address/list.do?userId=$!result.obj.id">收货地址</a></li>
+                    <li class=""><a href="$request.getContextPath()/invoice/queryByType.do?userId=$!result.obj.id&invoiceType=1">开票信息</a></li>
+                    <li class=""><a href="$request.getContextPath()/credits/queryByUserId.do?userId=$!result.obj.id">积分管理</a></li>
+                </ul>
+
+                <div class="border-gray" style="padding: 50px 100px;">
+                    <div class="" style="height: 65px;line-height: 65px;">
+                        <div style="float: left;margin-right:15px;text-align: left;">账户头像：</div>
+                        <div class="headerimg">
+                            #if($!result.obj.photo == '')
+##                                <img src="../assets/img/u1236.png"/>
+                                <img src=""/>
+                            #else
+                                <img src="$wmStringUtils.getUrlFullDefault($!result.obj.photo)"/>
+                            #end
+                        </div>
+                    </div>
+
+                    <div style="padding-top: 15px;">
+                        <div style="float: left;margin-right:15px;text-align: left;">姓名：</div>
+                        <div style="text-align: left;" id="name">$!result.obj.realName</div>
+                    </div>
+                    <div style="padding-top: 15px;">
+                        <div style="float: left;margin-right:15px;text-align: left;">注册手机号码：</div>
+                        <div style="margin-right:15px;">$!result.obj.cellPhone</div>
+                    ##                <div style="color: orange;">修改手机号码</div>
+                    </div>
+                    <div style="padding-top: 15px;">
+                        <div style="float: left;margin-right:15px;text-align: left;">用户名：</div>
+                        #if($result.obj.userName == '')
+                            <div>XXXXX</div>
+                        #else
+                            <div>$!result.obj.userName</div>
+                        #end
+                    </div>
+                    <div style="padding-top: 15px;">
+                        <div style="float: left;margin-right:15px;text-align: left;">客户类型：</div>
+
+                        #if($!result.obj.userType == "1")
+                            <div>采购商</div>
+                        #elseif($!result.obj.userType == "2")
+                            <div>供应商</div>
+                        #else
+                            <div>配套服务商</div>
+                        #end
+
+                    </div>
+                    <div style="padding-top: 15px;">
+                        <div style="float: left;margin-right:15px;text-align: left;">注册申请日期：</div>
+                        <div>$dateUtil.formatDate($!result.obj.createDate,"yyyy-MM-dd")</div>
+                    </div>
+                </div>
+
+                <form name="" action="" method="post" id="detailForm">
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>         

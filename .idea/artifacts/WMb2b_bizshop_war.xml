@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="WMb2b-bizshop:war">
+    <output-path>$PROJECT_DIR$/WMb2b-bizshop/target</output-path>
+    <root id="archive" name="WMb2b-bizshop.war">
+      <element id="artifact" artifact-name="WMb2b-bizshop:war exploded" />
+    </root>
+  </artifact>
+</component>

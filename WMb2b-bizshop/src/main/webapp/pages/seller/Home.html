@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>卖家中心-首页</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+	<link href="../../assets/css/admin/seller-home.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+		<div class="home_title main-login">
+			<span class="company-name"></span>
+
+			<span id="cert-status" class="">未认证</span>
+
+			<span class="uname"></span>
+			<span class="tel"></span>
+
+			<span class="f12">您的信息未完善,&nbsp;完善后商业伙伴将更容易找到您</span>
+			&nbsp;&nbsp;
+			<a class="parent-url f12" href="Account.html">去完善</a>
+		</div>
+
+		<div class="home_title main-logout">
+			未登录
+		</div>
+
+		<ul class="highlight navtitle clearfix">
+		    <li class="account">
+		    	<a class="parent-url" href="Account.html"><i></i>企业认证</a>
+		    </li>
+		    <li class="brand">
+		    	<a class="parent-url" href="BrandManagement.html"><i></i>品牌管理</a>
+		    </li>
+		    <li class="post-product">
+		    	<a class="parent-url" href="PostProduct.html"><i></i>发布商品</a>
+		    </li>
+		</ul>
+
+		<div class="box mt20">
+			<div class="ma price_ma">
+			    <div class="ma_title">
+			        报价管理
+			    </div>
+			    <ul>
+			        <li>待报价(0)</li>
+			        <li>已报价(0)</li>
+			        <li>报价结束(0)</li>
+			    </ul>
+			</div>
+			<div class="ma price_ma">
+			    <div class="ma_title">
+			        订单管理
+			    </div>
+			    <ul>
+			        <li>
+						<a href="Order.html?nav=Order&status=20">
+							买家已签约(<span class="count-buyersigned">0</span>)
+						</a>
+					</li>
+			        <li>
+						<a href="Order.html?nav=Order&status=50">
+							买家已付款(<span class="count-buyerpaid">0</span>)
+						<a>
+					</li>
+			        <li>
+						<a href="Order.html?nav=Order&status=90">
+							交易完成(<span class="count-finished">0</span>)
+						</a>
+					</li>
+					<li>
+						<a href="Order.html?nav=Order&status=99">
+							已关闭(<span class="count-closed">0</span>)
+						</a>
+					</li>
+			    </ul>
+			</div>
+		</div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+	<script src="../../assets/js/admin/jquery.artDialog.js"></script>
+	<script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/seller/seller-home.js"></script>
+	<script src="../../assets/js/seller/common.js"></script>
+</body>
+</html>

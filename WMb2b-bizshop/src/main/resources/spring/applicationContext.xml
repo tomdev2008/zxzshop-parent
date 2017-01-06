@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd ">
+
+	<context:component-scan base-package="com.wangmeng" />
+
+    <bean id="propertyConfigurer" class="com.wangmeng.spring.XPropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:wm-config.properties"/>
+        <property name="searchSystemEnvironment" value="true" />
+        <property name="nestSystemResolver" value="true" />
+    </bean>
+	
+
+	<!-- 静态变量保存applicationContext,方便全局调用 -->
+	<bean class="com.wangmeng.spring.ApplicationContextHolder" lazy-init="false" />
+    
+	 <!-- 上传文件配置 -->
+     <bean id="wmConfiguration" class="org.apache.commons.configuration.PropertiesConfiguration">
+         <constructor-arg type="java.lang.String">
+             <value>wm-config.properties</value>
+         </constructor-arg>               
+     </bean> 
+	
+	 <import resource="classpath:spring/applicationContext-motan.xml"/>
+</beans>

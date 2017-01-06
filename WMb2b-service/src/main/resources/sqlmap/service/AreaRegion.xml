@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AreaRegion">
+	
+	<!-- 根据ID查询地区对象 -->
+	<select id="AreaRegion.findById" parameterType="int" resultType="com.wangmeng.service.bean.Region">
+		select * from wm_region_t WHERE Id = #{id}
+	</select>
+	
+	<!-- 查询省的列表 -->
+	<select id="AreaRegion.getProvince" resultType="com.wangmeng.service.bean.Region">
+		select ProvinceId,ProvinceName from wm_region_t group by ProvinceId
+	</select>
+	
+	<!-- 根据省查询市的列表 -->
+	<select id="AreaRegion.getCityByProvince" resultType="com.wangmeng.service.bean.Region">
+		select CityId,CityName from wm_region_t 
+		where ProvinceId = #{province}
+		group by CityId
+	</select>
+	
+	<!-- 根据市查询地区列表 -->
+	<select id="AreaRegion.getAreaByCity" resultType="com.wangmeng.service.bean.Region">
+		select Id,AreaId,AreaName from wm_region_t 
+		where CityId = #{city}
+	</select>
+
+	<!-- 查询地区 -->
+	<select id="AreaRegion.getRegionByPCA" parameterType="map" resultType="com.wangmeng.service.bean.Region">
+		SELECT Id, ProvinceId, ProvinceName, CityId, CityName, AreaId, AreaName FROM wm_region_t WHERE 
+		ProvinceId = #{provinceId} 
+		AND CityId = #{cityId} 
+		<if test="areaId > 0">
+		AND AreaId = #{areaId} 
+		</if>
+	</select>
+	
+</mapper>

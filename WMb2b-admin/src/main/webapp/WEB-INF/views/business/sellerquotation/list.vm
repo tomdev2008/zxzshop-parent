@@ -1,0 +1,494 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>价格库管理</title>
+  <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/added.css" rel="stylesheet" type="text/css" />
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+        <script src="$!{request.getContextPath()}/assets/js/sea.js"></script>
+        <script src="$!{request.getContextPath()}/assets/js/config.js"></script>
+
+ 
+    </head>
+    <body>
+        #parse("include/page_normal_detect.vm")
+      <div class="demo-content">
+          <div class="doc-content">
+            <ul class="nav-tabs">
+              <li class="active"><a href="#">价格库管理</a></li>
+             </ul>
+             <div class="row">
+             <div class="span24 doc-content" style="width:90%">
+              <form method="post" action="$request.getContextPath()/ReadFile/querySellerQuoteList.do" class="form-horizontal well" name="page" id="pageForm">
+                <input type="hidden" name="pageSize" id="pageSize" value="$!page.pageSize"/>
+                <input type="hidden" name="currentPage" id="currentPage" value="$!page.currentPage"/>
+                <div class="row">
+                  <div class="control-group span8">
+                    <label class="control-label">名称：</label>
+                    <div class="controls">
+                      <input type="text" name="name" placeholder="企业名称/品牌/材料名称" value="$!name"" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                
+                   <div class="row">
+                    <div class="control-group span10">
+                      <label class="control-label">起始日期：</label>
+                      <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                        <input name="startDate" value="$!startDate" data-tip="{text : '起始日期'}" data-rules="{required:true}" data-messages="{required:'起始日期不能为空'}" class="input-small calendar" type="text" placeholder="起始日期"><label>&nbsp;-&nbsp;</label>
+                        <input name="endDate" value="$!endDate" data-rules="{required:true}" data-messages="{required:'截止日期不能为空'}" class="input-small calendar" type="text" placeholder="截止日期">
+                      </div>
+                    </div>
+                    <div class="form-actions span5">
+                        <input type="button" id="btnSearch" class="button button-primary" value="搜索"/>
+                    </div>
+                  </div>
+                  
+              </form>
+              <div class="form-actions span5">
+                  #auth($request.getSession().getAttribute("session.user").getId(),"价格库.添加报价")
+                 <a href="#" id="addquote" class="button button-primary">添加报价</a>
+                  #end
+                  #auth($request.getSession().getAttribute("session.user").getId(),"价格库.批量导入")
+                 <a href="#" id="uploadquote" class="button button-primary">批量导入</a>
+                  #end
+              </div>
+
+              <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="80">企业名称</th>
+                  <th width="80">品牌</th>
+                  <th width="80">材料名称</th>
+                  <th>型号</th>
+                  <th width="80">规格</th>
+                  <th width="80">单位</th>
+                  <th width="80">起批量</th>
+                  <th width="80">市场价</th>
+                  <th width="80">工程价</th>
+                  <th width="80">合约价</th>
+                   <th width="80">是否含税</th>
+                    <th width="80">是否含运费</th>
+                  <th width="120">备注</th>
+                    <th width="80">创建时间</th>
+                  <th width="100">操作</th>
+                </tr>
+              </thead>
+               <tbody>
+                #foreach($Sellerquotation in $result.obj.data)
+                    <tr>
+                      <td>$!Sellerquotation.companyName</td>
+                      <td>$!Sellerquotation.brandName</td>
+                      <td>$!Sellerquotation.productName</td>
+                      <td>$!Sellerquotation.model</td>
+                       <td>$!Sellerquotation.sku</td>
+                       <td>$!Sellerquotation.unit</td>
+                       <td>$!Sellerquotation.startMass</td>
+                      <td>$!Sellerquotation.markPrices</td>
+                      <td>$!Sellerquotation.price</td>
+                       <td>$!Sellerquotation.exercisePrice</td>
+                       <td>
+                       #if($!Sellerquotation.IsFeeRate == 1)
+                        是
+                       #else
+                          否
+                       #end
+                       </td>
+                        <td>
+                       #if($!Sellerquotation.IsExpressFee == 1)
+                        是
+                       #else
+                          否
+                       #end
+                       </td>
+                       <td>$!Sellerquotation.remark</td>
+                       <td>$dateUtil.formatDate($!Sellerquotation.createDate,"yyyy-MM-dd HH:mm")</td>
+                       <td nowrap>
+                           #auth($request.getSession().getAttribute("session.user").getId(),"价格库.编辑")
+                                <a class="button button-primary" href="javascript:editQuote('$!Sellerquotation.id');" title="编辑" tab="$!Sellerquotation.id">编辑</a>
+                           #end
+                           &nbsp;&nbsp;
+                            #auth($request.getSession().getAttribute("session.user").getId(),"价格库.删除")
+                                <a class="button button-primary" href="#" title="删除" onClick="javascript:delete_seller('$!Sellerquotation.id');" tab="$!Sellerquotation.id">删除</a>
+                            #end
+                        </td>
+                    </tr>
+                #end
+              </tbody>
+                    </table>
+                 #parse("include/page_normal.vm")
+              </div>
+            </div>
+          </div>  
+      </div>
+     <div id="addDlg" style="display:none"  class="span24 doc-content">
+      <form action="$request.getContextPath()/ReadFile/addSellerQuote.do" id="addSellerForm">
+          <div class="row">
+            <div class="control-group span24">
+              <label class="control-label">企业名称：</label>
+              <div class="controls">
+                <input type="text" name="companyName" value="" class="control-text">
+              </div>
+            </div>
+          </div>
+                <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">材料名称：</label>
+                    <div class="controls">
+                      <input type="text" name="productName" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">品牌名称：</label>
+                    <div class="controls">
+                      <input type="text" name="brandName" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">型号：</label>
+                    <div class="controls">
+                      <input type="text" name="model" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">规格：</label>
+                    <div class="controls">
+                      <input type="text" name="sku" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">单位：</label>
+                    <div class="controls">
+                      <input type="text" name="unit" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">起批量：</label>
+                    <div class="controls">
+                      <input type="text" name="startMass" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">市场价：</label>
+                    <div class="controls">
+                      <input type="text" name="markPrices" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">工程价：</label>
+                    <div class="controls">
+                      <input type="text" name="price" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">合约价：</label>
+                    <div class="controls">
+                      <input type="text" name="exercisePrice" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                   <label class="control-label">是否含税：</label>
+                    <input type="radio" class="auxiliary-text" value="1" name="IsFeeRate">是</input>
+                    <input type="radio" class="auxiliary-text" value="0" name="IsFeeRate">否</input>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                   <label class="control-label">是否含运费：</label>
+                    <input type="radio" class="auxiliary-text" value="1" name="IsExpressFee">是</input>
+                    <input type="radio" class="auxiliary-text" value="0" name="IsExpressFee">否</input>
+                  </div>
+                </div>
+                 <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">备注：</label>
+                    <div class="controls">
+                      <textarea name="remark" ></textarea>
+                    </div>
+                  </div>
+                </div>
+      </form>
+  </div>
+
+  <div id="editDlg" style="display:none"  class="span24 doc-content">
+      <form action="$request.getContextPath()/ReadFile/updateSellerQuote.do" id="editSellerForm">
+          <div class="row">
+            <div class="control-group span24">
+              <label class="control-label">企业名称：</label>
+              <div class="controls">
+                <input type="hidden" name="id">
+                <input type="text" name="companyName" value="" class="control-text">
+              </div>
+            </div>
+          </div>
+                <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">材料名称：</label>
+                    <div class="controls">
+                      <input type="text" name="productName" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">品牌名称：</label>
+                    <div class="controls">
+                      <input type="text" name="brandName" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">型号：</label>
+                    <div class="controls">
+                      <input type="text" name="model" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">规格：</label>
+                    <div class="controls">
+                      <input type="text" name="sku" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">单位：</label>
+                    <div class="controls">
+                      <input type="text" name="unit" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">起批量：</label>
+                    <div class="controls">
+                      <input type="text" name="startMass" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">市场价：</label>
+                    <div class="controls">
+                      <input type="text" name="markPrices" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">工程价：</label>
+                    <div class="controls">
+                      <input type="text" name="price" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">合约价：</label>
+                    <div class="controls">
+                      <input type="text" name="exercisePrice" value="" class="control-text">
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                   <label class="control-label">是否含税：</label>
+                    <input type="radio" class="auxiliary-text" value="1" name="IsFeeRate">是</input>
+                    <input type="radio" class="auxiliary-text" value="0" name="IsFeeRate">否</input>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="control-group span24">
+                   <label class="control-label">是否含运费：</label>
+                    <input type="radio" class="auxiliary-text" value="1" name="IsExpressFee">是</input>
+                    <input type="radio" class="auxiliary-text" value="0" name="IsExpressFee">否</input>
+                  </div>
+                </div>
+                 <div class="row">
+                  <div class="control-group span24">
+                    <label class="control-label">备注：</label>
+                    <div class="controls">
+                      <textarea name="remark" ></textarea>
+                    </div>
+                  </div>
+                </div>
+      </form>
+   </div>
+  
+  <div id="uploadDlog" style="display:none"  class="span24 doc-content">
+      <form action="$request.getContextPath()/ReadFile/read.do" enctype="multipart/form-data" id="uploadform" method="post">
+          <div class="row">
+            <div class="control-group span24">
+              <label class="control-label">企业名称：</label>
+              <div class="controls">
+                <input type="text" name="companyName" value="" class="control-text">
+              </div>
+            </div>
+          </div>
+         <div class="row">
+          <div class="control-group span24">
+           <label class="control-label">是否含税：</label>
+            <input type="radio" class="auxiliary-text" value="1" name="IsFeeRate">是
+            <input type="radio" class="auxiliary-text" value="0" name="IsFeeRate">否
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span24">
+           <label class="control-label">是否含运费：</label>
+            <input type="radio" class="auxiliary-text" value="1" name="IsExpressFee">是
+            <input type="radio" class="auxiliary-text" value="0" name="IsExpressFee">否
+          </div>
+          <div class="control-group span24">
+              <label class="control-label">下载模板</label>
+              <div class="controls">
+
+                <a target="_blank " href="$request.getContextPath()/template/报价模板.xls">下载模板</a>
+              </div>
+            </div>
+            <div class="control-group span24">
+              <label class="control-label">上传文件</label>
+              <div class="controls">
+                 <input type="file" id="logoUpload" name="file">
+              </div>
+            </div>
+          </div>
+      </form>
+    </div>
+
+ 
+ <script type="text/javascript" language="JavaScript">
+   $LAB
+   .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+   .script("$!{request.getContextPath()}/assets/js/bui-min.js")
+   .script("$!{request.getContextPath()}/assets/js/config-min.js")
+   .wait(function(){
+    
+   });
+   
+    BUI.use('bui/calendar',function(Calendar){
+      var datepicker = new Calendar.DatePicker({
+        trigger:'.calendar',
+        autoRender : true
+      });
+    });
+    
+    function delete_seller(data){
+       location.href="$!{request.getContextPath()}/ReadFile/deleteSellerQuote.do?id="+data;
+    }
+
+    var EditDialog = null;
+     BUI.use(['bui/overlay','bui/form'],function(Overlay,Form){
+       var dialogAdd = new Overlay.Dialog({
+            title:'添加报价',
+            width:500,
+            height:600,
+            contentId:'addDlg',
+            success:function () {
+               $("#addSellerForm").submit();
+              this.hide();
+            }
+          }); 
+ 
+        $('#addquote').on('click',function () {
+          dialogAdd.show();
+        });
+
+       var dialogUpload = new Overlay.Dialog({
+            title:'批量上传',
+            width:400,
+            height:350,
+            contentId:'uploadDlog',
+            success:function () {
+               $("#uploadform").submit();
+              this.hide();
+            }
+          }); 
+    
+        $('#uploadquote').on('click',function () {
+          dialogUpload.show();
+        });
+
+        EditDialog = new Overlay.Dialog({
+            title:'编辑报价',
+             width:500,
+            height:600,
+            contentId:'editDlg',
+            success:function () {
+               $("#editSellerForm").submit();
+              this.hide();
+            }
+          }); 
+
+      }); 
+
+
+     function editQuote(id){
+        $.ajax({
+          type: 'get',
+          url: "$!{request.getContextPath()}/ReadFile/querySellerQuoteById.do?id="+id,
+          dataType: "json",
+          success: function(data){
+                var _data = data.obj;
+              if(data.code == '000000'){//返回成功
+                 var _editForm = $('#editSellerForm');
+                 _editForm.find('input[name=id]').val(_data.id);
+                 _editForm.find('input[name=productName]').val(_data.productName);
+                 _editForm.find('input[name=companyName]').val(_data.companyName);
+                 _editForm.find('input[name=brandName]').val(_data.brandName);
+                 _editForm.find('input[name=model]').val(_data.model);
+                 _editForm.find('input[name=sku]').val(_data.sku);
+                 _editForm.find('input[name=unit]').val(_data.unit);
+                 _editForm.find('input[name=startMass]').val(_data.startMass);
+                 _editForm.find('input[name=markPrices]').val(_data.markPrices);
+                 _editForm.find('input[name=price]').val(_data.price);
+                 _editForm.find('input[name=exercisePrice]').val(_data.exercisePrice);
+                 _editForm.find('input[name=IsFeeRate][value='+_data.isFeeRate+']').attr('checked', true);
+                 _editForm.find('input[name=IsExpressFee][value='+_data.isExpressFee+']').attr('checked', true);
+                 _editForm.find('textarea[name=remark]').val(_data.remark);
+                 EditDialog.show();
+              }else{
+                  BUI.Message.Alert('查询数据失败！','error'); 
+              }
+          },
+          error : function() {    
+              BUI.Message.Alert('查询数据失败！','error'); 
+          }   
+        });
+     }
+
+     //条件搜索
+     $("#btnSearch").click(function () {
+         $("#currentPage").val(1);
+         $("#pageForm").submit();
+     })
+    
+</script>  
+
+</body>
+</html>

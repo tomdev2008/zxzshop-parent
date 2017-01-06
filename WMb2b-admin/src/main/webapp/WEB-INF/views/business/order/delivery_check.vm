@@ -1,0 +1,233 @@
+##------------------------------------------------------------------------
+##  发货审核 
+##
+##  Author: 衣奎德
+##  Created: 2016-11-11
+##------------------------------------------------------------------------
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+    <link href="$!{request.getContextPath()}/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/artdilog.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/inner-custom.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-deliver-check.css?v=1" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="$!{request.getContextPath()}/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+     <form name="editForm" method="post" id="editForm">
+    <div class="container">
+        <div class="nav_title">
+            发货审核
+            <a class="back" href="./queryOrderInfo.do">返回订单管理</a>
+        </div>
+
+        <div class="module-box">
+            <div class="left-box fl">
+                <div class="entry row">
+                    <label for="" class="field_label"><span class="highlight">*</span>确认发货日期：</label>
+                    <div class="field_value">
+                        <input type="text" class="datetime" name="sendTime" value="$dateUtil.formatDate($!orderTransfer.sendTime,"yyyy-MM-dd HH:mm:ss")">
+                    </div>
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">选择配送方式：</label>
+                    <div class="field_value deliver_way" id="deliver_way_container">
+						#if($!{orderTransfer.sendType}==3)
+                            <button class="active" code="3">自取</button><button code="1">供应商配送</button>
+						#else
+                            <button code="3">自取</button><button class="active" code="1">供应商配送</button>
+						#end
+
+                    </div>
+                    <input type="hidden" name="sendType" id="sendType" value="$!{orderTransfer.sendType}">
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">物流名称：</label>
+                    <div class="field_value">
+                        <input type="text" name="transferCom" value="$!{orderTransfer.transferCom}">
+                    </div>
+                </div>
+                <div class="entry row">
+                    <label for="" class="field_label">货运单号：</label>
+                    <div class="field_value">
+                        <input type="text" name="transCode" value="$!{orderTransfer.transCode}">
+                    </div>
+                </div>
+
+                <div class="entry row">
+                    <label for="" class="field_label">备注：</label>
+                    <div class="field_value">
+                        <textarea name="sendAuditedDesc" class="textarea">$!{orderTransfer.sendAuditedDesc}</textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="right-box fr">
+                <div class="entry row">
+
+                    <div class="field_value">
+                        <div>
+                                <div class="pic" style="width:200px;height:200px">
+                                	#if(${orderTransfer.sendProv})
+                                		<a id="imgPreview" href="#" onclick="preview();return false;" target="_blank"><img id="provImg" src="${mediaPath}${orderTransfer.sendProv}" alt="点击查看详情" width="200px" height="200px"></a>
+                                	#else
+                                		<img id="provImg" src="" alt="">
+                                	#end
+                                    <i></i>
+                                </div>
+                           
+                            <span id="uploadpic" class="btn btn-info">
+                                点击上传／重新上传
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="action">
+            	<input type="hidden" name="id" id="id" value="$!{orderTransfer.id}">
+            	<input type="hidden" name="sendProv" id="sendProv" value="$!{orderTransfer.sendProv}">
+            	<input type="hidden" name="orderNo" id="orderNo" value="$!{orderInfo.orderNo}">
+				#auth($request.getSession().getAttribute("session.user").getId(),"订单发货审核.取消")
+                	<button class="cancel">取消</button>
+				#end
+                 #if($orderTransfer && $orderTransfer.status == 1)
+				#auth($request.getSession().getAttribute("session.user").getId(),"订单发货审核.确认")
+                  <button class="submit"  >发货审核</button>
+                #end
+				 #elseif($orderTransfer && $orderTransfer.status == 2)
+                  <button class="cancel" disabled >发货审核已通过</button>
+                 #else 
+                  <button class="cancel" disabled >当前不能操作</button>
+                 #end
+               
+            </div>
+        </div>
+    </div>
+    </form>
+     <input type='file' id="provPicFile" name="_file" style="display:none">
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.form.js"></script>
+	<script src="$!{request.getContextPath()}/assets/js/wm-common.js?v=1"></script>
+
+	<script type="text/javascript" language="JavaScript">
+	
+		function preview(){
+			$("#imgPreview").attr("href", "#");
+			if($("#provImg").attr("src") == ""){
+				$.dialog.errorTips("未上传凭证");
+			}else{
+				$("#imgPreview").attr("href", $("#provImg").attr("src"));
+				$("#imgPreview").click();
+			}
+		}
+	
+		$(function() {
+   		 	$(".datetime").datetimepicker({
+        		language: 'zh-CN',
+        		format: 'yyyy-mm-dd hh:ii',
+        		autoclose: true,
+       			 weekStart: 1
+   			 });
+
+##			 $("#deliver_way_container >button").each(function(i){
+##				$(this).attr("class", "");
+##			   if('$!{orderTransfer.sendType}' == $(this).attr("code")){
+##					$(this).attr("class", "active");
+##				}
+##			 });
+			 
+			 $('#deliver_way_container button').click(function(){
+		        $(this).is('.active') || $(this).addClass('active').siblings('button').removeClass('active');
+		        return false;//防止表单自动提交
+		    });
+		    
+			$("#uploadpic").click(function(){
+				$("#provPicFile").click();
+			});
+			//_callbackImgId, _hiddenImgFileId, _uploadImgFileName, _uploadImgFileId, _filePath, _callbackBefore, _callbackAfter, _callbackImgDelId, _callbackDelete
+			$('#provPicFile').change(function(){
+				WM.uploadPic("provImg", "sendProv", "_file", "provPicFile", "common"
+					, function(){}
+					, function(){}
+					, ''
+					, function(){
+						$("#provImg").attr("src", "");
+						$("#provImg").hide();
+						$("#provPicFile").val('');
+						$("#sendProv").val('');
+					}
+				);
+			});
+		});
+		
+		function save(){
+			var _sendType = "";
+			 try{
+				 $("#deliver_way_container>.active").each(function(i){
+					 _sendType = $(this).attr("code");
+				 });
+			 }catch(ex){
+				// alert(ex.message);
+			 }
+			 if(_sendType == ""){
+ 				$.dialog.errorTips("请选择选择配送方式");
+				return false;
+			 }
+
+			 $("#sendType").val(_sendType);
+		
+			 var _url = "$!{request.getContextPath()}/orderInfo/deliveryCheckPost.do?t="+Math.random();
+			 try{ 
+				 $.post(
+			     	_url
+			     	, $("#editForm").serialize()
+			     	, function (result) { 
+			     		if (result!=null && result!=undefined && result.code == '000000') {
+			 				//提交
+			         		$.dialog.succeedTips("发货审核成功！");
+			         		self.location.href= "$!{request.getContextPath()}/orderInfo/queryOrderInfo.do";
+			 			}else{
+			 				if(result.value){
+			 			    	$.dialog.errorTips("发货审核失败！"+result.value);
+			 			    }else{
+			 			    	$.dialog.errorTips("发货审核失败！");
+			 			    }
+			 			}
+			         },
+			     	"json");	
+			 }catch(ex2){
+				 //--
+			 } 
+		}
+	
+		$(function(){
+			 $(document).on('click', '.submit', function(){
+				save();
+			    return false;//防止表单自动提交
+			 });
+			$(document).on('click','.cancel',function(){
+                window.history.back();
+			});
+		});
+	</script>
+
+</body>
+
+</html>

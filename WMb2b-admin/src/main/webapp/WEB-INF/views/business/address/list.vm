@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>详情页</title>
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="../assets/css/admin-prise-style.css" rel="stylesheet">
+</head>
+<body>
+<div class="demo-content">
+    <!-- 详情页 ================================================== -->
+    <div>
+        <div class="row">
+            <div class="span24 doc-content" style="width:90%">
+                <ul class="nav-tabs">
+                    <li class=""><a href="$request.getContextPath()/user/showDetail.do?id=$!userId">账户信息</a></li>
+                    <li class="active"><a href="$request.getContextPath()/address/list.do?userId=$!userId">收货地址</a></li>
+                    <li class=""><a href="$request.getContextPath()/invoice/queryByType.do?userId=$!userId&invoiceType=1">开票信息</a></li>
+                    <li class=""><a href="$request.getContextPath()/credits/queryByUserId.do?userId=$!userId">积分管理</a></li>
+                </ul>
+                <input type="hidden" id="userId" value="$!userId"/>
+                <form name="" action="" method="post" id="detailForm">
+                    <div class="pd-15" style="padding: 20px 15px;">
+                        <div class="" style="margin:0 auto;display:block;">
+                            #auth($request.getSession().getAttribute("session.user").getId(),"收货地址.新增")
+                                <span class="submit-btn" id="createAddr">新增收货地址</span>
+                            #end
+                            #if(!$result.obj.size())
+                                <span class="ml-25">您已创建0个收货地址，最多创建20个收货地址</span>
+                            #else
+                                <span class="ml-25">您已创建<span>$!result.obj.size()</span>个收货地址，最多创建20个收货地址</span>
+                            #end
+                        </div>
+                        #foreach($Address in $result.obj)
+                            <input type="hidden" id="id-$!Address.id" value="$!Address.id"/>
+                            <input type="hidden" id="shipTo-$!Address.id" value="$!Address.shipTo"/>
+                            <input type="hidden" id="phone-$!Address.id" value="$!Address.phone"/>
+                            <input type="hidden" id="telPhone-$!Address.id" value="$!Address.telPhone"/>
+                            <input type="hidden" id="email-$!Address.id" value="$!Address.email"/>
+                            <input type="hidden" id="address-$!Address.id" value="$!Address.address"/>
+                            <input type="hidden" id="prov-$!Address.id" value="$!Address.provinceId"/>
+                            <input type="hidden" id="city-$!Address.id" value="$!Address.cityId"/>
+                            <input type="hidden" id="area-$!Address.id" value="$!Address.areaId"/>
+                            <div class="mt-20" style="border: 2px solid #eee;height: 205px;">
+                                <div class="pd-15 mt-10">
+                                    <p class="fs-md fw-ber fl-left ml-25">$!Address.shipTo</p><p class="fs-md fw-ber fl-left ml-10">$!Address.regionStr</p>
+                                    #if($!Address.isDefault == "1")
+                                        <button class="orangebtn ml-35" disabled>默认收货地址</button>
+                                    #else
+                                        <button class="orangebtn ml-35" style="visibility: hidden">默认收货地址</button>
+                                    #end
+                                    #auth($request.getSession().getAttribute("session.user").getId(),"收货地址.删除")
+                                        <span class="fs-lg fw-ber tl-right fl-right deletebtn" onclick="javascript:del($!Address.id);">X</span>
+                                    #end
+                                </div>
+                                <div class="mt-20 pd-40">
+                                    <div>
+                                        <p class="fl-left">收货人：</p>
+                                        <p>$!Address.shipTo</p>
+                                    </div>
+                                    <div>
+                                        <p class="fl-left">收货地址：</p>
+                                        <p>$!Address.address</p>
+                                    </div>
+                                    <div>
+                                        <p class="fl-left">手机号码：</p>
+                                        <p>$!Address.phone</p>
+                                    </div>
+                                    <div>
+                                        <p class="fl-left">固定电话：</p>
+                                        <p>$!Address.telPhone</p>
+                                        #if($!Address.isDefault == "1")
+                                            #auth($request.getSession().getAttribute("session.user").getId(),"收货地址.编辑")
+                                                <span class="ft-orange fl-right updatebtn" value="$!Address.id">编辑</span>
+                                            #end
+                                        #else
+                                            #auth($request.getSession().getAttribute("session.user").getId(),"收货地址.编辑")
+                                                <span class="ft-orange fl-right updatebtn" value="$!Address.id">编辑</span>
+                                            #end
+                                            #auth($request.getSession().getAttribute("session.user").getId(),"收货地址.设为默认")
+                                                <span class="ft-orange fl-right mr-60 setdefault" onclick="javascript:setdefault($!Address.id)">设为默认收货地址</span>
+                                            #end
+                                        #end
+                                    </div>
+                                    <div>
+                                        <p class="fl-left">电子邮箱：</p>
+                                        <p>$!Address.email</p>
+                                    </div>
+                                </div>
+                            </div>
+                        #end
+                    </div>
+                </form>
+##              地址输入框
+                <div id="content" class="hidden" style="display: none;">
+                    <input type="hidden" id="choosetype" value="0"/>
+                    <form id="form" class="form-horizontal" method="post" action="">
+                        <div class="row">
+                            <div class="control-group span15">
+                                <label class="control-label">*收货人：</label>
+                                <div class="controls">
+                                    <input type="text" id="shipTo" class="input-normal control-text" name="shipTo" data-rules="{required : true}">
+                                </div>
+                            </div>
+                            <div class="control-group span15">
+                                <label class="control-label">*所在国家：</label>
+                                <div class="controls">
+                                    <input type="text" class="input-normal control-text" value="中国大陆" style="" disabled>
+                                </div>
+                            </div>
+                            <div class="control-group span15" style="margin-left: 55px;">
+                                <label class="field_label" style="float: left;">*注册地址：</label>
+                                <div class="controls">
+                                    <div class="field_value address_value">
+                                        <select id="provinceDiv" name="provinceId">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <select id="cityDiv" name="cityId">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                        <select id="countyDiv" name="areaId">
+                                            <option value="0">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group span15">
+                                <label class="control-label">*详细地址：</label>
+                                <div class="controls">
+                                    <input type="text" id="detailArea" class="input-normal control-text" name="address" data-rules="{required : true}">
+                                </div>
+                            </div>
+                            <div class="control-group span15">
+                                <label class="control-label">*手机：</label>
+                                <div class="controls">
+                                    <input type="text" id="mobilephone" class="input-normal control-text" name="phone" data-rules="{required : true}">
+                                </div>
+                            </div>
+                            <div class="control-group span15">
+                                <label class="control-label">*固定电话：</label>
+                                <div class="controls">
+                                    <input type="text" id="telephone" class="input-normal control-text" name="telPhone" data-rules="{required : true}">
+                                </div>
+                            </div>
+                            <div class="control-group span15">
+                                <label class="control-label">*电子邮箱：</label>
+                                <div class="controls">
+                                    <input type="text" id="email" class="input-normal control-text" name="email" data-rules="{required : true}">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="maskLayer" style="display: none;">
+    <div class="delSize">
+        <div class="fs-lg fw-ber tl-center mt-30">是否删除该收货地址</div>
+        <div class="mt-30 tl-center">
+            <span class="delSize-btn mr-42" id="cannelbtn">取消</span>
+            <span class="delSize-btn" id="comfirmbtn">确定</span>
+        </div>
+    </div>
+</div>
+
+
+<script src="../assets/js/jquery-1.8.1.min.js"></script>
+<script src="../assets/js/bui-min.js"></script>
+<script src="../assets/js/Region.js"></script>
+<script src="../assets/js/admin-purchase-check.js"></script>
+<script src="../assets/js/jquery.imgUploadPreview.js"></script>
+<script type="text/javascript" language="JavaScript">
+    var updateid;
+    var userId = $("#userId").val();
+    var id = "",
+        shipTo = "",
+        provinceid = "",
+        cityid = "",
+        countyid = "",
+        detailArea = "",
+        mobilephone = "",
+        telephone = "",
+        email = "";
+    BUI.use(['bui/overlay','bui/form'],function(Overlay,Form){
+        var form = new Form.HForm({
+            srcNode : '#form'
+        }).render();
+        var dialog = new Overlay.Dialog({
+            title:'客户管理》收货地址',
+            width:800,
+            height:500,
+            //配置DOM容器的编号
+            contentId:'content',
+            success:function () {
+                var chooseType = $("#choosetype").val();
+                if(chooseType == "0"){
+                    add();
+                }else{
+                    update();
+                }
+//                dialog.close();
+            }
+        });
+        $('#createAddr').on('click',function () {
+            $("#choosetype").val('').val('0');
+            dialog.show();
+        });
+        $(document).on('click','.updatebtn',function(){
+            $("#choosetype").val('').val('1');
+            updateid = $(this).attr('value');
+            dialog.show();
+            recordd(updateid);
+        });
+    });
+
+    //原数据显示
+    function recordd(data){
+        var shipid = "shipTo-"+data,detailid = "address-"+data,mobileid = "phone-"+data,telid = "telPhone-"+data,emailid = "email-"+data;
+        var shipTo = $("#"+shipid).val(),detailArea = $("#"+detailid).val(),mobilephone = $("#"+mobileid).val(),telephone = $("#"+telid).val(),email = $("#"+emailid).val();
+        $("#shipTo").val(shipTo),$("#detailArea").val(detailArea),$("#mobilephone").val(mobilephone),$("#telephone").val(telephone),$("#email").val(email);
+
+        var prid = "prov-"+data,ciid="city-"+data,coid="area-"+data;
+        var pid = $("#"+prid).val(),
+            cid = $("#"+ciid).val(),
+            cuid = $("#"+coid).val();
+        $('#provinceDiv').children().each(function () {
+            if ($(this).val() == pid) {
+                $(this).parent().val('').val(pid);
+                city = fnSelect(province, pid, 'city');
+                cityDiv.html('<option value="0">请选择</option>');
+                countyDiv.html('<option value="0">请选择</option>');
+                createElem(city, cityDiv, pid);
+                $('#cityDiv').children().each(function () {
+                    if ($(this).val() == cid) {
+                        $(this).parent().val(cid);
+                        city = fnSelect(province, pid, 'city');
+                        county = fnSelect(city, cid, 'county');
+                        countyDiv.html('<option value="0">请选择</option>');
+                        createElem(county, countyDiv);
+                        $('#countyDiv').children().each(function () {
+                            if ($(this).val() == cuid) {
+                                $(this).parent().val(cuid);
+                            }
+                        });
+                        return;
+                    }
+                });
+                return;
+            }
+        });
+    }
+
+//    新增收货地址
+    function add(){
+         shipTo = $("#shipTo").val(),provinceid = $("#provinceDiv option:selected").val(),cityid = $("#cityDiv option:selected").val(),countyid = $("#countyDiv option:selected").val(),
+         detailArea = $("#detailArea").val(),mobilephone = $("#mobilephone").val(),telephone = $("#telephone").val(),email = $("#email").val();
+        if(shipTo==""){
+            BUI.Message.Alert("请输入收货人名称","warning");
+            return false;
+        }
+        if(detailArea==""){
+            BUI.Message.Alert("请输入详细收货地址","warning");
+            return false;
+        }if(mobilephone==""){
+            BUI.Message.Alert("请输入手机号码","warning");
+            return false;
+        }if(telephone==""){
+            BUI.Message.Alert("请输入固定电话号码","warning");
+            return false;
+        }if(email==""){
+            BUI.Message.Alert("请输入正确的邮箱","warning");
+            return false;
+        }
+
+        $.ajax({
+            url:'$request.getContextPath()/address/add.do?userId='+userId+"&shipTo="+shipTo+"&provinceId="+provinceid+"&cityId="+cityid+"&areaId="+countyid+"&address="+detailArea+"&phone="+mobilephone+"&telPhone="+telephone+"&email="+email,
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                if(data){
+                    BUI.Message.Alert("添加地址成功！","success");
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
+                }else{
+                    BUI.Message.Alert("新增地址失败","error");
+                }
+            },
+            error:function(){
+
+            }
+        });
+    }
+//    编辑收货地址
+    function update(){
+        shipTo = $("#shipTo").val(),provinceid = $("#provinceDiv option:selected").val(),cityid = $("#cityDiv option:selected").val(),countyid = $("#countyDiv option:selected").val(),
+        detailArea = $("#detailArea").val(),mobilephone = $("#mobilephone").val(),telephone = $("#telephone").val(),email = $("#email").val();
+        $.ajax({
+            url:'$request.getContextPath()/address/update.do?userId='+userId+"&id="+updateid+"&shipTo="+shipTo+"&provinceId="+provinceid+"&cityId="+cityid+"&areaId="+countyid+"&address="+detailArea+"&phone="+mobilephone+"&telPhone="+telephone+"&email="+email,
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                if(data){
+                    BUI.Message.Alert("编辑地址成功！","success");
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
+                }else{
+                    BUI.Message.Alert("编辑地址失败","error");
+                }
+            },
+            error:function(){
+
+            }
+        });
+
+
+    }
+//    删除收货地址
+    function del(data){
+        $("#maskLayer").show();
+        $("#cannelbtn").click(function(){
+           $("#maskLayer").hide();
+        });
+        $("#comfirmbtn").click(function(){
+            $("#maskLayer").hide();
+            $.ajax({
+                url:'$request.getContextPath()/address/delete.do?userId='+userId+"&id="+data,
+                type:'get',
+                dataType:'json',
+                success:function(data){
+                    if(data){
+                        BUI.Message.Alert("删除成功！","success");
+                        setTimeout(function(){
+                            location.reload();
+                        },1000);
+                    }else{
+                        BUI.Message.Alert("删除失败","error");
+                    }
+                }
+            });
+        });
+
+    }
+//    设置默认地址
+    function setdefault(data){
+        $.ajax({
+            url:'$request.getContextPath()/address/default.do?userId='+userId+"&id="+data,
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                if(data){
+                    BUI.Message.Alert("设置默认成功！","success");
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
+                }else{
+                    BUI.Message.Alert("设置默认失败","error");
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>         

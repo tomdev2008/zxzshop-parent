@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LanguageInfo">
+
+    <!-- 查询所有语库数据  -->
+    <select id="LanguageInfo.queryAll" resultType="com.wangmeng.service.bean.Language">
+        select * from wm_Language_t t GROUP BY t.`zh_CN`
+    </select>
+
+</mapper>

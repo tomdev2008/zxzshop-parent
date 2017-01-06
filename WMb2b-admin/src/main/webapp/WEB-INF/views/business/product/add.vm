@@ -1,0 +1,339 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>商品管理</title>
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-select.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/inner-custom.css" rel="stylesheet" type="text/css">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-product-add.css" rel="stylesheet">
+
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/jquery.cookie.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/jquery.artDialog.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/bootstrap-select.min.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/CommonJS.js"></script>
+    <script src="$!{request.getContextPath()}/assets/js/admin/admin-product-add.js"></script>
+    <style type="text/css">
+        .ancestor, .father, .child, .tory { display: inline-block; border: 1px solid #e4e4e4; height: 360px; width: 300px; float: left; margin-right: 10px; overflow-y: auto; cursor: pointer; background-color:#fff;}
+        .child { margin-right: 0 }
+        .tory { height: 290px; width: 980px; float: right; display: none; }
+        .history { display: block; line-height: 28px; }
+        .select { display: block; line-height: 28px; padding-left: 10px; color: #333; }
+        .ancestor a:hover, .history a:hover, .father a:hover, .child a:hover, .select.hover { background: #f5f5f5; text-decoration: none; }
+        .select span { display: inline-block; width: 250px; height: 28px; color: #333; }
+        .tag { font-size: 14px; font-style: normal }
+        #dvFast { width: 980px; padding:10px 20px; font-size: 14px; margin-bottom: 20px; background-color:#fff; }
+        #spFast { width: 80%; display: inline-block; flaot: left; padding-left: 10px; }
+        #spFastDown { width: 15%; float: right; line-height: 28px; padding-right: 10px; text-align: right; }
+        .table-input { border: 1px solid #e4e4e4; padding: 0; width: 100px; line-height: 28px; margin-right: 10px; padding-left: 10px; height: 30px; outline: 0; }
+        .g-tag { display: block; float: left; width: 60px; height: 100%; }
+        .g-select-box { display: block; float: right; width: 100%; position: relative; }
+        .g-select-box1 { display: block; float: right; width: 500px; height: 100%; position: relative; }
+        .checkbox-row { display: block; float: left; margin-right: 20px; width: 80px; height: 30px; }
+        .red { color: #b39a5a; }
+        .mr15 { margin-right: 15px; }
+        .fileBox { display: inline-block; width: 80px; height: 30px; line-height: 30px; text-align: center; overflow: hidden; position: relative; z-index: 3; cursor: pointer; }
+        .fileLabel { background: blue; }
+        .uploadFile { opacity: 0; filter: alpha(opacity=0); font-size: 100px; position: absolute; top: 0; right: 0; cursor: pointer; }
+        .view img, .view1 img, .view2 img, .view3 img, .view4 img { width: 100px; height: 100px; } 
+    </style>
+    <script type="text/javascript" language="JavaScript">
+     function saveBrandsapply(){
+     		var _checked =  $('.brand-group .selected input[type=checkbox]:checked');
+			var _checkedIds = [];
+			_checked.each(function(){
+				_checkedIds.push($(this).val());
+			});
+	    	$("#productCategoryIds").val(_checkedIds);
+	    	Brandsapply_Add_Form.submit();
+    	}
+    </script>
+    <script type="text/javascript">
+         //获得URL参数
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        };
+
+        var categoryData = null;
+        var productId = 0;
+        var categoryIds = "";
+        var saveCategoryCount = 10; //保留最新的10个常用分类
+        var saveCategoryDays = 30; //常用分类保存天数
+        var isShowFast = 0; //常用分类是否打开
+
+        var _option = "<a class=\"select\"><span data-id=\"#ID#\" data-pid=\"#PID#\" data-level=\"#LEVEL#\">#NAME#</span><i class=\"tag\">&gt;</i></a>";
+        $(document).ready(function () {
+
+            productId = GetQueryString("productId") || 0;
+            categoryIds = GetQueryString("categoryIds") || "";
+            //加载分类数据
+        //    initCategory();
+            //加载常用分类
+    //        initFast();
+
+            //下一步点击事件
+            $("#btnNext").click(function () {
+    			//校验是否选择企业
+    			var enterpriseId = $("#enterpriseId").val();
+    			if(enterpriseId==""){
+    				$("#enterPrInfoId_span").text("请选择供应商!");
+    				return;
+    			}else{
+    				$("#enterPrInfoId_span").text("");
+    			}
+                var firstname = $("#hidCategoryNames").val().split("_")[0];
+                var seccondname = $("#hidCategoryNames").val().split("_")[1];
+                var thirdId = $("#hidCategoryIds").val().split("_")[1];
+				if(thirdId==undefined){
+					$("#category_span").text("请选择分类!");
+    				return;
+				}else{
+    				$("#category_span").text("");
+    			}
+                $("#selectCategoryId").val(thirdId);
+				var categoryId = $("#selectCategoryId").val();
+				Product_Add_Form.submit();
+	          /*$.ajax({
+    			type:"POST",
+    				url:'$request.getContextPath()/ProductCategories/api/queryEnterpriseCategory.do',
+    				data:"enterpriseId=" + enterpriseId+"&categoryId="+categoryId,
+    				success:function(data){
+    					if( data=="true"){
+    						Product_Add_Form.submit();
+    					}else{
+    						$("#category_span").text("该企业没有此经营类目!!");
+    					}
+    			    }
+    		     });
+				 */
+            });
+
+            //常用分类点击事件
+            $('#dvFast').on('click', function (e) {
+                if (isShowFast == 0) {
+                    $('#dvHistory').css({
+                        position: 'absolute',
+                        display: 'block',
+                        left: '20px',
+                        top: '57px',
+                        background: '#fff',
+                        zIndex: '999'
+                    }).slideDown(100);
+                    isShowFast = 1;
+                    $('#spFastDown .col').addClass('slide');
+                } else {
+                    $('#dvHistory').css({
+                        display: 'none'
+                    });
+                    isShowFast = 0;
+                    $('#spFastDown .col').removeClass('slide');
+                }
+            });
+
+            //常用分类项选择事件
+            $("#dvHistory .history").bind("click", function () {
+                var ids = $(this).find("a:first").attr("data-ids");
+                var categoryNames = $(this).find("a:first").text();
+                $('#spFast').html(categoryNames);
+                $("#dvHistory").slideUp(100);
+                isShowFast = 0;
+                $('#spFastDown').html('<i class="glyphicon glyphicon-chevron-down"></i>');
+                initByIds(ids);
+            });
+        });
+
+
+
+        //加载分类数据
+        function initCategory() {
+			$("#dvFirst").empty();
+			$("#dvSecond").empty();
+			var enterpriseId = $("#basic").val();
+            $.ajaxSetup({ cache: false });
+            $.get("$!{request.getContextPath()}/ProductCategories/queryCateGoriesList.do?enterpriseId="+enterpriseId, function (data) {
+                //var data = JSON.parse(data);
+                if (!data) {
+                    $.dialog.errorTips('商品分类加载不正确，请刷新后重试！');
+                    return;
+                }
+
+                categoryData = data.obj;
+                $(data.obj).each(function () {
+                    var firstId = this.id;
+                    var firstName = this.name;
+                    //加载一级分类
+                    $("#dvFirst").append(_option.replace("#ID#", firstId).replace("#PID#", "0").replace("#LEVEL", "1").replace("#NAME#", firstName));
+                });
+
+                $("#dvFirst").find("a").bind("click", function () { categorySelected(this, 1); });
+
+                //参数初始化更新选中状态
+                initByIds(categoryIds);
+            });
+        };
+
+        //参数初始化更新选中状态
+        function initByIds(ids) {
+            if (!ids) return;
+            if (ids.indexOf("_") == -1) {
+
+            }
+            var firstId = ids.split("_")[0];
+            var secondId = ids.split("_")[1];
+            categorySelected(null, 1, firstId);
+            categorySelected(null, 2, secondId);
+        }
+
+        //分类选择事件
+        function categorySelected(obj, level, selectId) {
+            if (!categoryData) {
+                $.dialog.errorTips('商品分类加载不正确，请刷新后重试！');
+                return;
+            }
+
+            if (obj)
+                obj = $(obj);
+            else if (selectId) {
+                //通过ID找到对象
+                var dvId = "";
+                if (level == 1)
+                    dvId = "#dvFirst";
+                else if (level == 2)
+                    dvId = "#dvSecond";
+                obj = $(dvId).find("span[data-id='" + selectId + "']").parent();
+            }
+
+            var selectId = obj.find("span:first").attr("data-id");
+            if (level == 1) {
+                //一级分类点击时,加载二级分类
+                $("#dvFirst").find(".hover").removeClass("hover");
+                obj.addClass("hover");
+                $("#dvSecond,#dvThird").empty();
+
+                $(categoryData).each(function () {
+                    if (this.id == selectId && this.keyValue) {
+                        //加载二级分类
+                        $(this.keyValue).each(function () {
+                            var secondId = this.id;
+                            var secondName = this.name;
+                            $("#dvSecond").append(_option.replace("#ID#", secondId).replace("#PID#", selectId).replace("#LEVEL", "2").replace("#NAME#", secondName));
+                        });
+
+                        $("#dvSecond").find("a").bind("click", function () { categorySelected(this, 2); });
+                    }
+                });
+
+                //点击一级分类清空值
+                if ($("#hidCategoryIds").val()) {
+                    try {
+                        var firstId = $("#hidCategoryIds").val().split("_")[0];
+                        if (firstId != selectId)
+                            $("#hidCategoryIds,#hidCategoryNames").val("");
+                    } catch (e) {
+                        $("#hidCategoryIds,#hidCategoryNames").val("");
+                    }
+                }
+            } else if (level == 2) {
+			    leveid=level;
+				//二级分类点击时，设置样式
+                $("#dvThird").find(".hover").removeClass("hover");
+                obj.addClass("hover");
+                var firstId = $("#dvFirst .hover").find("span:first").attr("data-id");;
+                var firstName = $("#dvFirst .hover").find("span:first").text();
+                var secondId = $("#dvSecond .hover").find("span:first").attr("data-id");;
+                var secondName = $("#dvSecond .hover").find("span:first").text();
+
+                $("#hidCategoryIds").val(firstId + "_" + secondId + "_" + selectId);
+                $("#hidCategoryNames").val(escape(firstName) + "_" + escape(secondName));
+            } 
+        };
+		
+		$(document).on('change', '#basic', function(){
+			$("#enterpriseId").val($(this).val());
+		});
+		
+		function getBindingCate(){
+		   initCategory();
+		}
+    </script>      
+    </head>
+    <body>
+    
+     <div class="container">
+        <div class="account_mgr_nav">
+            <a href="$request.getContextPath()/product/toProductList.do">商品管理</a>
+        	<a href="$request.getContextPath()/product/toProductAdd.do" class="active">新增商品</a>
+		</div>
+	 <form id="Product_Add_Form" class="form-horizontal" action="$request.getContextPath()/product/toProductAddDetails.do">
+	   <input id="selectCategoryId" name="selectCategoryId" type="hidden">
+	   <input id="enterpriseId" name="enterpriseId" type="hidden">
+       <div class="module-box mt20">
+          <div class="fields">
+##              <div class="entry">
+##                  <label for="" class="field_label">
+##                      <span class="highlight">*</span>
+##                      选择供应商：
+##                  </label>
+##                  <select name="enterpriseId" id="">
+##                    #foreach( $enterpriseinfoSimple in $enterpriseinfoSimpleList )
+##						<option value="$!enterpriseinfoSimple.id">$!enterpriseinfoSimple.companyName</option>
+##					#end
+##                  </select>
+##              </div>
+
+          <form class="form-horizontal" role="form">
+              <div class="form-group">
+                  <label for="basic" class="col-lg-2 control-label"><span class="highlight">*</span>选择供应商：</label>
+                  <div class="col-lg-10">
+                      <select id="basic" class="selectpicker show-tick form-control" data-live-search="true" onchange="getBindingCate();">
+						  <option value="">请选择</option>
+                          #foreach( $enterpriseinfoSimple in $enterpriseinfoSimpleList )
+                              <option value="$!enterpriseinfoSimple.id">$!enterpriseinfoSimple.companyName</option>
+                          #end
+                      </select>
+					  <span id="enterPrInfoId_span" style="color:red"></span>
+                  </div>
+              </div>
+          </form>
+
+
+               <div class="entry">
+                  <label for="" class="field_label">
+                      
+
+快速选择一个分类
+                  </label>
+				  <span id="category_span" style="color:red"></span>
+              </div>
+          </div>
+          <div style="height:1px;background:#ddd;">
+
+          </div>
+         
+        <div class="container">
+    	<div class="select-category">
+	        <div id="dvFirst" class="ancestor"></div>
+	        <div id="dvSecond" class="father"></div>
+	        <div id="dvHistory" class="tory"></div>
+	        <input type="hidden" id="hidCategoryIds" />
+	        <input type="hidden" id="hidCategoryNames" />
+	        <span class="btn btn-primary fr mt20" id="btnNext" style="left: 870px">下一步</span>
+        </div>
+       </div>
+         
+       </div>
+
+ 	 </form> 
+    </div>
+    
+    </body>
+    </html>       

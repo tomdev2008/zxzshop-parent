@@ -1,0 +1,48 @@
+  <div id="user_add_content">
+      <form id="U_Add_Form" class="form-horizontal" action="$request.getContextPath()/payway/add.do">
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">支付方式代码</label>
+            <div class="controls">
+              <input name="code" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">支付方式名称</label>
+            <div class="controls  control-row2">
+             <input name="payway" type="text" data-rules="{required:true}" class="input-normal control-text">
+	        </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">商户代码</label>
+            <div class="controls  control-row2">
+             <input name="merchantcode" type="text" data-rules="{required:true}" class="input-normal control-text">
+	        </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">手续费</label>
+            <div class="controls  control-row2">
+             <input name="commission" type="text" data-rules="{required:true}" class="input-normal control-text">
+	        </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">状态</label>
+            <div class="controls  control-row2">
+			  <input type="checkbox" id="statusCheckboxAdd" name="status" value="1" class="checkbox" checked>
+				<script type="text/javascript" language="JavaScript">
+					$("#statusCheckboxAdd").simpleSwitch();
+				</script>
+	        </div>
+          </div>
+        </div>
+		  
+      </form>
+    </div> 

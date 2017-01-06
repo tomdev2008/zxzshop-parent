@@ -1,0 +1,52 @@
+.nav_title{
+    height: 55px;
+    line-height:55px;
+    font-size: 16px;
+    font-weight: normal;
+    background-color: #fff;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.nav_title .back{
+    color: #888;
+    float: right;
+    padding-left: 30px;
+    background-image: url(../../img/admin/icon_center_return.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+.view_title{
+    border-bottom: 1px solid #ddd;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 14px;
+}
+.view_title span{
+    padding-left: 50px;
+}
+.inquiry_info{
+    padding-top: 10px;
+    padding-bottom: 0px;
+    margin-bottom: -5px;
+}
+.inquiry_info li{
+    width: 380px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 14px;
+    float: left;
+}
+#table th,#table td{
+    text-align: center;
+    font-size: 14px;   
+}
+#table th{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #f1f1f1;
+}
+#table td{
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #fefcfd;
+}

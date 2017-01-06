@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>采购管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-history-inquiry.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="heading">
+            <h2>历史报价信息</h2>
+            <a class="back" href="Purchase.html">
+                返回采购管理
+            </a>
+        </div>
+        <div class="search_box">
+            <div class="field">
+                <label for="" class="fname">材料：</label>
+                <input type="text" placeholder="请输入材料名称/供应商/材料品牌" id="ProductName" class="fvalue orderid">
+            </div>
+            <div class="field number">
+                <label for="" class="fname">数量：</label>
+                <button class="quantity_rage active" value="1" name="QuantityLast">0-50 <i></i></button>
+                <button class="quantity_rage" value="2" name="QuantityLast">50-100 <i></i> </button>
+                <button class="quantity_rage" value="3" name="QuantityLast">100-500 <i></i></button>
+                <button class="quantity_rage" value="4" name="QuantityLast">500以上 <i></i></button>
+            </div>
+            <div class="field price_range">
+            <label for="" class="fname">时间：</label>
+                <button class="price_range_btn active" name="LastTime" value="0">全部<i></i></button>
+               	<button class="price_range_btn" value="3" name="LastTime">近三天 <i></i></button>
+                <button class="price_range_btn" value="7" name="LastTime">近一周 <i></i> </button>
+                <button class="price_range_btn" value="10" name="LastTime">近十天 <i></i></button>
+                <button class="query" onclick="query()">查询</button>
+            </div>
+        </div>
+
+        <div class="box">
+            <table id="list" class="table"></table>
+            <div class="tabel-operate" id="batchOperate"></div>
+        </div>
+
+    </div>
+
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/buyer/buyer_base.js"></script>
+    <script src="../../assets/js/buyer/buyer-history-inquiry.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SellerInfo">
+	<!-- 保存-->
+	<insert id="SellerInfo.add" parameterType="com.wangmeng.service.bean.Sellerquotation">
+		insert into wm_sellerquotation_t( 
+			CompanyName,BrandName,ProductName,Model,Sku,Unit,StartMass,MarkPrices,Price,ExercisePrice,Remark,IsFeeRate,IsExpressFee,CreateDate,CreateBy,UpdateDate,UpdateBy
+		)values(
+		   #{companyName},
+		   #{brandName},
+		   #{productName},
+		   #{model},
+		   #{sku},
+		   #{unit},
+		   #{startMass},
+		   #{markPrices},
+		   #{price},
+		   #{exercisePrice},
+		   #{remark},
+		   #{IsFeeRate},
+		   #{IsExpressFee},
+		   now(),
+		   0,
+		   now(),
+		   0
+		)
+	</insert>	
+
+    <!-- 价格库查询 -->	
+	<select id="querySellerQutoListByPage" parameterType="map" resultType="com.wangmeng.service.bean.Sellerquotation">
+	   select * from wm_sellerquotation_t
+	   <where>
+	       <if test="name != null and name != ''"> and (CompanyName like '%${name}%' or BrandName like '%${name}%' or ProductName like '%${name}%') </if>
+	       <if test="startDate != null and startDate != ''"> and CreateDate &gt;= #{startDate} </if>
+	       <if test="endDate != null and endDate != ''"> and CreateDate &lt;= #{endDate} </if>
+	   </where>
+	   order by CreateDate desc
+	</select>
+	
+	<!-- 删除价格库 -->
+	<delete id="deleteSellerQuote" parameterType="map">
+	   delete from wm_sellerquotation_t where id = #{id}
+	</delete>
+	
+	<!-- 查询价格库 -->
+	<select id="querySellerQuoteById" parameterType="int" resultType="com.wangmeng.service.bean.Sellerquotation" >
+	   select * from wm_sellerquotation_t where id = #{id}
+	</select>
+	
+	
+	<!-- 更新价格库 -->
+	<update id="updateSellerQuote" parameterType="com.wangmeng.service.bean.Sellerquotation" >
+	   update wm_sellerquotation_t 
+	   <set>
+	       UpdateDate=now()
+	       <if test="companyName != '' and companyName !=null">,companyName = #{companyName}</if>
+	       <if test="brandName != '' and brandName !=null"> ,brandName = #{brandName}</if>
+	       <if test="productName != '' and productName !=null"> ,productName = #{productName}</if>
+	       <if test="model != '' and model !=null"> ,model = #{model}</if>
+	       <if test="sku != '' and sku !=null"> ,sku = #{sku}</if>
+	       <if test="unit != '' and unit !=null"> ,unit = #{unit}</if>
+	       <if test="startMass != '' and startMass !=null"> ,startMass = #{startMass}</if>
+	       <if test="markPrices != '' and markPrices !=null"> ,markPrices = #{markPrices}</if>
+	       <if test="price != '' and price !=null"> ,price = #{price}</if>
+	       <if test="exercisePrice != '' and exercisePrice !=null"> ,exercisePrice = #{exercisePrice}</if>
+	       <if test="remark != '' and remark !=null"> ,remark = #{remark}</if>
+	       <if test="IsFeeRate != '' and IsFeeRate !=null"> ,IsFeeRate = #{IsFeeRate}</if>
+	       <if test="IsExpressFee != '' and IsExpressFee !=null"> ,IsExpressFee = #{IsExpressFee}</if>
+	   </set>
+	   where  id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,13 @@
+  <div id="user_add_content">
+      <form id="U_Edit_Cate_Form" class="form-horizontal" action="$request.getContextPath()/News/updateNewsCate.do">
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">*名称</label>
+            <div class="controls">
+              <input name="name" value="$!newsCategory.name" type="text" data-rules="{required:true}" class="input-normal control-text">
+            </div>
+          </div>
+        </div>
+		<input type="hidden" name="id" value="$!newsCategory.id"> 
+      </form>
+    </div> 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Enterprisephoto">
+	<update id="Enterprisephoto.updatebyEP" parameterType="com.wangmeng.service.bean.Enterprisephoto" >
+		update wm_enterprisephoto_t 
+		 <set>
+		 	<if test="orgPath!=null and orgPath!=''">
+		 		OrgPath =#{orgPath}
+		 	</if>
+		 </set> 
+		 where EnterpriseinfoId=#{enterpriseinfoId} 
+		  and Category=#{category}
+		  and DictCode =#{dictCode}
+	</update>
+	
+	<!-- 查询图片通过企业=0主键id -->
+	<select id="Enterprisephoto.queryPic" parameterType="java.lang.Integer" resultType="com.wangmeng.service.bean.Enterprisephoto">
+		select * from wm_enterprisephoto_t where EnterpriseinfoId =#{id} and Category=0
+	</select>
+	<update id="Enterprisephoto.updatebyId"  parameterType="com.wangmeng.service.bean.Enterprisephoto">
+		update wm_enterprisephoto_t set OrgPath = #{orgPath}  where Id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新闻详情</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="format-detection" content="email=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+    <link rel="stylesheet" type="text/css" href="css/ui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="all">
+    <style>
+        .am-button-group:not([am-version]) a, .am-button-group:not([am-version]) button {
+            display: block;
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            width: 100%;
+            height: 26px;
+            padding: 0;
+            font-size: 16px;
+            line-height: 27px;
+            text-align: center;
+            border: 1px solid #ffffff;
+            border-width: 1px 1px 1px 0;
+            color: #FFFFFF;
+            white-space: nowrap;
+            background: #328deb;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body ontouchstart="">
+<div class="pd15">
+    <div class="news-title">
+        <h3 class="am-ft-xxl newsTitleDetiles" id="titleCont">杭州省建筑装饰行业协会设计分会第三届会员代表大会“和美将”发布会</h3>
+
+        <div class="am-ft-darkgray am-ft-smm am-ft-right am-mt-15 am-pb-10"><span id="source">东方建材网</span>   <span id="publishTime">2016-04-15</span></div>
+    </div>
+    <div class="am-ft-md news-content pd-t" id="newContent">
+        <!-- <p>
+            9月上证指数下跌4.78%，月线呈现4连阴走势。自6月中旬股市大幅调整以来，市场人气低迷，成交量萎缩，然而9月以来机构调研热情悄然升温。统计显示，9月441家公司共被机构调研734次，环比8月，被调研公司数量和调研次数分别增长两成和四成。此背景下，我们对9月以来被调研公司进一步统计，发现49只业绩三连增中小创股获机构扎堆调研。</p>
+
+        <p>
+            市场震荡整理期间，机构加快调研节奏，或许是趁股票普遍“打折”之际寻找新的投资机会，抑或是对所持有股票进一步追踪。从上市公司角度看，经股市巨震后，公司维护股价稳定意愿强烈，借助调研也让外界了解公司真实情况、传递利好等。</p>
+        <img src="images/banner_03.png">
+
+        <p>从板块分布看，前期调整幅度较大的中小板和创业板最受关注，分别有208家公司和125家公司入围，占被调研公司总数逾七成。分行业看，化工、机械设备和计算机是近期调研中最热门的三大行业，均有超过40家公司入围。</p> -->
+
+    </div>
+</div>
+<script src="js/jquery-1.8.2.min.js"></script>
+<script>
+var id = getParam("id");
+$.ajax({
+	url:'/WMb2b-app/Articles/queryNewsById.do',
+	type:'post',
+	data:{id:id},
+	dataType:'json',
+	success:function(data){
+	//	var d = JSON.parse(data);
+		if(data.code=="000000"){
+			$("#titleCont").html(data.data.title);
+			$("#source").html(data.data.source);
+			$("#publishTime").html(data.data.publishTime);
+			$("#newContent").html(data.data.content);
+		}
+	},
+	error:function(){
+
+	}
+})	
+
+
+function getParam(paramName) {  
+    paramValue = "", isFound = !1;  
+    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {  
+        arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;  
+        while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++  
+    }  
+    return paramValue == "" && (paramValue = null), paramValue  
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- Simple sessionManagementService
+	<bean id="sessionManagementService"
+		class="com.wangmeng.session.impl.SimpleSessionManagementService"
+		init-method="init">
+		<property name="enableCacheTick" value="true" />
+		<property name="sessionExpired" value="1800" />
+		<property name="sessionExpiredPlus" value="1820" />
+		<property name="pushOnlineUserByRole" value="4" />
+		<property name="enableOnlineUserView" value="true" />
+		<property name="cacheService" ref="cacheService"> </property>
+		<property name="sessionUserService" ref="adminLoginService"> </property>
+	</bean>
+	 -->
+
+	<!-- Redis sessionManagementService  -->
+	<bean id="sessionManagementService"
+		class="com.wangmeng.session.impl.DefaultSessionManagementService"
+		  init-method="init">
+		<property name="sidPrefix" value="admin#session-online-sid:" />
+		<property name="uidPrefix" value="admin#session-online-uid:" />
+		<property name="onlineUserCacheKey" value="admin#session-onlinecus-${profile.name}" />
+		<property name="enableOnlineUserView" value="true" />
+		<property name="onlineUserCacheKeyView" value="admin#session-onlinecus-view-${profile.name}" />
+		<property name="sessionExpired" value="1800" />
+		<property name="sessionExpiredPlus" value="10" />
+		<property name="pushOnlineUserByRole" value="4" />
+		<property name="cacheService" ref="cacheExtService"/>
+		<property name="sessionUserService" ref="adminLoginService"/>
+	</bean>
+
+	<!-- 缓存推送 -->
+	<bean id="sessionTickPushService" class="com.wangmeng.session.impl.SessionTickPushServiceImpl">
+		<property name="silentMode" value="true" />
+		<property name="enableOnlineUserView" value="true" />
+		<property name="onlineUserCacheKey" value="admin#session-tick-onlinecus-${profile.name}" />
+		<property name="onlineUserCacheKeyView" value="admin#session-tick-onlinecus-view-${profile.name}" />
+		<property name="sessionExpired" value="${websocket_interval}" />
+		<property name="cacheService" ref="cacheExtService"> </property>
+	</bean>
+
+	<!-- Websocket在线监听 -->
+	<bean id="websocketOnlineHandler" class="com.wangmeng.web.core.websocket.handler.WebsocketOnlineEndPoint" init-method="init">
+		<property name="sidPrefix" value="admin#wsession-online-sid-${profile.name}-" />
+		<property name="pushOnlineUserByRole" value="4" />
+		<property name="sessionManagementService" ref="sessionManagementService" />
+		<property name="enableCacheTick" value="true" />
+		<property name="cacheService" ref="cacheExtService"> </property>
+		<property name="sessionTickPushServiceList">
+			<list>
+				<ref bean="sessionTickPushService" />
+			</list>
+		</property>
+	</bean>
+</beans>

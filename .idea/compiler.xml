@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="BUILD_PROCESS_HEAP_SIZE" value="1024" />
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="WMb2b-admin" />
+        <module name="WMb2b-app" />
+        <module name="WMb2b-bizshop" />
+        <module name="WMb2b-common" />
+        <module name="WMb2b-service" />
+        <module name="WMb2b-third" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="WMb2b-admin" target="1.7" />
+      <module name="WMb2b-app" target="1.7" />
+      <module name="WMb2b-bizshop" target="1.7" />
+      <module name="WMb2b-common" target="1.7" />
+      <module name="WMb2b-parent" target="1.5" />
+      <module name="WMb2b-service" target="1.7" />
+      <module name="WMb2b-third" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

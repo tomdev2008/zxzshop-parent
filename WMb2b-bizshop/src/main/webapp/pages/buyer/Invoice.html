@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>发票信息管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-invoice.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-address.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="content clearfix">
+        <div class="box clearfix">
+            <div class="panel_title">
+               	 开票信息管理
+            </div>
+            <div class="mt20 invoicebtn">
+                <label>开票类型：</label>
+                <button class="active" id="button1">增值税(专用发票) <i></i> </button>
+                <button id="button2">增值税(普通发票) <i></i> </button>
+            </div>
+            <div class="invoice_box">
+                <ul>
+                    <li class="prop normal">
+                        <label for="company-name"><em>*</em>公司名称：</label>
+                        <input type="text" id="company-name" placeholder="请输入您的公司名称">
+                        <span class="error-msg">请输入您的公司名称</span>
+                    </li>                
+                    <li class="prop">
+                        <label for="tax-no"><em>*</em>统一社会信用代码证：</label>
+                        <input type="text" id="tax-no" placeholder="请输入您公司统一社会信用代码证（税号）">
+                        <span class="error-msg">请输入您公司统一社会信用代码证（税号）</span>
+                    </li>
+                    <li class="prop">
+                        <label for="bank-name"><em>*</em>开户银行：</label>
+                        <input type="text" id="bank-name" placeholder="请输入您公司对公银行名称">
+                        <span class="error-msg">请输入您公司对公银行名称</span>
+                    </li>
+                    <li class="prop">
+                        <label for="bank-account"><em>*</em>银行账户：</label>
+                        <input type="text" id="bank-account" placeholder="请输入您公司对公银行账号">
+                        <span class="error-msg">请输入您公司对公银行账号</span>
+                    </li>
+                    <li class="prop">
+                        <label for="tax-address"><em>*</em>地址：</label>
+                        <input type="text" id="tax-address" placeholder="请输入您公司统一社会信用代码证上的地址">
+                        <span class="error-msg">请输入您公司统一社会信用代码证上的地址</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-box">
+                <button class="btn-submit">提交</button>
+            </div>
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/buyer/Invoice.js"></script>
+</body>
+</html>

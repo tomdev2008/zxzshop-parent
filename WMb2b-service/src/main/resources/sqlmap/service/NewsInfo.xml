@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NewsInfo">
+	
+	<select id="NewsInfo.queryList" parameterType="map" resultType="com.wangmeng.service.bean.Newsinfo">
+		select  Id             ,       
+				Title          ,
+				IconUrl        ,
+				IFNULL(SimpleDetail,'')   SimpleDetail,
+				CategoryId     ,
+				DisplayOrder   ,
+				PublishTime    ,
+				Status         ,
+				IsRecommend    ,
+				Location       ,
+				MetaTitle      ,
+				MetaKeywords    ,
+				MetaDescription ,
+				Source    ,
+				IsShow    
+		from wm_newsinfo_t 	
+		<where>
+			<if test="querykey!=null and querykey !=''"> and Title like '%${querykey}%'</if>
+			<if test="categoryId != null and categoryId >0"> and CategoryId = #{categoryId}</if>
+			<if test="isRecommend != null and isRecommend >0"> and IsRecommend = #{isRecommend}</if>
+			
+			<if test="beginDate != null and beginDate !=''"> and date(publishTime)<![CDATA[  >=  ]]> #{beginDate}</if>
+			<if test="endDate != null and endDate !=''"> and date(publishTime) <![CDATA[  <=  ]]> #{endDate}</if>
+		</where> 
+			order by PublishTime DESC limit #{begin},#{end}
+		
+	</select>
+	
+	<select id="NewsInfo.queryListnumb" parameterType="map"  resultType="java.lang.Integer">
+	select count(1) as numb
+		from wm_newsinfo_t 	
+		<where>
+			<if test="querykey!=null and querykey !=''"> and Title like '%${querykey}%'</if>
+			<if test="categoryId != null and categoryId >0"> and CategoryId = #{categoryId}</if>
+			<if test="isRecommend != null and isRecommend >0"> and IsRecommend = #{isRecommend}</if>
+			
+			<if test="beginDate != null and beginDate !=''"> and date(publishTime)<![CDATA[  >=  ]]> #{beginDate}</if>
+			<if test="endDate != null and endDate !=''"> and date(publishTime) <![CDATA[  <=  ]]> #{endDate}</if>
+		</where> 
+			
+	</select>
+	 <select id="NewsInfo.queryinfo" parameterType="int" resultType="com.wangmeng.service.bean.Newsinfo">
+	 	select  Id             ,       
+				Title          ,
+				IconUrl        ,
+				SimpleDetail   ,
+				content        ,
+				CategoryId     ,
+				DisplayOrder   ,
+				PublishTime    ,
+				Status         ,
+				IsRecommend    ,
+				Location       ,
+				MetaTitle      ,
+				MetaKeywords    ,
+				MetaDescription ,
+				Source  ,
+				IsShow      
+		from wm_newsinfo_t 	
+	   where Id = #{id}
+	 </select>
+	
+	<select id="NewsInfo.queryCategoryInfo" parameterType="map" resultType="com.wangmeng.service.bean.NewsCategory">
+		select * from wm_newscategory_t
+		<where>
+			<if test="parentId != null and parentId >= 0"> and parentId = #{parentId}</if>
+		</where>
+		order by id 
+	</select>
+	
+	<!-- 删除新闻 -->
+	<update id="NewsInfo.deletebyId" parameterType="java.lang.Integer" >
+		update wm_newsinfo_t  set Status = 0  where Id = #{id}
+	</update>
+	<!-- 添加意见建议-->
+	<insert id="NewsInfo.addSuggest" parameterType="com.wangmeng.service.bean.Suggest"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `wm_suggest_t`
+		(`CreateTime`,
+		`Mobile`,
+		`Content`,
+		`SuggestType`)
+		VALUES (#{CreateTime},
+		#{Mobile},
+		#{Content},
+		#{SuggestType});
+	</insert>
+	
+	<!-- 分页查询 -->
+	<select id="NewsInfo.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.NewsinfoVo"
+		resultType="com.wangmeng.service.bean.vo.NewsinfoVo" >
+		 SELECT a.id,
+		 		a.title,
+		 		b.name,
+		 		a.status,
+		 		a.publishTime 
+ 		from wm_newsinfo_t a,wm_newscategory_t b
+ 		WHERE a.categoryId = b.id and a.status != 0
+ 		<if test="param.title!=null and param.title!=''" >
+			and a.title like '%${param.title}%'
+		</if>
+		<if test="param.status!=null" >
+			and a.status = #{param.status}
+		</if>
+		<if test="param.categoryId!=null" >
+			and a.categoryId = #{param.categoryId}
+		</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+			<![CDATA[
+		 		and a.publishTime >= #{param.beginTime} and a.publishTime <= #{param.endTime}
+			]]>
+		</if>
+ 		ORDER BY a.publishTime DESC
+	</select>
+	
+	<!-- 根据example查询分类 -->
+	<select id="NewsInfo.queryNewsCategoryByExample" parameterType="com.wangmeng.service.bean.NewsCategory"
+		resultType="com.wangmeng.service.bean.NewsCategory" >
+		 SELECT id,
+		 		ParentId,
+		 		Name,
+		 		DisplayOrder,
+		 		IsDefault 
+ 		from wm_newscategory_t
+ 		<where>
+ 		<if test="id!=null" >
+			and id = #{id}
+		</if>
+ 		<if test="parentId!=null" >
+			and ParentId = #{parentId}
+		</if>
+ 		<if test="name!=null and name !=''"> and name = #{name}</if>
+ 		 <if test="displayOrder!=null" >
+			and displayOrder = #{displayOrder}
+		</if>
+		<if test="isDefault!=null" >
+			and isDefault = #{isDefault}
+		</if>
+ 		</where>
+ 		ORDER BY id desc
+	</select>
+	<!-- 保存文章分类 -->
+	<insert id="NewsInfo.saveCategory" parameterType="com.wangmeng.service.bean.NewsCategory" useGeneratedKeys="true" keyProperty="Id">
+			insert into  wm_newscategory_t(id,ParentId,Name,DisplayOrder,IsDefault) 
+			values(#{id},#{parentId},#{name},#{displayOrder},#{isDefault})
+	</insert>
+	
+	 <select id="NewsInfo.queryNewsCategory" parameterType="java.lang.Integer" resultType="com.wangmeng.service.bean.NewsCategory">
+	 	select  Id             ,       
+				ParentId       ,
+				Name           ,
+				DisplayOrder   ,
+				IsDefault      
+		from wm_newscategory_t 	
+	   where Id = #{id}
+	 </select>
+	
+	<!-- 修改文章分类 -->
+	<update id="NewsInfo.updateCate" parameterType="com.wangmeng.service.bean.NewsCategory">
+		UPDATE wm_newscategory_t SET Name = #{name} WHERE Id = #{id}
+	</update>
+	
+	<!-- 删除分类 -->
+	<delete id="NewsInfo.delCate" parameterType="Integer">
+		DELETE FROM wm_newscategory_t WHERE id = #{Id}
+	</delete>
+	
+	<!-- 保存文章 -->
+	<insert id="NewsInfo.saveNewsinfo" parameterType="com.wangmeng.service.bean.vo.NewsinfoVo" useGeneratedKeys="true" keyProperty="Id">
+			insert into  wm_newsinfo_t(
+				Id             ,       
+				Title          ,
+				IconUrl        ,
+				SimpleDetail   ,
+				content        ,
+				CategoryId     ,
+				DisplayOrder   ,
+				PublishTime    ,
+				Status         ,
+				IsRecommend    ,
+				Location       ,
+				MetaTitle      ,
+				MetaKeywords    ,
+				MetaDescription ,
+				Source  ,
+				IsShow      
+			) 
+			values(
+				null,
+			    #{title},
+			    #{iconUrl},
+			    #{simpleDetail},
+			    #{content},
+			    #{categoryId},
+			    #{displayOrder},
+			    #{publishTime},
+			    #{status},
+			    #{isRecommend},
+			    #{location},
+			    #{metaTitle},
+			    #{metaKeyword},
+			    #{metaDescrption},
+			    #{source},
+			    #{isShow}
+			)
+	</insert>
+	
+	<!-- 修改文章 -->
+	<update id="NewsInfo.updateNewsinfo" parameterType="com.wangmeng.service.bean.Newsinfo">
+		UPDATE wm_newsinfo_t
+		 SET title = #{title},
+			 IconUrl = #{iconUrl},
+			 SimpleDetail = #{simpleDetail},
+			 content = #{content},
+			 CategoryId =#{categoryId},
+			 DisplayOrder =#{displayOrder},
+			 PublishTime =#{publishTime},
+			 Status  =#{status},
+			 IsRecommend  =#{isRecommend},
+			 Location  =#{location},
+			 MetaTitle =#{metaTitle},
+			 MetaKeywords  =#{metaKeyword},
+			 MetaDescription =#{metaDescrption},
+			 Source=#{source},
+			 IsShow  =#{isShow}  
+		  WHERE Id = #{id}
+	</update>
+	
+</mapper>

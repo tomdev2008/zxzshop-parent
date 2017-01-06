@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+		   xmlns:context="http://www.springframework.org/schema/context"
+		   xmlns:mvc="http://www.springframework.org/schema/mvc"
+		   xmlns:websocket="http://www.springframework.org/schema/websocket"
+		   xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/websocket
+    http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+	<context:component-scan base-package="
+		com.wangmeng.web.core.interceptor,
+	    com.wangmeng.web.core.action,
+	    com.wangmeng.action,
+	    com.wangmeng.web.sys.interceptor,
+	    com.wangmeng.web.sys.action.common,
+	    com.wangmeng.web.sys.action.legacy"/>
+	<context:annotation-config />
+	
+	<!-- WebRequestIdentifier -->
+	<bean id="webRequestIdentifier" class="com.wangmeng.web.core.idt.impl.WebRequestIdentifier">
+	</bean>
+
+    <!-- StringHttpMessageConverter -->
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+				<value>application/jsonp;charset=UTF-8</value>
+				<value>text/plain;charset=UTF-8</value>
+				<value>text/html;charset=UTF-8</value>
+				<value>text/css;charset=UTF-8</value>
+				<value>application/atom+xml;charset=UTF-8</value>
+				<value>application/xml;charset=UTF-8</value>  
+				<value>application/*;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- MappingJackson2HttpMessageConverter  -->
+	<bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="objectMapper" ref="objectMapper"/>	
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/jsonp;charset=UTF-8</value>
+				<value>application/json;charset=UTF-8</value>
+				<value>text/plain;charset=UTF-8</value>
+				<value>text/html;charset=UTF-8</value>
+				<value>text/css;charset=UTF-8</value>
+				<value>application/atom+xml;charset=UTF-8</value>
+				<value>application/xml;charset=UTF-8</value>  
+				<value>application/*;charset=UTF-8</value> 
+			</list>
+		</property>
+	</bean>
+	
+	<!-- MappingJackson2JsonView -->
+	<bean id="jsonView"  class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+		<property name="objectMapper" ref="objectMapper"/>
+	</bean>
+	 
+  	<!-- WebBindingInitializer -->
+	<bean id="webBindingInitializer" class="com.wangmeng.web.core.CustermerizedWebBindingInitializer">
+ 	</bean>
+ 	
+  	<!-- TODO 最小化配置 -->
+	<mvc:annotation-driven content-negotiation-manager="contentNegotiationManager">
+		<mvc:message-converters>
+	        <ref bean="stringHttpMessageConverter"/>
+	        <ref bean="jsonHttpMessageConverter"/>
+		</mvc:message-converters>
+		
+		<mvc:argument-resolvers>
+	        <bean id="modelArgumentResolver" class="com.wangmeng.web.core.ModelArgumentResolver">
+				<property name="webRequestIdentifier" ref="webRequestIdentifier"/>
+				<property name="objectMapper" ref="objectMapper"/>
+			</bean>
+	    </mvc:argument-resolvers>
+	</mvc:annotation-driven>
+	
+ 	<!-- ContentNegotiationManagerFactoryBean -->
+	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+	    <property name="favorPathExtension" value="false" />
+	    <property name="favorParameter" value="true" />
+	    <property name="mediaTypes" >
+	        <value>
+            	json=application/json
+	            jsonp=application/javascript
+	            html=text/html
+	            css=text/css
+	            txt=text/plain
+	            xml=application/xml
+	            atom=application/atom+xml
+	        </value>
+	    </property>
+	</bean>
+	
+	<!-- VelocityConfigurer -->
+	<bean class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/views" />
+		<property name="configLocation" value="classpath:velocity.properties" />
+	</bean>
+	
+	<!-- VelocityViewResolver -->
+	<bean id="velocityViewResolver" class="com.wangmeng.web.core.velocity.XVelocityViewResolver">
+		<property name="order" value="0"/>
+		<property name="cache" value="true" />
+		<property name="prefix" value=""/>
+		<property name="suffix" value=".vm" />
+		<!-- 使用springMacro、使用servlet的对象 -->
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<!-- 绑定request和session参数 -->
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<!-- 日期格式化 -->
+		<property name="dateToolAttribute" value="dateTool" />
+		<!-- 数值格式化 -->
+		<property name="numberToolAttribute" value="numberTool" />
+		<!-- toolbox -->
+		<property name="toolboxConfigLocation" value="WEB-INF/vm-toolbox.xml" />
+		<property name="contentType" value="text/html;charset=UTF-8" />	
+		<property name="exportServletContextPath" value="true" />
+		<property name="ctxPathName" value="ctxPath"/>
+	</bean>
+	
+ 
+	<!-- SmartContentNegotiatingViewResolver -->
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="contentNegotiationManager" ref="contentNegotiationManager"/>
+		<property name="order" value="1" />
+		<property name="viewResolvers">
+			<list>
+				<!-- <ref bean="freemarkerViewResolver" />  -->
+				<ref bean="velocityViewResolver" />
+			</list>
+		</property>
+		<!-- 
+		<property name="defaultViews">
+			<list>
+				<ref bean="jsonView" />
+			</list>
+		</property>
+		 -->
+	</bean>
+	
+	 <!-- 将任意类型的Controller适配为Handler -->  
+    <bean name="requestMappingHandlerAdapter"  
+        class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">  
+        <property name="contentNegotiationManager" ref="contentNegotiationManager" />  
+        <property name="webBindingInitializer" ref="webBindingInitializer" />  
+        <property name="messageConverters">	
+        	<list>
+        	  <ref bean="jsonHttpMessageConverter" />
+        	  <ref bean="stringHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 上传文件时需要用到的分解器，默认将编码转为utf-8 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding">
+			<value>UTF-8</value>
+		</property>
+       <!--  指定所上传文件的总大小不能超过1G。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和   -->
+        <property name="maxUploadSize" value="1048576000"/>  
+	</bean>
+	
+	<!-- 后台管理拦截器  -->
+	<bean id="adminSecurityInterceptor"
+		class="com.wangmeng.web.sys.interceptor.SecurityInterceptor">
+		<!-- 登录uri, 只支持当前应用下的  -->
+		<property name="loginUri" value="/security/login.do" />
+		<!-- 忽略的uri -->
+		<property name="ignoredUries">
+			<set>
+				<value>/403.html</value>
+				<value>/404.html</value>
+				<value>/error.html</value>
+				<value>/index.html</value>
+				<value>/index</value>
+				<value>/index.jsp</value>
+				<value>/index.do</value>
+				<value>/security/login</value>
+				<value>/security/login.do</value>
+				<value>/home/logout</value>
+				<value>/home/logout.do</value>
+				<value>/security/loginPost</value>
+				<value>/security/loginPost.do</value>
+                <!-- <value>/wsa/online</value> -->
+			</set>
+		</property>
+        <property name="ignoredPatters">
+            <set>
+                <value>^/wsa/.*</value>
+            </set>
+        </property>
+	</bean>
+
+	<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <ref bean="adminSecurityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+
+    <!-- Websocket 配置 -->
+    <websocket:handlers allowed-origins="*">
+        <websocket:mapping path="/online" handler="websocketOnlineHandler"/>
+        <websocket:handshake-interceptors>
+            <bean class="com.wangmeng.web.core.websocket.HandshakeInterceptor"/>
+        </websocket:handshake-interceptors>
+        <websocket:sockjs></websocket:sockjs>
+    </websocket:handlers>
+
+	<bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+		<property name="maxTextMessageBufferSize" value="8192"/>
+		<property name="maxBinaryMessageBufferSize" value="8192"/>
+	</bean>
+</beans>  

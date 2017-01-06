@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BuyerPurchase">
+	<!-- 发布采购单 -->
+	<insert id="BuyerPurchase.publishPurchase" parameterType="com.wangmeng.service.bean.PurchaseInfo"
+		useGeneratedKeys="true" keyProperty="Id">
+		insert into wm_purchaseinfo_t(
+		PurchaseNo,Name,CompanyId,CompanyName,UserId,ContactName,ContactMobile,DeadTime,
+		PublishTime,ExpressWay,RegionId,Address,InvoiceType,Remark,Status,ShipEndDate)
+		values(#{purchaseNo},#{name},#{companyId},#{companyName},#{userId},
+		#{contactName},#{contactMobile},#{deadTime},now(),#{expressWay},
+		#{regionId},#{address},#{invoiceType},#{remark},#{status},#{shipEndDate})
+	</insert>
+	<!-- 发布采购单商品详情 -->
+	<insert id="BuyerPurchase.publishPurchaseProduct"  parameterType="com.wangmeng.service.bean.SheetProduct"
+		useGeneratedKeys="true" keyProperty="Id">
+		insert into wm_purchaseproduct_t
+		(PurchaseNo,ProductName,Model,Quantity,
+		Unit,ShortDescription,BrandIds,BrandNames,Sku,CompanyId)
+		values(#{sheetCode},#{productName},#{model},#{quantity},#{unit},
+		#{shortDescription},#{brandIds},#{brandNames},#{sku},#{companyId})
+	</insert>
+	<!-- 采购单列表 -->
+	<select id="BuyerPurchase.getPurchaseListByPage" parameterType="map" 
+		resultType="com.wangmeng.service.bean.PurchaseInfo">
+		select *
+		from wm_purchaseinfo_t 
+		where 1=1
+		<if test="param.userId != 0">
+			and UserId=#{param.userId}
+		</if>
+		<if test="param.companyId != 0">
+			and CompanyId = #{param.companyId}
+		</if>
+		<if test="param.name != null and param.name != ''">
+			and Name like CONCAT("%",#{param.name},"%")
+		</if>
+		<if test="param.status > 0">
+			and Status = #{param.status}
+		</if>
+		<if test="param.startTime != null and param.startTime != ''">
+			and PublishTime > #{param.startTime}
+		</if>
+		<if test="param.endTime != null and param.endTime != ''">
+			and #{param.endTime} > PublishTime
+		</if>
+		<if test="param.purchaseNo != null and param.purchaseNo != ''">
+			and PurchaseNo = #{param.purchaseNo}
+		</if>
+		<if test="param.type != 0">
+			<if test="param.type == 1">
+				and 6 > Status
+			</if>
+			<if test="param.type == 2">
+				and Status >= 6
+			</if>
+		</if>
+		order by PublishTime desc
+	</select>
+	<!-- 采购单列表查询mobile端 -->
+	<select id="BuyerPurchase.getPurchaseMobile" parameterType="map" resultType="map">
+		select a.Name as name,a.PurchaseNo as purchaseNo, date_format(a.PublishTime,'%Y-%m-%d %T') as publishTime,
+			a.Status as status,
+			case when 6 > a.Status then '待报价' when a.Status = 6 then '已报价'
+			when a.Status = 7 then '已下单' when a.Status > 7 then '已关闭' end as statusStr,
+			(select Count(c.Id) from wm_purchaseproduct_t c where c.PurchaseNo=a.PurchaseNo) as productKinds,
+			Count(d.id) as quoteTimes,
+			Count(DISTINCT d.CompanyId) as quoteEnterpriseCounts,
+			Count(b.id) as signedCounts,
+			case when d.IsView is null then 0 else d.IsView end as isView
+		from wm_purchaseinfo_t a
+			LEFT JOIN wm_purchaseprotocol_t b on a.purchaseNo = b.purchaseNo and  b.Status > 0
+			Left join wm_quotestatistic_t d on a.purchaseNo = d.DealNo and d.Status > 4
+		where 1=1
+		<if test="param.userId != 0">
+			and a.UserId=#{param.userId}
+		</if>
+		<if test="param.companyId != 0">
+			and a.CompanyId = #{param.companyId}
+		</if>
+		<if test="param.name != null and param.name != ''">
+			and a.Name like CONCAT("%",#{param.name},"%")
+		</if>
+		<if test="param.status > 0">
+			and a.Status = #{param.status}
+		</if>
+		<if test="param.startTime != null and param.startTime != ''">
+			and a.PublishTime > #{param.startTime}
+		</if>
+		<if test="param.endTime != null and param.endTime != ''">
+			and #{param.endTime} > a.PublishTime
+		</if>
+		<if test="param.purchaseNo != null and param.purchaseNo != ''">
+			and a.PurchaseNo = #{param.purchaseNo}
+		</if>
+		group by a.PurchaseNo
+		order by a.PublishTime desc
+		limit #{page.offSet},#{page.pageSize}
+	</select>
+	<!-- 根据单号查询采购单详情 -->
+	<select id="BuyerPurchase.queryPurchaseByCode" parameterType="String"
+		resultType="com.wangmeng.service.bean.PurchaseInfo">
+		select
+		Id as id, 
+		PurchaseNo as purchaseNo,
+		Name as name,
+		CompanyId as companyId,
+		CompanyName as companyName,
+		UserId as userId,
+		ContactName as contactName,
+		ContactMobile as contactMobile,
+		DeadTime as deadTime,
+		PublishTime as publishTime,
+		ExpressWay as expressWay,
+		RegionId as regionId,
+		Address as address,
+		InvoiceType as invoiceType,
+		Remark as remark,
+		Status as status
+		from wm_purchaseinfo_t 
+		where PurchaseNo = #{code}
+	</select>
+	
+	<!-- 根据采购单号查询采购商品列表 -->
+	<select id="BuyerPurchase.queryProductByPurchaseCode" parameterType="String"
+		resultType="com.wangmeng.service.bean.SheetProduct">
+		select
+		Id as id, 
+		PurchaseNo as sheetCode,
+		ProductName as productName,
+		Model as model,
+		Sku as sku,
+		Quantity as quantity,
+		Unit as unit,
+		ShortDescription as shortDescription,
+		BrandIds as brandIds,
+		BrandNames as brandNames
+		from wm_purchaseproduct_t
+		where PurchaseNo=#{code}
+	</select>
+	
+	<!-- 跟据采购单号修改采购信息 -->
+	<update id="BuyerPurchase.updatePurchase" parameterType="com.wangmeng.service.bean.PurchaseInfo">
+		update wm_purchaseinfo_t
+		<set>
+			PurchaseNo=#{purchaseNo}
+			<if test="name != null and name != ''">
+			,Name=#{name}
+			</if>
+			<if test="deadTime != null">
+			,DeadTime = #{deadTime}
+			</if>
+			<if test="invoiceType != 0">
+			,InvoiceType=#{invoiceType}
+			</if>
+			<if test="expressWay != 0">
+			,ExpressWay = #{expressWay}
+			</if>
+			<if test="regionId != 0">
+			,RegionId = #{regionId}
+			</if>
+			<if test="address != null and address != ''">
+			,Address = #{address}
+			</if>
+			<if test="remark != null and remark != ''">
+			,Remark = #{remark}
+			</if>
+			<if test="contactName != null and contactName != ''">
+			,ContactName = #{contactName}
+			</if>
+			<if test="contactMobile != null and contactMobile != ''">
+			,ContactMobile = #{contactMobile}
+			</if>
+			<if test="status != 0">
+			,Status = #{status}
+			</if>
+		</set>
+		<where>
+			PurchaseNo=#{purchaseNo}
+		</where>
+	</update>
+	
+	<!-- 根据ID修改采购商品的信息 -->
+	<update id="BuyerPurchase.updateProduct" parameterType="com.wangmeng.service.bean.SheetProduct">
+		update wm_purchaseproduct_t
+		<set>
+		PurchaseNo=#{sheetCode}
+		<if test="productName != null and productName != ''">
+		,ProductName = #{productName}
+		</if>
+		<if test="quantity != 0">
+		,Quantity = #{quantity}
+		</if>
+		<if test="unit != null and unit != ''">
+		,Unit = #{unit}
+		</if>
+		<if test="shortDescription != null and shortDescription !=''">
+		,ShortDescription = #{shortDescription}		
+		</if>
+		<if test="brandIds != null and brandsIds != ''">
+		,BrandIds = #{brandIds}
+		</if>
+		<if test="brandNames != null and brandNames != ''">
+		,BrandNames = #{brandNames}
+		</if>
+		<if test="sku != null and sku != ''">
+		,Sku = #{sku}
+		</if>
+		<if test="model != null and model != ''">
+		,Model = #{model}
+		</if>
+		</set>
+		where Id = #{id}
+	</update>
+	
+	<!-- 根据ID删除采购的商品信息 -->
+	<delete id="BuyerPurchase.deleteProduct" parameterType="int">
+		delete from wm_purchaseproduct_t where Id=#{id}
+	</delete>
+	
+	<!-- 查询采购列表信息 -->
+	<select id="queryPurchaseQueryListByPage" parameterType="map" resultType="com.wangmeng.service.bean.PurchaseQueryResult">
+	       select pu.PurchaseNo,pu.name as title,us.UserName,us.CellPhone as phone,pu.PublishTime as createDate,pu.DeadTime endDate,pu.`Status` as state,
+	       wsysus.user_name as customerName
+                    from wm_purchaseinfo_t  pu
+          <!--  <if test="data.roleId != null and data.roleId >0"> inner join wm_distributionorder_t wdi on pu.PurchaseNo = wdi.relationNo and wdi.type = 2 and  wdi.sysUserId = #{data.sysUserId}</if> -->
+             <choose>
+              <when test="data.roleId != null and data.roleId >0"> inner join wm_distributionorder_t wdi on pu.PurchaseNo = wdi.relationNo and wdi.type = 2 and  wdi.sysUserId = #{data.sysUserId}</when>
+              <otherwise> left join wm_distributionorder_t wdi on wdi.relationNo = pu.PurchaseNo and wdi.type = 2 </otherwise>
+           </choose>
+            left join  wm_sys_user wsysus  on wdi.sysuserid = wsysus.id
+            left JOIN wm_user_t  us on pu.userid = us.Id
+             <where>
+                   <if test="data.name != null and data.name != ''"> and  (us.UserName like '%${data.name}%' or us.CellPhone = #{data.name} or pu.name like '%${data.name}%') </if>
+                   <if test="data.startDate != null and data.startDate != ''"> and pu.PublishTime  &gt;= #{data.startDate} </if>
+                   <if test="data.endDate != null and data.endDate != ''"> and pu.DeadTime  &lt;= #{data.endDate} </if>
+                   <if test="data.status != null and data.status != ''"> and pu.`Status` = #{data.status}</if>
+                   <if test="data.code != null and data.code != ''"> and pu.PurchaseNo=#{data.code}</if>
+           </where>
+                order by pu.PublishTime desc
+	</select>
+	
+	<!-- 查询采购品牌 -->
+	<select id="getBrandsMapByPurCode" parameterType="String" resultType="com.wangmeng.service.bean.MapEntity">
+			select (case when tb.id is null 
+                            then -1
+                            else tb.id 
+                            end) as `key` ,
+                        (case when tb.name is null 
+                            then ti.brandnames
+                            else tb.`Name` 
+                            end) as `value`
+                from wm_purchaseproduct_t  ti
+                       left join  wm_brands_t tb  
+                       on FIND_IN_SET(tb.Id,ti.brandids) and ti.purchaseno = #{purchaseCode}
+                where  ti.purchaseno = #{purchaseCode}
+	</select>
+	
+	<!-- 统计采购状态 数据 -->
+	<select id="queryCountPurchaseStatus" resultType="com.wangmeng.service.bean.MapEntity">
+	      select Status as `key` ,count(id) as value  
+        from wm_purchaseinfo_t group BY Status
+	</select>
+	
+	<!-- 采购单审核 -->
+	<update id="auditingPurchase">
+	       update wm_purchaseinfo_t 
+	       <set>
+            <if test="status != null and status > 0"> status = #{status}</if>
+        </set>
+        <where>
+            PurchaseNo=#{purchaseCode}
+        </where>
+	</update>
+	
+	
+	<!-- 根据采购单号和品牌信息查询采购商品列表 -->
+    <select id="queryProductsBybrand" parameterType="map"
+        resultType="com.wangmeng.service.bean.SheetProduct">
+        select
+        Id as id, 
+        PurchaseNo as sheetCode,
+        ProductName as productName,
+        Model as model,
+		Sku as sku,
+        Quantity as quantity,
+        Unit as unit,
+        ShortDescription as shortDescription,
+        BrandIds as brandIds,
+        BrandNames as brandNames
+        from wm_purchaseproduct_t
+        where PurchaseNo=#{purchaseCode}
+        <if test="brandsId != null and brandsId > 0"> and find_in_set(#{brandsId},brandIds)</if>
+        <if test="brandsName != null and brandsName !=''"> and  find_in_set(#{brandsName},brandNames)</if>
+    </select>
+    
+    <!-- 获取采购单的统计数据 -->
+	<select id="BuyerPurchase.getPurchaseStatistic" resultType="com.wangmeng.service.bean.MapEntity"
+		parameterType="com.wangmeng.service.bean.PurchaseInfo">
+		SELECT count(0) as value,Status as `key`
+		from wm_purchaseinfo_t 
+		WHERE 1=1
+		<if test="userId != 0">
+			and UserId=#{userId}
+		</if>
+		<if test="companyId != 0">
+			and CompanyId = #{companyId}
+		</if>
+		<if test="name != null and name != ''">
+			and Name like CONCAT("%",#{name},"%")
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and PublishTime > #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} > PublishTime
+		</if>
+		<if test="purchaseNo != null and purchaseNo != ''">
+			and PurchaseNo = #{purchaseNo}
+		</if>
+		<if test="type != 0">
+			<if test="type == 1">
+				and 5 >= Status
+			</if>
+			<if test="type == 2">
+				and Status > 5
+			</if>
+		</if>
+		group by Status
+	</select>
+</mapper>

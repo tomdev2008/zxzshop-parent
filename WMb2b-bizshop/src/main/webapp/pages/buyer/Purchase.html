@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>采购管理</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-purchase.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="purchase_title">
+            采购单管理
+            <a href="History-Inquiry.html" target="iframe">
+               <button class="tool_btn">
+                    查看历史询价
+                </button>
+            </a>
+            <a class="parent-url" href="Publish-Purchase.html" target="iframe">
+            <button class="tool_btn">
+                发布采购单
+            </button>
+            </a>
+        </div>
+        <div class="warn" id="CACertify">
+            您尚未通过企业认证或个人CA认证。可能会影响您的在线签约！<a href="Account.html">马上认证</a>
+             <span class="highlight pl30">如您需要供应商再次报价，请联系在线客服或拨打400-006-5216</span>
+        </div>
+        <table id="list" class="outer">
+        </table>
+        <div class="tabel-operate" id="batchOperate"></div>
+    </div>
+    <div style="display:none">
+        <div id="send-order">
+            <div class="alert_body">
+                <div class="alert_info">
+                    <label><input type="radio" name="sendorder" id="ChooseEnterprise" value="2"> 选择企业购买签约 </label>
+                    <div id="CAEnterpriseName"></div>
+                    <span id="EnterpriseStatus">未开通CA认证&nbsp;<a href="" id="EnterpriseCa"> 去认证</a></span> 
+                </div>
+                <div class="alert_info">
+                    <label><input type="radio" name="sendorder" id="ChoosePersonal" value="1"> 个人购买签约 </label>
+                    <div id="CAPersonalName"></div>
+                    <span id="PersonalStatus">未开通CA认证&nbsp;<a href="AccountCaPersonal.html"> 去认证</a></span> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display:none">
+        <div id="view_content">
+            <div class="entry_wrap">
+                <div class="entry" id="Invoice">
+                </div>
+                <div class="entry" id="Receiving">
+                    收货方式：含税
+                </div>
+                <div class="entry" id="Address">
+                    收货地址：含税
+                </div>
+                <div class="entry" id="Attachment">
+                    附件：无
+                </div>
+                <div class="entry" id="Remarks">
+                    备注说明：含税
+                </div>
+            </div>
+            <div class="bj">
+                <div class="bj_title" id="TotalContent">
+                    <span>报价编号：</span>     
+                    <span>报价时间：</span>  
+                    <span>供应商：</span>
+                    <span>运费价格：<b>214234234.00</b>元</span>
+                </div>
+                <div class="bj_btns">
+                </div>
+                <div class="bj_sub_wrap">
+                    <div class="scrollbar">
+                        <table class="table" id="order-data">
+                            <thead>
+                                <tr>
+                                    <th>材料名称</th>
+                                    <th>材料品牌</th>
+                                    <th>规格</th>
+                                    <th>型号</th>
+                                    <th>数量</th>
+                                    <th>单位</th>
+                                    <th>单价（元）</th>
+                                </tr>
+                            </thead>
+                            <tbody id="TableContext">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text">
+                        <span>备注说明：价格10天有效</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/buyer/buyer_base.js"></script>
+    <script src="../../assets/js/buyer/buyer-purchase.js"></script>
+</body>
+</html>

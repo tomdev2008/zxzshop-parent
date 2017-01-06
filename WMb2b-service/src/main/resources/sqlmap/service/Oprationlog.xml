@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LogInfo">
+	
+	
+	<select id="">
+	    
+		select 
+		<if test="ProvinceId!=null and ProvinceId!=''">
+			DISTINCT(CityName),CityId
+		</if>
+		<if test="ProvinceId==null || ProvinceId==''">
+			DISTINCT(ProvinceName),ProvinceId
+		</if>
+		 from wm_region_t 
+		 <where>
+		 	<if test="ProvinceId!=null and ProvinceId!=''">
+		 		ProvinceId = 374
+		 	</if>
+		 </where>
+		
+	</select>
+	
+</mapper>

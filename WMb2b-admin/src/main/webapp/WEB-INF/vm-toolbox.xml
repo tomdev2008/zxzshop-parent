@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<toolbox>
+	<xhtml>true</xhtml>
+	<tool>
+		<key>stringUtils</key>
+		<scope>application</scope>
+		<class>org.apache.commons.lang.StringUtils</class>
+	</tool>
+	<tool>
+		<key>stringEscapeUtils</key>
+		<scope>application</scope>
+		<class>org.apache.commons.lang.StringEscapeUtils</class>
+	</tool>
+    <tool>
+         <key>linkTool</key>
+         <scope>request</scope>
+         <class>org.apache.velocity.tools.view.LinkTool</class>
+    </tool>
+    
+     <tool>
+         <key>paraTool</key>
+         <scope>request</scope>
+         <class>org.apache.velocity.tools.view.ParameterTool</class>
+     </tool>
+    
+	<tool>
+		<key>dateUtil</key>
+		<scope>application</scope>
+		<class>com.wangmeng.common.utils.DateFormatUtils</class>
+	</tool>
+
+	<tool>
+		<key>wmStringUtils</key>
+		<scope>application</scope>
+		<class>com.wangmeng.common.utils.AdminStringUtil</class>
+	</tool>
+</toolbox>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>详情页</title>
+<!-- 此文件为了显示Demo样式，项目中不需要引入 -->
+<link href="$request.getContextPath()/assets/code/demo.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+    <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+</head>
+<body>
+ <div class="demo-content">
+<!-- 详情页 ================================================== -->
+ <div>
+  <div class="row">
+    <div class="span24 doc-content" style="width:90%">
+        <ul class="nav-tabs">
+          <li><a href="$request.getContextPath()/purchaseinfo/queryPurchaseQuery.do">采购询价</a></li>
+          <li class="active"><a href="#">查看</a></li>
+          <a href="$request.getContextPath()/purchaseinfo/queryPurchaseQuery.do" style="color: #888;float: right;padding-left: 30px;background-position: left center;background-repeat: no-repeat;font-size: 16px;margin-top: 10px;"><<返回采购管理</a>
+        </ul>
+      <form name="" action="" method="post" id="detailForm">
+        <h3>采购信息</h3>
+        <div class="row detail-row form-horizontal well">
+          <div class="span8">
+          <label>采购单号：</label><span class="detail-text">$!result.obj.purchaseNo</span>   
+          </div>
+          <div class="span8">
+          <label>提交时间：</label><span class="detail-text">
+           $dateUtil.formatDate($!result.obj.publishTime,"yyyy-MM-dd HH:mm")
+           </span>
+          </div>
+          <div class="span8">
+          <label>询价截止时间：</label><span class="detail-text">
+                $dateUtil.formatDate($!result.obj.deadTime,"yyyy-MM-dd HH:mm")
+          </span>
+          </div>
+        </div>    
+          
+         <div class="form-horizontal well">
+        <div class="row detail-row">
+          <div class="span8">
+            <label>工程名称：</label><span class="detail-text">$!result.obj.name</span>
+          </div>
+          <div class="span8">
+            <label>收货方式：</label><span class="detail-text">
+            #if($!result.obj.expressWay == "1")
+                                                        自取
+            #else
+                                                        物流配送
+             #end 
+            </span>
+          </div>
+        </div>    
+        <div class="row detail-row">
+           <div class="span8">
+            <label>企业名称：</label><span class="detail-text">$!result.obj.companyName</span>
+          </div>
+          <div class="span8">
+            <label>收货地址：</label><span class="detail-text">$!result.obj.address</span>
+          </div>
+        </div>    
+          <div class="row detail-row">      
+             <div class="span8">
+                <label >联系人：</label><span class="detail-text">$!result.obj.contactName</span>
+              </div>
+              <div class="span8">
+                <label>发票类型：</label><span class="detail-text">
+                 #if($!result.obj.invoiceType == "0")
+                                                               无需发票
+                #elseif($!result.obj.invoiceType == "1")
+                                                                普通发票
+                  #else
+                                                                增值税发票
+                 #end 
+                </span>
+              </div>
+          </div>
+        <div class="row detail-row">      
+          <div class="span8">
+            <label>联系人手机号码：</label><span class="detail-text">$!result.obj.contactMobile</span>
+          </div>
+          <div class="span8">
+            <label>询价备注：</label><span class="detail-text">$!result.obj.remark</span>
+          </div>
+        </div>    
+        </div>
+        
+        <h3>货品信息</h3> 
+         <table cellspacing="0" class="table table-bordered">
+              <thead>
+                <tr class="form-horizontal well" >
+                  <th>材料名称</th>
+                  <th>材料品牌</th>
+                  <th>规格</th>
+                  <th>型号</th>
+                  <th>数量</th>
+                  <th>单位</th>
+                </tr>
+              </thead>
+               <tbody>
+                #foreach($SheetProduct in $result.obj.products)
+                    <tr>
+                      <td>$!SheetProduct.productName</td>
+                      <td>$!SheetProduct.brandNames</td>
+                      <td>$!SheetProduct.sku</td>
+                      <td>$!SheetProduct.model</td>
+                      <td>$!SheetProduct.quantity</td>
+                      <td>$!SheetProduct.unit</td>
+                    </tr>
+                #end
+              </tbody>
+           </table>   
+      </form>
+      </div>
+    </div>
+  </div>
+<script src="../../assets/js/jquery-1.8.1.min.js"></script>
+<script src="../../assets/js/build/bui-min.js"></script> 
+  </div>
+</body>
+</html>         

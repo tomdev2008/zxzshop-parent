@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BuyerInquiry">
+	<!-- 发布询价单 -->
+	<insert id="BuyerInquiry.publishInquiry" parameterType="com.wangmeng.service.bean.InquirySheetModel"
+		useGeneratedKeys="true" keyProperty="Id">
+		insert into wm_inquirysheet_t(
+		Title,QuotationEndDate,ShippingEndDate,Invoice,Receiving,RegionId,Address,Remark,
+		Name,Phone,PublishDate,State,UserId,CompanyId,CompanyName,InquirySheetCode)
+		values(#{title},#{quotationEndDate},#{shippingEndDate},#{invoice},#{receiving},#{regionId},#{address},
+		#{remark},#{name},#{phone},now(),#{state},#{userId},#{companyId},#{companyName},#{inquirySheetCode})
+	</insert>
+	<!-- 发布询价单商品详情 -->
+	<insert id="BuyerInquiry.publishInquiryProduct" useGeneratedKeys="true" keyProperty="Id"
+		parameterType="com.wangmeng.service.bean.SheetProduct">
+		insert into
+		wm_inquirysheetproduct_t
+		(SheetCode,ProductName,Quantity,Unit,ShortDescription,BrandIds,BrandNames,Sku,Model,CompanyId)
+		values(#{sheetCode},#{productName},#{quantity},#{unit},#{shortDescription},
+		#{brandIds},#{brandNames},#{sku},#{model},#{companyId})
+	</insert>
+	<!-- 询价单列表 -->
+	<select id="BuyerInquiry.getInquiryListByPage" parameterType="map"
+		resultType="com.wangmeng.service.bean.InquirySheetModel">
+		select case when a.CompanyId = 0 then a.CompanyName
+		when a.CompanyId != 0 then b.CompanyName end as companyName,
+		a.Id,
+		a.Title,
+		a.QuotationEndDate,
+		a.ShippingEndDate,
+		a.Invoice,
+		a.Receiving,
+		a.RegionId,
+		a.Address,
+		a.Remark,
+		a.Name,
+		a.Phone,
+		a.PublishDate,
+		a.State,
+		a.UserId,
+		a.CompanyId,
+		a.InquirySheetCode
+		from wm_inquirysheet_t a left join wm_enterpriseinfo_t b on
+		a.CompanyId = b.Id
+		where 1=1
+		<if test="param.userId != 0">
+			and a.UserId=#{param.userId}
+		</if>
+		<if test="param.companyId != 0">
+			and a.CompanyId = #{param.companyId}
+		</if>
+		<if test="param.startTime != null and param.startTime != ''">
+			and a.PublishDate >= #{param.startTime}
+		</if>
+		<if test="param.endTime != null and param.endTime != ''">
+			and #{param.endTime} >= a.PublishDate
+		</if>
+		<if test="param.title != null and param.title != ''">
+			and a.Title like CONCAT('%',#{param.title},'%')
+		</if>
+		<if test="param.state != 0">
+			and a.State = #{param.state}
+		</if>
+		<if test="param.type != 0">
+			<if test="param.type == 1">
+				and 3 >= a.State
+			</if>
+			<if test="param.type == 2">
+				and a.State > 3
+			</if>
+		</if>
+		order by a.PublishDate desc
+	</select>
+	<!-- 询价单列表 查询Mobile端-->
+	<select id="BuyerInquiry.getInquiryListMobile" parameterType="map" resultType="map">
+		select
+			case when a.CompanyId = 0 then a.CompanyName
+			when a.CompanyId != 0 then b.CompanyName end as companyName,
+			a.Title as title,date_format(a.PublishDate,'%Y-%m-%d %T') as publishDate,
+			a.State as state, a.InquirySheetCode as inquirySheetCode,
+			case when 5 >= a.State  then '待报价'
+			when a.State > 5 and 8 > a.State then '已报价'
+			when a.State >=20 and 21 >= a.State then '已关闭' end as StateStr,
+			(SELECT count(*) from wm_inquirysheetproduct_t e where e.SheetCode = a.InquirySheetCode) as productKinds,
+			Count(d.id) as quoteTimes,
+			Count(DISTINCT d.CompanyId) as companyCounts,
+			case when d.IsView is null then 0 else d.IsView end as isView
+		from wm_inquirysheet_t a
+			left join wm_enterpriseinfo_t b on a.CompanyId = b.Id
+			left join wm_quotestatistic_t d on a.InquirySheetCode = d.DealNo and d.Status > 4
+		where 1=1
+		<if test="param.userId != 0">
+			and a.UserId=#{param.userId}
+		</if>
+		<if test="param.companyId != 0">
+			and a.CompanyId = #{param.companyId}
+		</if>
+		<if test="param.startTime != null and param.startTime != ''">
+			and a.PublishDate >= #{param.startTime}
+		</if>
+		<if test="param.endTime != null and param.endTime != ''">
+			and #{param.endTime} >= a.PublishDate
+		</if>
+		<if test="param.title != null and param.title != ''">
+			and a.Title like CONCAT('%',#{param.title},'%')
+		</if>
+		<if test="param.state != 0">
+			and a.State = #{param.state}
+		</if>
+		group by a.InquirySheetCode
+		order by a.PublishDate desc
+		limit #{page.offSet},#{page.pageSize}
+	</select>
+
+	<!-- 根据单号查询询价单详情 -->
+	<select id="BuyerInquiry.queryInquiryByCode" parameterType="String"
+		resultType="com.wangmeng.service.bean.InquirySheetModel">
+		select * from wm_inquirysheet_t where InquirySheetCode =
+		#{code}
+	</select>
+
+	<!-- 根据询价单号查询询价商品列表 -->
+	<select id="BuyerInquiry.queryProductByInquiryCode"
+		parameterType="map" resultType="com.wangmeng.service.bean.SheetProduct">
+		select * from wm_inquirysheetproduct_t
+		where SheetCode=#{code}
+		<if test="brandsId != null and brandsId > 0"> and find_in_set(#{brandsId},brandIds)</if>
+		<if test="brandsName != null and brandsName !=''"> and  find_in_set(#{brandsName},brandNames)</if>
+	</select>
+	
+	<!-- 跟据询价单号修改询价信息 -->
+	<update id="BuyerInquiry.updateInquiry" parameterType="com.wangmeng.service.bean.InquirySheetModel">
+		update wm_inquirysheet_t
+		<set>
+			InquirySheetCode=#{inquirySheetCode}
+			<if test="title != null and title != ''">
+				,Title=#{title}
+			</if>
+			<if test="quotationEndDate != null">
+				,QuotationEndDate = #{quotationEndDate}
+			</if>
+			<if test="shippingEndDate != null">
+				,ShippingEndDate = #{shippingEndDate}
+			</if>
+			<if test="invoice != 0">
+				,Invoice=#{invoice}
+			</if>
+			<if test="receiving != 0">
+				,Receiving = #{receiving}
+			</if>
+			<if test="regionId != 0">
+				,RegionId = #{regionId}
+			</if>
+			<if test="address != null and address != ''">
+				,Address = #{address}
+			</if>
+			<if test="remark != null and remark != ''">
+				,Remark = #{remark}
+			</if>
+			<if test="name != null and name != ''">
+				,Name = #{name}
+			</if>
+			<if test="phone != null and phone != ''">
+				,Phone = #{phone}
+			</if>
+			<if test="state != 0">
+				,State = #{state}
+			</if>
+		</set>
+		<where>
+			InquirySheetCode=#{inquirySheetCode}
+		</where>
+	</update>
+
+	<!-- 根据ID修改询价商品的信息 -->
+	<update id="BuyerInquiry.updateProduct" parameterType="com.wangmeng.service.bean.SheetProduct">
+		update wm_inquirysheetproduct_t
+		<set>
+			Id = #{id}
+			<if test="productName != null and productName != ''">
+				,ProductName = #{productName}
+			</if>
+			<if test="quantity != 0">
+				,Quantity = #{quantity}
+			</if>
+			<if test="unit != null and unit != ''">
+				,Unit = #{unit}
+			</if>
+			<if test="shortDescription != null and shortDescription !=''">
+				,ShortDescription = #{shortDescription}
+			</if>
+			<if test="brandIds != null and brandIds != ''">
+				,BrandIds = #{brandIds}
+			</if>
+			<if test="brandNames != null and brandNames != ''">
+				,BrandNames = #{brandNames}
+			</if>
+			<if test="sku != null and sku != ''">
+				,Sku = #{sku}
+			</if>
+			<if test="model != null and model != ''">
+				,Model = #{model}
+			</if>
+		</set>
+		<where>Id = #{id}</where>
+	</update>
+
+	<!-- 根据ID删除询价的商品信息 -->
+	<delete id="BuyerInquiry.deleteProduct" parameterType="int">
+		delete
+		from wm_inquirysheetproduct_t where Id=#{id}
+	</delete>
+
+	<!-- 询价单列表状态 对应 数据 统计 -->
+	<select id="queryCountInqueryStatus" parameterType="map" resultType="com.wangmeng.service.bean.MapEntity">
+		select State as `key` ,count(id) as value from wm_inquirysheet_t
+		<if test="roleid != null and roleid == 4 and sysUserId != null and sysUserId >0">
+		INNER JOIN wm_distributionorder_t wd on wis.inquirySheetCode = wd.relationNo and wd.type = 1 and  wd.sysUserId = #{sysUserId} 
+		</if>
+		group BY State
+	</select>
+	
+	<!-- 查询询价单列表 -->
+	<select id="queryInquerySheetListByPage" parameterType="map" resultType="com.wangmeng.service.bean.InquiryQueryResult">
+		select
+	        iq.InquirySheetCode,iq.Title, us.username, us.CellPhone phone,iq.PublishDate createDate,
+	        iq.QuotationEndDate endDate, iq.state state, (case when ser.id != null then 1 else 0 end ) as isService,
+	        wsysus.user_name as customerName
+		   from wm_inquirysheet_t  iq
+		 <!--   <if test="data.roleId != null and data.roleId >0"> inner join wm_distributionorder_t wdi on iq.inquirySheetCode = wdi.relationNo and wdi.type = 1 and  wdi.sysUserId = #{data.sysUserId}</if> -->
+		   <choose>
+		      <when test="data.roleId != null and data.roleId >0"> inner join wm_distributionorder_t wdi on iq.inquirySheetCode = wdi.relationNo and wdi.type = 1 and  wdi.sysUserId = #{data.sysUserId}</when>
+		      <otherwise> left join wm_distributionorder_t wdi on wdi.relationNo = iq.inquirySheetCode and wdi.type = 1 </otherwise>
+		   </choose>
+		    left join  wm_sys_user wsysus  on wdi.sysuserid = wsysus.id
+	        left JOIN wm_user_t  us on iq.userid = us.Id
+	        left join wm_inquiryorder_t ser on iq.Id = ser.InquirySheetCode
+		   <where>
+		           <if test="data.name != null and data.name != ''"> and  (us.UserName like '%${data.name}%' or us.CellPhone = #{data.name} or iq.title like '%${data.name}%') </if>
+		           <if test="data.startDate != null and data.startDate != ''"> and iq.PublishDate  &gt;= #{data.startDate} </if>
+		           <if test="data.endDate != null and data.endDate != ''"> and iq.QuotationEndDate  &lt;= #{data.endDate} </if>
+		           <if test="data.status != null and data.status != ''"> and iq.state in (${data.status})</if>
+		           <if test="data.code != null and data.code != ''"> or iq.InquirySheetCode=#{data.code}</if>
+		   </where>
+		    order by iq.PublishDate desc
+	</select>
+
+	<!-- 询价单审核 -->
+	<update id="auditingInquiry" parameterType="map">
+		update wm_inquirysheet_t
+		<set>
+			<if test="status != null and status > 0"> state = #{status}</if>
+		</set>
+		<where>
+			InquirySheetCode=#{inquiryCode}
+		</where>
+	</update>
+
+	<!-- 查询关联品牌 -->
+	<select id="getBrandsMapByInqCode" parameterType="String"
+		resultType="com.wangmeng.service.bean.MapEntity">
+		select (case when tb.id is null
+		then -1
+		else tb.id
+		end) as `key` ,
+		(case when tb.name is null
+		then ti.brandnames
+		else tb.`Name`
+		end) as `value`
+		from wm_inquirysheetproduct_t ti
+		left join wm_brands_t tb
+		on FIND_IN_SET(tb.Id,ti.brandids) and ti.SheetCode = #{inquiryCode}
+		where ti.SheetCode = #{inquiryCode}
+	</select>
+	<!-- 上传询价单/采购单 -->
+	<insert id="insertInquiryPhotoOld" parameterType="map"
+		useGeneratedKeys="true" keyProperty="Id">
+		insert into
+		wm_inquirysheetphoto_t(SheetCode,OrgPath,DictCode,Description,Name)
+		values(#{inquiryCode},#{path},#{dictcode},#{Description},#{name})
+	</insert>
+	
+	<!-- 上传询价单/采购单 去掉了不用的参数 -->
+	<insert id="insertInquiryPhoto" parameterType="map"
+		useGeneratedKeys="true" keyProperty="Id">
+		insert into
+		wm_inquirysheetphoto_t(SheetCode,OrgPath,DictCode)
+		values(#{inquiryCode},#{path},#{dictcode})
+	</insert>
+
+	<!-- 删除询价单/采购单 -->
+	<delete id="deleteInquiryPhoto" parameterType="String">
+		delete from wm_inquirysheetphoto_t
+		where SheetCode=#{inquiryCode}
+	</delete>
+
+	<!-- 查询询价清单列表 -->
+	<select id="queryInquirySheetPhoto" parameterType="map"
+		resultType="com.wangmeng.service.bean.InquirySheetPhoto">
+		select * from wm_inquirysheetphoto_t
+		<where>
+			<if test="code != '' and code != null ">
+				and SheetCode=#{code}
+			</if>
+		</where>
+	</select>
+
+	<!-- 获取询价单的统计数据 -->
+	<select id="BuyerInquiry.getInquiryStatistic" resultType="com.wangmeng.service.bean.MapEntity"
+		parameterType="com.wangmeng.service.bean.InquirySheetModel">
+		SELECT count(0) as value,State as `key`
+		from wm_inquirysheet_t
+		WHERE 1=1
+		<if test="userId != 0">
+			and UserId=#{userId}
+		</if>
+		<if test="companyId != 0">
+			and CompanyId = #{companyId}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and PublishDate >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= PublishDate
+		</if>
+		<if test="title != null and title != ''">
+			and Title like CONCAT('%',#{title},'%')
+		</if>
+		<if test="type != 0">
+			<if test="type == 1">
+				and 3 >=State
+			</if>
+			<if test="type == 2">
+				and State > 3
+			</if>
+		</if>
+		group by State
+	</select>
+</mapper>

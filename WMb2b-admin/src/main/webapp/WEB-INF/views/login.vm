@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理系统登陆</title>
+    <link href="$!{request.getContextPath()}/favicon.ico" rel="icon" type="image/x-icon" />
+    <link rel="shortcut icon" type="image/x-icon" href="$!{request.getContextPath()}/favicon.ico" media="screen" />
+    <link href="$!{request.getContextPath()}/assets/login/css/style.css" rel="stylesheet">
+   <script type="text/javascript" src="$!{request.getContextPath()}/assets/js/LAB.min.js"></script>
+   <script type="text/javascript" src="$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js"></script>
+   <script type="text/javascript" src="$!{request.getContextPath()}/assets/js/login.js?v=633111"></script>
+</head>
+<body>
+<div class="content">
+    <div class="content_box"> 
+    	 
+        <img class="logo" src="$!{request.getContextPath()}/assets/login/images/logo.png?v=2">
+        <div class="detail">
+            <form class="c_info" id="U_Login_Form" method="post">
+                <div class="user">
+                    <input type="text" placeholder="用户名" id="userName" name="userName">
+                    <img src="$!{request.getContextPath()}/assets/login/images/user_icon.png">
+                </div>
+                <div class="password">
+                    <input type="password" placeholder="密码" id="userPwd" name="userPwd">
+                    <img src="$!{request.getContextPath()}/assets/login/images/password_icon.png">
+                </div>
+				<button id="submitLogin" onclick="return false;">登录</button>
+                <div class="remember">
+                    <div class="errorMsg"></div>
+                </div>
+                <input type="hidden" id="action" value="$!{request.getContextPath()}/home/main.do">
+            </form>
+        </div>
+    </div>
+    <div class="foot">
+        <p>网盟<br>
+            Copyright©2016  网盟 All Rights Reserved</p>
+    </div>
+</div>
+<script type="text/javascript" language="JavaScript">
+   $LAB
+   .script("$!{request.getContextPath()}/assets/js/jquery-1.8.1.min.js").wait()
+   .script("$!{request.getContextPath()}/assets/js/login.js?v=633111")
+   .wait(function(){
+   	login.init();
+   });
+   function onlogin(){
+     if(login){
+	 	login.validateLoginForm();
+	 }
+   };
+   
+ </script>     
+</body>
+</html>

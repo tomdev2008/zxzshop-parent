@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>平台管理中心</title>
+      <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+    <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="$!{request.getContextPath()}/assets/css/admin/admin-agreement-union-order.css" rel="stylesheet">
+      <style>
+          .preview{position:relative;}
+          .preview:hover > img{width:auto!important; positon:absolute; z-index: 9;}
+      </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="box">
+            <div class="order_title">
+                <input type="hidden" id="orderNo" value="$!result.obj.orderNo">
+                订单编号：$!result.obj.orderNo &nbsp;&nbsp;&nbsp;&nbsp;下单日期：$dateUtil.formatDate($!result.obj.sendTime,"yyyy-MM-dd HH:mm")
+            </div>
+            <div class="progressbar">
+                <ul class="bar">
+                  #if($!result.obj.status == 0)
+                        <li class="done">已下单</li>
+                        <li>协议生成</li>
+                        <li>货款到账</li>
+                        <li>货已签收</li>
+                        <li>交易完成</li>
+                    #elseif($!result.obj.status == 10 || $!result.obj.status == 20 || $!result.obj.status == 30)
+                        <li class="done current">已下单</li>
+                        <li class="done">协议生成</li>
+                        <li>货款到账</li>
+                        <li>货已签收</li>
+                        <li>交易完成</li>
+                     #elseif($!result.obj.status == 40 || $!result.obj.status == 44)
+                         <li class="done">已下单</li>
+                        <li class="done current">协议生成</li>
+                        <li class="done">货款到账</li>
+                        <li>货已签收</li>
+                        <li>交易完成</li>
+                    #elseif($!result.obj.status == 41  || $!result.obj.status == 50 || $!result.obj.status == 60 || $!result.obj.status == 70)
+                         <li class="done">已下单</li>
+                        <li class="done">协议生成</li>
+                        <li class="done current">货款到账</li>
+                        <li>货已签收</li>
+                        <li>交易完成</li>
+                     #elseif($!result.obj.status == 80)
+                         <li class="done">已下单</li>
+                        <li class="done">协议生成</li>
+                        <li class="done">货款到账</li>
+                        <li class="done current">货已签收</li>
+                        <li>交易完成</li>
+                    #elseif($!result.obj.status ==90 || $!result.obj.status ==99)
+                         <li class="done">已下单</li>
+                        <li class="done">协议生成</li>
+                        <li class="done">货款到账</li>
+                        <li class="done">货已签收</li>
+                        <li class="done current">交易完成</li>
+                    #end
+                </ul>
+            </div>
+        </div>
+        <div class="box2 mt10 clearfix">
+            <div class="deliverway">
+
+                #if($result.obj.orderTransferList && $result.obj.orderTransferList.size()>0)
+                    <p class="title">
+                        配送方式
+                    </p>
+
+                   #if($!result.obj.orderTransferList[0].sendType == 1)
+                        <p> 物流承运</p>
+                    #else
+                        <p>厂家配送</p>
+                    #end
+
+
+                     <p class="last">
+	                    物流费用：<span class="highlight">$!result.obj.quoteStatistic.expressFee</span>元
+	                </p>
+
+
+	                #if($result.obj.orderTransferList[0].sendTime)
+	                <p>
+	                    发货时间：$dateUtil.formatDate($!result.obj.orderTransferList[0].sendTime,"yyyy-MM-dd HH:mm")
+	                </p>
+	                <p>
+	                    物流：$!result.obj.orderTransferList[0].transferCom
+	                </p>
+	                <p>
+	                    货物单号：$!result.obj.orderTransferList[0].transCode
+	                </p>
+	                <p class="preview last">
+                        附件：
+                        #if($result.obj.orderTransferList[0].reachProv)
+                            <img src="$!result.obj.orderTransferList[0].reachProv" width="35px">
+                        #end
+	                </p>
+	                #end
+	                #if($result.obj.orderTransferList[0].reachTimeStr)
+	                <p>
+	                    货物签收：$!result.obj.orderTransferList[0].reachDescr
+	                </p>
+	                <p class="preview">
+                        附件：
+                        #if($result.obj.orderTransferList[0].reachProv)
+                            <img src="$!result.obj.orderTransferList[0].reachProv" width="35px">
+                        #end
+	                </p>
+	                #end
+                #end
+
+
+            </div>
+            <div class="deliverlist">
+                <div class="delivertitle">
+                    <ul class="clearfix">
+                        <li class="bold">货品清单</li>
+                        <li>供应商：$!result.obj.enterpriseinfo.companyName</li>
+                        <li>材料种类：<span class="highlight bold">$!result.obj.productKind</span>种</li>
+                        <li>材料总价：<span class="highlight bold">$!result.obj.totalCost</span>元</li>
+                    </ul>
+                </div>
+                <div class="tablewrap">
+                    <table class="table">
+                        <tr>
+                            <th>材料名称</th>
+                            <th>材料品牌</th>
+                            <th>规格</th>
+                            <th>型号</th>
+                            <th>数量</th>
+                            <th>单位</th>
+                            <th>单位(元)</th>
+                        </tr>
+                        <tbody style="height:100px;">
+                        #foreach($PurchaseProduct in $result.obj.purchaseProductList)
+                            <tr>
+                                <td>$!PurchaseProduct.productName</td>
+                                <td>$!PurchaseProduct.brandName</td>
+                                <td>$!PurchaseProduct.sku</td>
+                                <td>$!PurchaseProduct.model</td>
+                                <td>$!PurchaseProduct.quantity</td>
+                                <td>$!PurchaseProduct.unit</td>
+                                <td>$!PurchaseProduct.price</td>
+                            </tr>
+                        #end
+                       </tbody>
+
+                    </table>
+                </div>
+
+                <div class="desc">备注说明：$!result.obj.quoteStatistic.remark</div>
+            </div>
+        </div>
+        <div class="box2 mt10 clearfix">
+            <div class="htinfo">
+                <p class="title">
+                    合同协议
+                </p>
+                <i></i>
+                <a id="view_ssq" target="_blank" href="#"><button>查看协议</button></a>
+                <button style="margin-top:10px;" onclick="javascript:download_ssq();">下载协议</button>
+            	<a href="../ThrAgreementNew.html?id=$!result.obj.orderNo"><button style="margin-top:10px;" >指定模板</button></a>
+            </div>
+            <div class="shinfo">
+                <p class="title">收货信息</p>
+                <div class="shentry clearfix">
+                    <div class="dt">第一收货地址：</div>
+                    <div class="dd">
+                        <!-- <p> $!result.obj.companyName</p> -->
+                       <p> $!result.obj.address</p>
+                    </div>
+                    <div class="dt">第二收货地址：</div>
+                    <div class="dd">
+                     #if($result.obj.secondAddr)
+                       <!--  <p> $!result.obj.companyName</p> -->
+                       <p> $!result.obj.secondAddr</p>
+                    #else
+                    <p>无</p>
+                    #end
+                    </div>
+                </div>
+
+            </div>
+            <div class="invoiceinfo">
+                <p class="title">发票信息</p>
+                <div class="invoiceentry clearfix">
+                    <div class="dt">发票类型：</div>
+                    <div class="dd">
+                    #if($!result.obj.quoteStatistic.invoiceType =='1')
+                        普通发票
+                    #elseif($!result.obj.quoteStatistic.invoiceType =='2')
+                    专用发票(增值税)
+                    #end
+                    </div>
+                </div>
+                <div class="invoiceentry clearfix">
+                    <div class="dt">发票税点：</div>
+                    <div class="dd">
+                        $!result.obj.quoteStatistic.feeRate
+                    </div>
+                </div>
+            </div>
+            <div class="payinfo">
+                <p class="title">付款信息</p>
+                <div class="payentry clearfix">
+                    <div class="dt">付款日期：</div>
+                    <div class="dd">
+                      $dateUtil.formatDate($!result.obj.payTime,"yyyy-MM-dd HH:mm")
+                    </div>
+                </div>
+                <div class="payentry clearfix">
+                    <div class="dt">已付款金额：</div>
+                    <div class="dd">
+                        $!result.obj.totalCost
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="box2 mt10 clearfix">
+            <div class="total">
+                订单合计金额：<span class="highlight bold">$!result.obj.totalCost</span> 元
+            </div>
+        </div>
+
+        <div id="view_contractid" style="display:none">
+
+        </div>
+    </div>
+    <script src="$!{request.getContextPath()}/assets/js/jquery-1.12.0.min.js"></script>
+  <script src="$!{request.getContextPath()}/assets/js/jquery.artDialog.js"></script>
+  <script src="$!{request.getContextPath()}/assets/js/artDialog.iframeTools.js"></script>
+  <script type="text/javascript" src="$!{request.getContextPath()}/assets/js/pdfobject.js"></script>
+  <script src="$!{request.getContextPath()}/assets/js/bui-min.js"></script>
+   <script src="$!{request.getContextPath()}/assets/js/config-min.js"></script>
+
+  <script type="text/javascript">
+
+        var orderNo = $("#orderNo").val();
+
+          $.ajax({
+              type: 'get',
+              url: "../Ssq/viewContract.do",
+              data:{protocolNo:'',orderNo:orderNo},
+               dataType: "json",
+              success: function(data){
+                  if(data.code == '000000'){//返回成功
+
+                    if (data.obj) {
+                        $('#view_ssq').attr('href', data.obj);
+                    }else{
+                         $('#view_ssq').attr('href', 'javascript:;');
+                         $('#view_ssq').removeAttr('target');
+                         $('#view_ssq').click(function(){
+                            BUI.Message.Alert('协议暂未生成！','error');
+                         });
+                    }
+                }
+                },
+              error : function() {
+                  BUI.Message.Alert('查看协议失败！','error');
+              }
+            });
+
+            function download_ssq(){
+             $.ajax({
+              type: 'get',
+              url: "../Ssq/downloadContract.do",
+              data:{protocolNo:'',orderNo:orderNo},
+               dataType: "json",
+              success: function(data){
+                  if(data.code == '000000'){//返回成功
+                     if (data.obj) {
+                        window.open(data.obj);
+                    }else{
+                        BUI.Message.Alert('协议暂未生成！','error');
+                    }
+
+                  }
+              },
+              error : function() {
+                  BUI.Message.Alert('查看协议失败！','error');
+              }
+            });
+
+            }
+  </script>
+</body>
+</html>

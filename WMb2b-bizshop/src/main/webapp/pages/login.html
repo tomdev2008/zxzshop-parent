@@ -1,0 +1,160 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>东方建材网-登录</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/admin/artdilog.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/global.css">
+	<link rel="stylesheet" type="text/css" href="../assets/css/login.css">
+    <script src="../assets/js/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+	 <!--[if lt IE 8]>
+        <p class="browserupgrade">您的浏览器太古老，请<a href="http://browsehappy.com/">更新您的浏览器</a>以提升用户体验。</p>
+    <![endif]-->
+	<div class="header" id="simple-header"></div>
+	<div class="body">
+	    <div class="position" id="entry">
+	    	<ul class="tab">
+				<li><a href="register.html">注册</a></li>
+				<li><a class="active" href="login.html">登录</a></li>
+			</ul>
+	        <div class="mc " id="bgDiv">
+	            <div id="entry-bg"></div>
+	            <div class="form">
+	            	<h3 class="user-text">马上登录</h3>
+	            	<div class="username-login" id="username-login-id">
+	            		<div class="item fore1">
+		                    <span><b>*</b>用 户 名：</span>
+		                    <div class="item-ifo">
+		                        <input type="text" id="loginname" name="loginname" class="text" placeholder="输入注册时的手机号" tabindex="1" autocomplete="off" sta="2">
+		                        <label id="loginname_succeed" class="blank invisible succeed"></label>
+		                        <label id="loginname_error" class="error" style="display:none;"></label>
+		                    </div>
+		                </div>
+		                <div class="item fore2">
+		                    <span><b>*</b>登录密码：</span>
+		                    <div class="item-ifo">
+		                       <input type="password" id="password" name="password" class="text highlight2" placeholder="输入登录密码" tabindex="2" maxlength="16" autocomplete="off" sta="2">
+		                       <label id="loginpwd_succeed" class="blank invisible succeed"></label>
+		                       <label id="loginpwd_error" class="error" style="display:none;"></label>
+		                       <img class="pwdlock" style="float:right;position:absolute; display:none; right:32px;top:10px;" src="../assets/img/locked.png" />
+		                    </div>
+
+		                </div>
+		               <!--  <div class="item fore3" id="checkCodeArea" style="display:none;">
+		                    <span>验证码</span>
+
+		                    <div class="item-ifo">
+		                        <input type="text" id="checkCodeBox" class="text text-1" name="authcode" tabindex="6" maxlength="4" style="ime-mode:disabled" sta="0">
+		                        <label class="img">
+		                            <img id="checkCodeImg" src="GetCheckCode">
+		                        </label>
+		                        <label class="ftx23 hline">看不清？<br><a href="javascript:void(0)" id="checkCodeChange" class="flk13">换一张</a></label>
+		                        <label id="authcode_succeed" class="blank invisible"></label>
+		                        <label id="checkCode_error" class="error" style="display: none;"></label>
+		                    </div>
+		                </div> -->
+		                 <input type="hidden" name="cellPhone" id="cellPhone" value="" class="hide">
+		                <input type="hidden" name="code" id="code" value="" class="hide">
+		                <input type="hidden" name="loginType" id="loginType" value="" class="hide">
+		                <input type="hidden" name="machineNet" id="machineNet" value="" class="hide">
+		                <input type="hidden" name="machineCpu" id="machineCpu" value="" class="hide">
+		                <input type="hidden" name="machineDisk" id="machineDisk" value="" class="hide">
+		                <input type="hidden" name="refurl" id="refurl" value="" class="hide">
+		                <input type="hidden" name="userName" id="userName" value="" class="hide">
+		                <div class="item fore4">
+		                    <div class="item-ifo chebox-box">
+		                        <label class="mar"><input type="checkbox" id="autoLogin" class="checkbox" name="" checked="">两周内自动登录</label>
+		                        <a class="text-link" href="findPassword.html">忘记密码?</a>
+		                    </div>
+		                </div>
+		                <div class="item login-btn2013">
+		                    <div class="item-ifo chebox-box">
+		                        <input type="button" class="btn-img btn-entry" id="loginsubmit" value="登录">
+		                    </div>
+		                </div>
+		                <div class="item login-btn2013">
+		                   <div class="item-ifo chebox-box">
+		                        <div class="line"></div><div class="register-text">忘记密码？<b class="login">手机验证码登录</b></div><div class="line"></div>
+		                   </div>
+			            </div>
+			            <div class="coagent">
+			                <label class="ftx24">
+			                    <span class="clr"></span>
+			                </label>
+			            </div>
+	            	</div>
+	                <div class="mobile-login" id="mobile-login-id">
+	                	<div class="item fore1">
+		                    <span><b>*</b>手机号码：</span>
+		                    <div class="item-ifo">
+		                        <input type="text" id="mobilenumber" name="mobilenumber" class="text" placeholder="输入注册时的手机号" tabindex="1" autocomplete="off" sta="2">
+		                     
+		                        <label id="mobile_succeed" class="blank invisible succeed"></label>
+		                        <label id="mobile_error" class="error" style="display:none;"></label>
+		                    </div>
+		                </div>
+		                <div class="item">
+		                	<span><b>*</b>校 验 码：</span>
+		                	<img src="makeCertPic.jsp" id="codejsp" onclick="reloadcode()" style="cursor: pointer;" alt="看不清楚,换一张"> 
+		                	<input type="text" id="checkCode0" name="authcode0" class="text code" placeholder="请输入图形验证码" autocomplete="off" maxlength="6">
+		                </div>
+		                <div class="item fore2">
+		                    <span><b>*</b>验 证 码：</span>
+		                    <div class="item-ifo">
+		                        <input type="text" id="checkCode" name="authcode" class="text code" placeholder="请输入验证码" autocomplete="off" maxlength="6">
+	                            <a class="btn code-btn" href="javascript:sendCode();" id="sendMobileCode" codetype="sms">
+	                                <span id="dyMobileButton">获取手机短信</span>
+	                            </a>
+	                            <label id="checkCode_error" class="error" style="display:none">请输入验证码</label>
+	                            <label id="checkCode_succeed" class="blank" style="padding:0px;"></label>
+		                    </div>
+
+		                </div>
+		                <div class="item fore4">
+		                    <div class="item-ifo chebox-box">
+		                        <label class="mar"><input type="checkbox" id="autoLogin-mobile" class="checkbox" name="" checked="">两周内自动登录</label>
+		                        <a class="text-link" href="findpassword.html">忘记密码?</a>
+		                    </div>
+		                </div>
+		                <div class="item login-btn2013">
+		                    <div class="item-ifo chebox-box">
+		                        <input type="button" class="btn-img btn-entry" id="loginsubmit-mobile" value="登录">
+		                    </div>
+		                </div>
+		                <div class="item login-btn2013">
+		                   <div class="item-ifo chebox-box">
+		                        <div class="line"></div><div class="register-text">已有账户？<b class="login">立即登录</b></div><div class="line"></div>
+		                   </div>
+			            </div>
+			            <div class="coagent">
+			                <label class="ftx24">
+			                    <span class="clr"></span>
+			                </label>
+			            </div>
+	                </div> 
+	        </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="footer" id="footer"></div>
+	<script type="text/javascript">
+	  function reloadcode(){
+	                var verify=document.getElementById('codejsp');
+	                verify.setAttribute('src','/pages/makeCertPic.jsp?it='+Math.random());
+	        }
+	</script>
+	<script src="../assets/js/jquery-1.12.0.min.js"></script>
+	<script src="../assets/js/admin/jquery.artDialog.js"></script>
+	<script src="../assets/js/admin/artDialog.iframeTools.js"></script>
+	<script src="../assets/js/jquery.cookie.js"></script>
+	<script src="../assets/js/global.js"></script>
+	<script src="../assets/js/login.js"></script>
+</body>
+</html>

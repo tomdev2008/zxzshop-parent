@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title>添加角色</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="UTF-8">
+	  <link href="$request.getContextPath()/assets/css/shopcommon.css" rel="stylesheet" type="text/css" />
+      <link href="$request.getContextPath()/assets/css/demo.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/dpl.css" rel="stylesheet">
+      <link href="$request.getContextPath()/assets/css/bs3/bui.css" rel="stylesheet">
+	  <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+	  
+	  <style type="text/css">
+			.authorities label {
+				min-width: 120px;
+				_width: 120px;
+				display: block;
+				float: left;
+				padding-right: 4px;
+				_white-space: nowrap;
+			}
+		</style>
+
+     <script type="text/javascript" language="JavaScript">
+			function checkResource(obj){
+				var $this = $(obj);
+				var $thisCheckbox = $this.closest("tr").children("td").find(":checkbox");
+				var $thisthCheckbox = $this.closest("tr").children("th").find(":checkbox");
+				if ($thisthCheckbox.filter(":checked").size() > 0) {
+					$thisCheckbox.prop("checked", false);
+					$thisthCheckbox.prop("checked", false);
+				} else {
+					$thisthCheckbox.prop("checked", true);
+					$thisCheckbox.prop("checked", true);
+				}
+				return false;
+			}
+			
+			function selectResource(obj){
+				var $this = $(obj);
+				var $thisCheckbox = $this.closest("tr").children("td").find(":checkbox");
+				var $thisthCheckbox = $this.closest("tr").children("th").find(":checkbox");
+				if ($thisthCheckbox.filter(":checked").size() > 0) {
+					$thisCheckbox.prop("checked", false);
+					$thisthCheckbox.prop("checked", false);
+				} else {
+					$thisthCheckbox.prop("checked", true);
+					$thisCheckbox.prop("checked", true);
+				}
+				return false;
+			}
+			
+			function oncheck(obj){
+				var $this = $(obj);
+				var $thisCheckbox = $this.closest("tr").children("th").find(":checkbox");
+				var $thistdCheckbox = $this.closest("tr").children("td").find(":checkbox");
+				
+				if ($thistdCheckbox.filter(":checked").size() > 0) {
+					$thisCheckbox.prop("checked", true);
+				} else {
+					$thisCheckbox.prop("checked", false);
+				}
+				return false;
+			}
+			
+			function check(){
+				var roleName = $("#roleName").val();
+				if(roleName==""){
+					$.messager.alert('提示','角色名称不能为空!','warning');
+					return false;
+				}
+				return true;
+			}
+			function goback(){
+				location.href = "list.do";
+			}
+	  </script>
+	  
+ </head>
+ <body>
+	 <form method="post" action="$request.getContextPath()/sys/role/add.do" class="form-horizontal well" id="U_Add_Form">
+	 <div class="demo-content">
+		  <div class="span24 doc-content">
+            <div class="row">
+              <div class="control-group span8">
+                <label class="control-label">角色名称：</label>
+                <div class="controls">
+                  <input type="text" name="roleName" value="" class="control-text">
+                </div>
+              </div>
+			  <div class="control-group span8">
+                <label class="control-label">描述：</label>
+                <div class="controls">
+                  <input type="text" name="remark" value="" class="control-text">
+                </div>
+              </div>
+            </div>
+			
+            <table cellspacing="0" class="table table-bordered">
+			  #foreach($mykey in ${mapListPower.keySet()})
+				#set($listPower=$mapListPower[$mykey])
+				<tr class="authorities">
+					<th>
+						<a href="javascript:;" onclick="checkResource(this)" class="selectAll" title="全选">
+						<input type="checkbox" onchange="selectResource(this)"  name="powerIds" value="$listPower[0].id"/>
+							$!mykey:
+						</a>
+					</th>
+					<td colspan="4">
+						#foreach($power in $listPower)
+							#if($!{velocityCount}!=1)
+									<span class="fieldSet">
+										<label>
+											<input type="checkbox" class="selectAll" onchange="oncheck(this)" name="powerIds" value="${power.id}" />${power.powerName}
+                                            (#if(${power.sourceType}==0)
+                                            	菜单
+											#elseif(${power.sourceType}==1)
+                                            	按钮
+											#elseif(${power.sourceType}==2)
+                                            	数据
+											#end)
+										</label>
+									</span>
+							#end
+						#end
+					</td>
+				</tr>
+			  #end
+            </table>
+          </div>
+        </div>
+      </div>
+	</form>  
+	
+</body>

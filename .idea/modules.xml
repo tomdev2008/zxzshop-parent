@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-admin/WMb2b-admin.iml" filepath="$PROJECT_DIR$/WMb2b-admin/WMb2b-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-app/WMb2b-app.iml" filepath="$PROJECT_DIR$/WMb2b-app/WMb2b-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-bizshop/WMb2b-bizshop.iml" filepath="$PROJECT_DIR$/WMb2b-bizshop/WMb2b-bizshop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-common/WMb2b-common.iml" filepath="$PROJECT_DIR$/WMb2b-common/WMb2b-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-parent.iml" filepath="$PROJECT_DIR$/WMb2b-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-service/WMb2b-service.iml" filepath="$PROJECT_DIR$/WMb2b-service/WMb2b-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WMb2b-third/WMb2b-third.iml" filepath="$PROJECT_DIR$/WMb2b-third/WMb2b-third.iml" />
+    </modules>
+  </component>
+</project>

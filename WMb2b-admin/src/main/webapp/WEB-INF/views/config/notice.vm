@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title></title>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+   <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+   <script type="text/javascript" src="$request.getContextPath()/assets/js/config-min.js"></script>
+ </head>
+
+<div class="row">
+		  <div class="span24 doc-content" style="width:90%">
+        <form class="form-horizontal well" method="post" action="$request.getContextPath()/config/notice_config_save.do">
+         <div class="row">
+             <table class="table">
+		        <thead>
+		          <tr>
+		            <th>消息类型</th>
+		            <th>邮件通知</th>
+		            <th>手机短信</th>
+		          </tr>
+		        </thead>
+		        <tbody>
+		                #foreach($configItem in $configItemList)
+		                
+		                  <tr>
+				            <td>$!{configItem.itemName}</td>
+				            <td><input name="$!{configItem.itemCode}_sms_flag" type="checkbox" value="1" #if($configItem.smsFlag==1) checked="checked" #end></td>
+				            <td><input name="$!{configItem.itemCode}_mail_flag" type="checkbox" value="1" #if($configItem.mailFlag==1) checked="checked" #end></td>
+				          </tr> 
+				        #end 
+		        
+		        </tbody>
+		    </table>
+
+        </div>
+                  <div class="row">
+            <div class="form-actions offset3">
+                #auth($request.getSession().getAttribute("session.user").getId(),"消息设置.保存")
+                    <button type="submit" class="button button-primary">保存</button>
+                #end
+              <button type="reset" class="button">重置</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>   

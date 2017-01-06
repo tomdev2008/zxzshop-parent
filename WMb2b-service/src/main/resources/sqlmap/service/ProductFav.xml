@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProductFav">
+
+  <resultMap id="ProductFavResultMap" type="com.wangmeng.service.bean.ProductFav" >
+    <result column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="tid" property="productId" jdbcType="BIGINT" />
+    <result column="tags" property="tags" jdbcType="VARCHAR" />
+    <result column="create_date" property="date" jdbcType="TIMESTAMP" />
+    <!-- 
+      <association property="faProduct" column="tid" javaType="com.wangmeng.service.bean.ProductFavDetail" select="selectFavedProductById"/>
+	    <result column="Id" property="productId" jdbcType="BIGINT" />
+	    <result column="Name" property="productName" jdbcType="VARCHAR" />
+	    <result column="Picts" property="imagePath" jdbcType="VARCHAR" />
+	    <result column="StartMass" property="startingMass" jdbcType="INTEGER" />
+	    <result column="Unit" property="measureUnit" jdbcType="VARCHAR" />
+	  </association> 
+     -->
+  </resultMap>
+  
+  <resultMap id="ProductFavDetailResultMap" type="com.wangmeng.service.bean.ProductFavDetail" >
+    <result column="Id" property="productId" jdbcType="BIGINT" />
+    <result column="Name" property="productName" jdbcType="VARCHAR" />
+    <result column="Picts" property="imagePath" jdbcType="VARCHAR" />
+    <result column="StartMass" property="startingMass" jdbcType="INTEGER" />
+    <result column="Unit" property="measureUnit" jdbcType="VARCHAR" />
+    <result column="MarketPrice" property="marketPrice" jdbcType="DOUBLE" />
+    <result column="CompanyName" property="shopName" jdbcType="VARCHAR" />
+    <result column="EnterpriseId" property="shopId" jdbcType="BIGINT" />
+  </resultMap>
+  
+	<!-- 分页查询 -->
+	<select id="selectProductFavList" parameterType="map" resultMap="ProductFavResultMap">
+		 select id, user_id, tid,  tags, create_date from wm_fav where user_id=#{userId} and ttype=0 and status=1
+	</select>
+	
+	<!-- count查询 -->
+	<select id="countProductFavList" parameterType="map" resultType="java.lang.Integer">
+		 select count(1) from wm_fav where user_id=#{userId} and ttype=0 and status=1
+	</select>
+	
+	
+	<!-- selectFavedProductById -->
+	<select id="selectFavedProductById" resultMap="ProductFavDetailResultMap">
+		 select t1.Id, t1.Name, t1.Picts,  t1.StartMass, t1.Unit, t1.MarketPrice, t1.EnterpriseId, t2.CompanyName  from (
+		 select Id, EnterpriseId, Name, Picts,  StartMass, Unit, MarketPrice from wm_product_t
+		 where Id=#{id} 
+		 )t1 LEFT JOIN wm_enterpriseinfo_t t2 on t1.EnterpriseId=t2.Id
+		 
+	</select>
+
+	<!-- 增加产品收藏 -->
+	<insert id="insertProductFav"  parameterType="com.wangmeng.service.bean.Product">
+		insert into wm_fav (
+			user_id,
+			tid,
+			ttype,
+			create_date,
+			`status`
+		) select * from (select #{userId} as user_id,
+			#{productId} as tid,
+			0 as ttype,
+			NOW() as create_date,
+			1 as `status`) as tb where not exists(select 1 from wm_fav where user_id=#{userId} and tid=#{productId} and ttype=0 and status=1)
+	</insert>
+	
+	<!-- 删除用户收藏的产品 -->
+	<delete id="deleteProductFav">
+		delete from wm_fav where user_id=#{userId} and tid=#{productId} and ttype=0
+	</delete>	
+	
+	<!-- 是否已收藏 -->
+	<select id="countProductFav" parameterType="java.lang.Integer"  resultType="java.lang.Long" >
+		 select count(1) from wm_fav where user_id=#{userId} and tid=#{productId} and ttype=0 and status=1
+	</select>
+	
+	<!-- 查询收藏的商品 -->
+	<select id="queryFavProduct" parameterType="com.wangmeng.service.bean.vo.QueryFav"  resultType="com.wangmeng.service.bean.vo.QueryFav" >
+		 SELECT f.id id,
+			 p.id productId,
+			 p.Name productName,
+			 p.BirthArea area,
+			 p.Model model,
+			 p.sku sku,
+             p.StartMass startMass,
+             p.picts picts,
+             b.name brandName
+         from wm_fav f LEFT JOIN wm_product_t p on f.tid = p.id 
+                LEFT JOIN wm_brands_t b on b.id = p.brandid
+         where f.status = 1 AND f.ttype = #{ttype} and f.user_id = #{userId}
+         <!--  分页 -->
+		 limit #{begin},#{end}
+	</select>
+	
+	<!-- 查询总数 -->
+	<select id="queryFavProductnumb" parameterType="com.wangmeng.service.bean.vo.QueryFav" resultType="java.lang.Long">
+		select  count(1) numb       
+		from wm_fav 
+		where status = 1 AND ttype = #{ttype} and user_id = #{userId}
+	</select>
+	
+	<!-- 查询收藏的企业 -->
+	<select id="queryFavEnterprise" parameterType="com.wangmeng.service.bean.vo.QueryFav"  resultType="com.wangmeng.service.bean.vo.QueryFav" >
+	SELECT 
+         f.id id,
+         e.id enterpriseId,
+         e.CompanyName companyName,  
+         e.regionId regionId,
+         (SELECT logo from wm_brands_t WHERE id =
+         (SELECT brandid from wm_enpriinfobrands_t WHERE enterprinfoid = e.id and auditStatus = 1 limit 1)) brandLogo,
+         (SELECT group_concat(distinct b.Name Separator',') as brandNames from wm_brands_t b where b.id in(
+         SELECT brandId from wm_enpriinfobrands_t where  enterprinfoid = e.id) and b.AuditStatus = 1) brandNames
+         from 
+         wm_fav f 
+         LEFT JOIN wm_enterpriseinfo_t e on f.tid = e.id
+         where f.status = 1 AND f.ttype = #{ttype} and f.user_id = #{userId}
+         <!--  分页 -->
+		 limit #{begin},#{end}
+	</select>
+	
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CategoryBrands">
+	
+	<!-- 保存品牌分类关系 -->
+	<insert id="CategoryBrands.saveCategoryBrands" parameterType="com.wangmeng.service.bean.CategoryBrands">
+		insert into wm_categorybrands_t (
+			Id,
+			CategoryId,
+			BrandId,
+			Remark
+		)values(
+			null,
+			#{categoryId},
+			#{brandId},
+			#{remark}
+		)
+	</insert>
+	
+	<!-- 分页查询 -->
+	<select id="CategoryBrands.queryByPaginationListByPage" parameterType="com.wangmeng.service.bean.vo.CategoryBrandsVo"
+		resultType="com.wangmeng.service.bean.vo.CategoryBrandsVo" >
+		select t1.CategoryId, 
+		       t3.Name categoryName, 
+		       group_concat(distinct t2.Name Separator'/') as brandNames from `wm_categorybrands_t` t1 
+			   left join `wm_brands_t` t2 on t2.Id=t1.`BrandId`
+               left join `wm_productcategory_t` t3 on t1.CategoryId=t3.Id
+ 	   WHERE t3.Depth = 3	
+ 	   <if test="param.categoryName!=null and param.categoryName !=''"> and  t3.name like '%${param.categoryName}%'</if>	
+ 	   <if test="param.brandNames!=null and param.brandNames !=''"> and  t2.name like '%${param.brandNames}%'</if>	
+       group by t1.CategoryId
+       ORDER BY t1.id DESC
+	</select>
+	
+	<!-- 根据ID查出分类品牌关系 -->
+	<select id="CategoryBrands.findCategoryBrandsByPK" resultType="com.wangmeng.service.bean.CategoryBrands">
+		select id, 
+			   CategoryId,
+			   BrandId,
+			   Remark
+		from wm_categorybrands_t
+		where id = #{id}
+	</select>
+	
+	<!-- 根据Id删除分类品牌关系 -->
+	<delete id="CategoryBrands.delCategoryBrandsById" parameterType="java.lang.Long">
+		delete from wm_categorybrands_t where Id = #{id}
+	</delete>
+	
+	<!-- 根据Id删除分类品牌关系 -->
+	<delete id="CategoryBrands.delCategoryBrandsByCategoryId" parameterType="java.lang.Long">
+		delete from wm_categorybrands_t where CategoryId = #{categoryId}
+	</delete>
+	
+	<!-- 根据example查出分类品牌关系 -->
+	<select id="CategoryBrands.queryCategoryBrandsByExample" resultType="com.wangmeng.service.bean.CategoryBrands" parameterType="com.wangmeng.service.bean.CategoryBrands">
+		select Id,
+			   CategoryId,
+			   BrandId,
+			   Remark
+		from wm_categorybrands_t
+		<where>
+ 		<if test="id!=null" >and id = #{id}</if>
+ 		<if test="categoryId!=null" >and categoryId = #{categoryId}</if>
+ 		<if test="brandId!=null" >and brandId = #{brandId}</if>
+ 		<if test="remark!=null and remark !=''"> and remark = #{remark}</if>
+ 		</where>
+ 		ORDER BY id ASC
+	</select>
+	
+	<!-- 更新分类品牌关系 -->
+	<update id="CategoryBrands.updateCategoryBrands" parameterType="com.wangmeng.service.bean.CategoryBrands" >
+		UPDATE wm_categorybrands_t SET categoryId = #{categoryId},brandId = #{brandId},remark=#{remark}
+		WHERE id = #{id}
+	</update>
+</mapper>

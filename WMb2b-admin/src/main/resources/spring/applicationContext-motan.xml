@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:motan="http://api.weibo.com/schema/motan"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+   http://api.weibo.com/schema/motan http://api.weibo.com/schema/motan.xsd">
+
+   <!-- 注册中心配置 使用不同注册中心需要依赖对应的jar包。如果不使用注册中心，可以把check属性改为false，忽略注册失败。-->
+    <!--<motan:registry regProtocol="local" name="registry" />-->
+    <!--<motan:registry regProtocol="consul" name="registry" address="127.0.0.1:8500"/>-->
+    <motan:registry regProtocol="zookeeper" name="registry" address="${zookeeper.server}" connectTimeout="2000"/>
+
+    <!-- 协议配置。为防止多个业务配置冲突，推荐使用id表示具体协议。-->
+  	<motan:protocol default="true" name="motan" haStrategy="failover"
+                    loadbalance="roundrobin" maxClientConnection="100" minClientConnection="2"/>
+ 
+    <!-- 通用referer基础配置 -->
+    <motan:basicReferer connectTimeout="3000" requestTimeout="3000" accessLog="false"
+                        retries="2" group="motan-wangmeng-service-rpc-${profile.name}" module="motan-wangmeng-service-rpc"
+                        application="WMb2b-service-app" protocol="motan" registry="registry" id="motanWmServiceClientBasicConfig" throwException="false" check="false"/>
+                      
+    <!-- 具体referer配置。使用方通过beanid使用服务接口类 -->
+
+	<!--<motan:referer id="cacheService"-->
+				   <!--interface="com.wangmeng.service.api.ICacheService" basicReferer="motanWmServiceClientBasicConfig"/>-->
+
+	<motan:referer id="cacheExtService"
+				   interface="com.wangmeng.service.api.ICacheExtService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+	<motan:referer id="resultCodeService"
+                   interface="com.wangmeng.service.api.ResultCodeService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+ 	<motan:referer id="buyerInquiryService"
+                   interface="com.wangmeng.service.api.BuyerInquiryService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+ 	<motan:referer id="newsService"
+                   interface="com.wangmeng.service.api.NewsService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+  	<motan:referer id="dealQuoteService"
+                   interface="com.wangmeng.service.api.DealQuoteService" basicReferer="motanWmServiceClientBasicConfig"/>
+   
+   	<motan:referer id="buyerPurchaseService"
+                   interface="com.wangmeng.service.api.BuyerPurchaseService" basicReferer="motanWmServiceClientBasicConfig"/>
+  
+    <motan:referer id="orderInfoService"
+                   interface="com.wangmeng.service.api.OrderInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="orderTransferService"
+                   interface="com.wangmeng.service.api.OrderTransferService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="contractService"
+                   interface="com.wangmeng.service.api.ContractService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+    <motan:referer id="enterpriseInfoService"
+                   interface="com.wangmeng.service.api.EnterpriseInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+   <motan:referer id="visitService"
+                   interface="com.wangmeng.service.api.VisitService" basicReferer="motanWmServiceClientBasicConfig"/>
+                   
+    <motan:referer id="readFileInfoService"
+                   interface="com.wangmeng.service.api.ReadFileService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+    <motan:referer id="creditsService"
+                   interface="com.wangmeng.service.api.CreditsService" basicReferer="motanWmServiceClientBasicConfig"/>
+                   
+ 	<motan:referer id="userInfoService"
+                   interface="com.wangmeng.service.api.UserInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+	
+	<motan:referer id="statisticService"
+                   interface="com.wangmeng.service.api.StatisticService" basicReferer="motanWmServiceClientBasicConfig"/>
+                   
+	<motan:referer id="areaRegionService"
+                   interface="com.wangmeng.service.api.AreaRegionService" basicReferer="motanWmServiceClientBasicConfig"/>
+                   
+	<motan:referer id="categoryService"
+                   interface="com.wangmeng.service.api.ProductCategoriesService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 	
+	<motan:referer id="brandsService"
+                   interface="com.wangmeng.service.api.BrandsService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 	
+	<motan:referer id="categoryBrandsService"
+                   interface="com.wangmeng.service.api.CategoryBrandsService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+	<motan:referer id="productService"
+                   interface="com.wangmeng.service.api.ProductService" basicReferer="motanWmServiceClientBasicConfig"/>
+	
+ 	<motan:referer id="thirdentpriseInfoService"
+                   interface="com.wangmeng.service.api.ThirdentpriseInfoService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+	<motan:referer id="messagesendService"
+				   interface="com.wangmeng.third.api.MessagesendService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+	<!-- third service -->    
+    <motan:basicReferer connectTimeout="60000" requestTimeout="60000" accessLog="false"
+                        retries="2" group="motan-wangmeng-third-rpc-${profile.name}" module="motan-wangmeng-third-rpc"
+                        application="WMb2b-third-app" protocol="motan" registry="registry" id="motanWmThirdClientBasicConfig" throwException="false" check="false"/>
+                                          
+   	<motan:referer id="ssqExpService"
+                   interface="com.wangmeng.expand.ssq.api.SsqExpService" basicReferer="motanWmThirdClientBasicConfig"/> 
+
+
+	<!-- admin service -->
+	<motan:referer id="adminLoginService"
+                   interface="com.wangmeng.sys.legacy.api.ILoginService" basicReferer="motanWmServiceClientBasicConfig"/>
+	
+	<motan:referer id="adminUserService"
+                   interface="com.wangmeng.sys.legacy.api.IUserService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 	
+ 	<motan:referer id="adminRoleService"
+                   interface="com.wangmeng.sys.legacy.api.IRoleService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+  	<motan:referer id="adminPowerService"
+                   interface="com.wangmeng.sys.legacy.api.IPowerService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+	<!-- 协议 -->
+	<motan:referer id="adminAgreementService"
+                   interface="com.wangmeng.agreement.service.api.AgreementService" basicReferer="motanWmServiceClientBasicConfig"/>
+	 
+	<!-- 系统配置，站点，通知，smtp, sms等 -->
+	<motan:referer id="adminSysConfigService"
+                   interface="com.wangmeng.sys.service.api.SysConfigService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+ 	<!-- 操作日志 -->
+ 	<motan:referer id="adminSysOperationLogService"
+                   interface="com.wangmeng.sys.service.api.SysOperationLogService" basicReferer="motanWmServiceClientBasicConfig"/>
+ 
+	<!-- 支付方式 -->	
+	<motan:referer id="adminPaywayService"
+                   interface="com.wangmeng.payway.service.api.PaywayService" basicReferer="motanWmServiceClientBasicConfig"/>
+  
+ 	<!-- 三方采购协议 -->
+	<motan:referer id="adminPurchaseProtocolService"
+                   interface="com.wangmeng.protocols.service.api.PurchaseProtocolService" basicReferer="motanWmServiceClientBasicConfig"/>
+                   
+	<!-- 品牌 -->	
+	<motan:referer id="adminBrandService"
+                   interface="com.wangmeng.brands.service.api.BrandService" basicReferer="motanWmServiceClientBasicConfig"/>
+  
+  	<!-- 新闻 -->	
+	<motan:referer id="adminNewService"
+                   interface="com.wangmeng.news.service.api.NewService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+	<!-- 产品类别 -->	
+	<motan:referer id="adminCategoryService"
+                   interface="com.wangmeng.product.service.api.CategoryService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+	<!-- 权限服务 -->
+	<motan:referer id="authorityService" interface="com.wangmeng.sys.authority.api.IAuthorityService" basicReferer="motanWmServiceClientBasicConfig"/>
+
+</beans>

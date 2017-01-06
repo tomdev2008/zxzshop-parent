@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit|ie-stand">
+    <meta name="viewport" content="width=device-width">
+    <title>企业CA认证</title>
+    <link href="../../assets/css/admin/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="../../assets/css/admin/artdilog.css" rel="stylesheet">
+    <link href="../../assets/css/admin/inner-custom.css" rel="stylesheet">
+    <link href="../../assets/css/admin/buyer-account-ca.css" rel="stylesheet">
+    
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/admin/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="account_title">
+            企业CA认证
+            <a href="Account.html" class="back"><i></i>返回账户信息</a>
+        </div>
+        <div class="box clearfix">
+            <div class="box_title bold">
+                企业基本信息
+            </div>
+            <div class="name_entry">
+                <label  for=""><span class="highlight">*</span>企业名称：</label>
+                <input class="name_input" type="text" placeholder="请确保与企业证件名称一致" id="companyName">
+                <span class="error-msg">请输入企业名称</span>
+            </div>
+            <div class="name_entry cabtns" id="company-type">
+                <label  for=""><span class="highlight">*</span>企业证件：</label>
+                <button data-id="1" class="three_ca active">三证<i></i></button>
+                <button data-id="2" class="five_ca">三证/五证合一<i></i></button>
+                <span class="error-msg">请上传证件</span>
+            </div>
+            <div class="info">
+                请上传图片清晰的扫描拍照图片，图片大小不超过2M，<span class="highlight">查看示例</span>
+                <div class="case">
+                    <p class="gray">仅支持JPG，PNG，GIF，图片大小不超过2M的单张照片上传</p>
+                    <img src="../../assets/img/admin/image_center_03.png" alt="">
+                    <img src="../../assets/img/admin/image_center_02.png" alt="">
+                    <img src="../../assets/img/admin/image_center_01.png" alt="">
+                </div>
+            </div>
+            
+            <ul class="three_ca_content clearfix" id="three_ca_content">
+                <li class="ca_content_li">
+                     <div class="uploadpic">
+                        <input type='file' name="_file" class="uploadFilebtn" >
+                    </div>
+                    <div class="desc">营业执照证件</div>
+                </li>
+                <li class="ca_content_li">
+                     <div class="uploadpic">
+                        <input type='file' name="_file" class="uploadFilebtn" >
+                    </div>
+                    <div class="desc">组织机构代码证件</div>
+                </li>
+                <li class="ca_content_li">
+                     <div class="uploadpic">
+                        <input type='file' name="_file" class="uploadFilebtn" >
+                    </div>
+                    <div class="desc">税务登记证证件</div>
+                </li>
+            </ul>
+            <ul class="three_ca_content five_ca_content clearfix" id="five_ca_content">
+                <li class="ca_content_li">
+                     <div class="uploadpic">
+                        <input type='file' name="_file" class="uploadFilebtn" >
+                    </div>
+                    <div class="desc">三证/五证合一</div>
+                </li>
+
+            </ul>
+            <!--<div class="name_entry">
+                <label class="brand" for=""><span class="highlight">*</span>品牌授权书/注册商标证：<span class="highlight">(提示：完善品牌后，品台买家能快速定位到您！)</span></label>
+               
+            </div>
+            <div class="info gray">
+                请上传图片清晰的扫描拍照图片，图片大小不超过2M
+            </div>
+            <ul class="brand_content clearfix">
+                <li class="ca_content_li">
+                     <div class="uploadpic">
+                        <input type='file' name="_file" class="uploadFilebtn" >
+                    </div>
+                    <div class="desc">品牌授权书/注册商标证</div>
+                </li>
+            </ul>-->
+            <div class="more_info clearfix mt45">
+                <div class="more-btn">
+                    <button class="more up">完善更多信息</button>
+                </div>
+                <div class="more_info_content">
+                    <div class="info_text bold">
+                        法人/委托代理人信息
+                    </div>
+                    <div class="name_entry agentbtns"  id="person-type">
+                        <label  for="">申请人身份：</label>
+                        <button data-id="2" class="three_ca active">委托代理人<i></i></button>
+                        <button data-id="1" class="five_ca">企业法人<i></i></button>
+                    </div>
+                    <div class="name_entry">
+                        <label  for="">身份证证件：</label>
+                        <span class="gray">请上传图片清晰的扫描件或拍照图片，图片大小不超过2M。</span>
+                    </div>
+                    <ul class="three_ca_content clearfix " style="margin-top:-30px;" id="three_ca_content1">
+                        <li class="ca_content_li">
+                             <div class="uploadpic">
+		                        <input type='file' name="_file" class="uploadFilebtn" >
+		                    </div>
+                            <div class="desc">身份证正面</div>
+                        </li>
+                        <li class="ca_content_li">
+                             <div class="uploadpic">
+		                        <input type='file' name="_file" class="uploadFilebtn" >
+		                    </div>
+                            <div class="desc">身份证反面</div>
+                        </li>
+                        <li class="ca_content_li">
+                             <div class="uploadpic">
+		                        <input type='file' name="_file" class="uploadFilebtn" >
+		                    </div>
+                            <div class="desc">委托书</div>
+                        </li>
+                    </ul>
+                    <ul class="three_ca_content clearfix " style="margin-top:-30px;display:none" id="three_ca_content2">
+                        <li class="ca_content_li">
+                             <div class="uploadpic">
+		                        <input type='file' name="_file" class="uploadFilebtn" >
+		                    </div>
+                            <div class="desc">身份证正面</div>
+                        </li>
+                        <li class="ca_content_li">
+                            <div class="uploadpic">
+		                        <input type='file' name="_file" class="uploadFilebtn" >
+		                    </div>
+                            <div class="desc">身份证反面</div>
+                        </li>
+                        
+                    </ul>
+                    <div class="line"></div>
+
+                </div>
+                <button class="submit">提交</button>
+
+            </div>
+
+        </div>
+    </div>
+    <script src="../../assets/js/jquery-1.12.0.min.js"></script>
+    <script src="../../assets/js/admin/bootstrap.min.js"></script>
+    <script src="../../assets/js/jquery.cookie.js"></script>
+    <script src="../../assets/js/admin/jquery.artDialog.js"></script>
+    <script src="../../assets/js/admin/artDialog.iframeTools.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.js"></script>
+    <script src="../../assets/js/admin/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="../../assets/js/admin/jquery.datagrid.js"></script>
+    <script src="../../assets/js/admin/jquery.linkage.nocreate.js"></script>
+      <script src="../../assets/js/jquery.form.js"></script>
+     <script src="../../assets/js/jquery.imgUploadPreview.js"></script>
+    <script src="../../assets/js/admin/CommonJS.js"></script>
+    <script src="../../assets/js/admin/inner-custom.js"></script>
+    <script src="../../assets/js/buyer/buyer-account-ca.js"></script>
+
+</body>
+</html>

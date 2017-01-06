@@ -1,0 +1,114 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>东方建材网-产品页</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/global.css">
+	<link rel="stylesheet" type="text/css" href="../assets/css/products.css">
+	<link rel="stylesheet" type="text/css" href="../assets/css/mricode.pagination.css">
+    <script src="../assets/js/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+	 <!--[if lt IE 8]>
+        <p class="browserupgrade">您的浏览器太古老，请<a href="http://browsehappy.com/">更新您的浏览器</a>以提升用户体验。</p>
+    <![endif]-->
+	<div class="header" id="header"></div>
+	<div class="body">
+		<div class="position">
+			<div class="breadcrumb">
+				<ul>
+					<li><a href="/">首页</a></li>
+				</ul>
+				<span class="count">找到相关 <em>0</em> 件商品</span>
+			</div>
+			<div id="product-list">
+		        <div id="select-attr">
+		        		<div class="attr selected">
+		                    <div class="key">已选条件</div>
+		                    <div class="values"></div>
+		                </div>
+		                <div class="attrs">
+		                    <div class="prop-attrs brand-attr">
+		                        <div class="attr">
+		                            <div class="key">品牌</div>
+		                            <div class="values">
+		                                <div class="fold">
+		                                    <ul class="list" id="attrs_brandlist">
+		                                    </ul>
+		                                </div>
+		                                <div class="option"> <span class="more"><b></b>更多</span> </div>
+		                            </div>
+		                        </div>
+		                    </div>
+                            <div class="prop-attrs place-attr">
+                                  <div class="attr">
+                                      <div class="key">产地</div>
+                                          <div class="values">
+                                              <div class="fold">
+                                                  <ul class="list" id="prop-chandi">
+                                                  </ul>
+                                              </div>
+                                              <div class="option"> <span class="more"><b></b>更多</span> </div>
+                                          </div>
+                                  </div>
+	                           </div>
+		                </div>
+		            </div>
+		            <div id="boxdown" style="display:none" class="boxdown"></div>
+			        <div id="filter">
+			            <div class="options">
+			                <ul>
+			                    <li class="prop_1">排序</li>
+			                    <li class="prop_2">
+			                        <a href="#" class="">相关度</a>
+			                        <a href="#" class=""><span>销量</span><i></i></a>
+			                        <a href="#" class="red px_cur"><span>价格</span><i></i></a>
+			                    </li>
+			                    <li class="prop_price">
+			                        <span>价格区间：</span>
+			                        <input id="txtMinPirce" class="pro_low" type="text" title="最低价" placeholder="￥ 最低价">
+			                        -
+			                        <input id="txtMaxPirce" class="pro_high" type="text" title="最高价" placeholder="￥ 最高价">
+			                        <div class="price_range" id="pricerange">
+			                            <input type="button" class="clear" value="清空">
+			                            <input type="button" class="submit" value="确定">
+			                        </div>
+			                    </li> 
+			                </ul>
+			                <div class="pagin pagin-m">
+			                    <span class="text page-number"><i>1</i> / <i>1</i></span>
+			                    <div class="icon_lr">
+				                    <a title="上一页" class="prev disabled"></a>
+				                    <a title="下一页" class="next"></a>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			        <div class="products">
+		                <div class="list loading">
+		                	<ul></ul>
+		                    <div id="pagination"></div>
+		                </div>
+		                
+		                <div class="hot">
+		                    <h3>热门推荐</h3>
+		                    <ul></ul>
+		                </div>
+		            </div>
+        	</div>
+		</div>
+	</div>
+	<div class="footer" id="footer"></div>
+	
+	<script src="../assets/js/jquery-1.12.0.min.js"></script>
+	<script src="../assets/js/jquery.cookie.js"></script>
+	<script src="../assets/js/mricode.pagination.js"></script>
+	<script src="../assets/js/global.js"></script>
+	<script src="../assets/js/products.js"></script>
+</body>
+</html>

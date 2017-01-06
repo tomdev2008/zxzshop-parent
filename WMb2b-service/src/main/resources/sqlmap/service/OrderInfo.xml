@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderInfo">
+
+	<!-- 物流结果集 -->
+	<resultMap id="orderTransferResultMap" type="com.wangmeng.service.bean.OrderTransfer">
+		<id property="id" column="ordertransfer_id"/>
+		<result property="sendTime" column="ordertransfer_sendtime"/>
+		<result property="transferCom" column="ordertransfer_transcom"/>
+		<result property="transCode" column="ordertransfer_transcode"/>
+		<result property="sendProv" column="ordertransfer_sendprov"/>
+		<result property="reachTime" column="ordertransfer_reachtime"/>
+		<result property="reachProv" column="ordertransfer_reachprov"/>
+		<result property="sendType" column="ordertransfer_sendtype"/>
+		<result property="shipperContact" column="ordertransfer_shippercontact"/>
+		<result property="shipperPhone" column="ordertransfer_shipperphone"/>
+		<result property="shipperAdd" column="ordertransfer_shipperadd"/>
+	</resultMap>
+
+	<!-- 企业结果集 -->
+	<resultMap id="enterpriseResultMap" type="com.wangmeng.service.bean.Enterpriseinfo">
+		<id property="id" column="enterprise_id"/>
+		<result property="companyName" column="enterprise_companyname"/>
+	</resultMap>
+
+	<!-- 报价信息汇总结果集  -->
+	<resultMap id="quoteStatisticResultMap" type="com.wangmeng.service.bean.QuoteStatistic">
+		<id property="id" column="quotestatis_id"/>
+		<result property="expressFee" column="quotestatis_expressfee"/>
+		<result property="totalCost" column="quotestatis_totalcost"/>
+		<result property="invoiceType" column="quotestatis_invoicetype"/>
+		<result property="feeRate" column="quotestatis_feerate"/>
+		<result property="fee" column="quotestatis_fee"/>
+	</resultMap>
+
+	<!-- 采购商品结果集 -->
+	<resultMap id="purchaseProductResultMap" type="com.wangmeng.service.bean.PurchaseProduct">
+		<id property="id" column="Id"/>
+		<result property="purchaseNo" column="PurchaseNo"/>
+		<result property="productName" column="ProductName"/>
+		<result property="model" column="Model"/>
+		<result property="quantity" column="Quantity"/>
+		<result property="unit" column="Unit"/>
+		<result property="shortDescription" column="ShortDescription"/>
+		<result property="brandId" column="BrandIds"/>
+		<result property="brandName" column="BrandNames"/>
+		<result property="price" column="quoteinfo_price"/>
+		<result property="sku" column="sku"/>
+	</resultMap>
+
+	<!-- 订单明细结果集 -->
+	<resultMap id="orderDetailResultMap" type="com.wangmeng.service.bean.vo.OrderInfoVo">
+		<id property="id" column="Id"/>
+		<result property="orderNo" column="OrderNo"/>
+		<result property="projectName" column="ProjectName"/>
+		<result property="sendTime" column="SendTime"/>
+		<result property="totalCost" column="TotalCost"/>
+		<result property="productKind" column="ProductKind"/>
+		<result property="status" column="Status"/>
+		<result property="address" column="Address"/>
+		<result property="companyName" column="enterprise_companyname"/>
+		<result property="payTime" column="PayTime"/>
+		<result property="closedTime" column="ClosedTime" />
+		<result property="finishTime" column="FinishTime" />
+		<result property="buyerseller" column="buyerseller"/>
+		<result property="payCost" column="Cost" />
+
+		<association property="enterpriseinfo" javaType="com.wangmeng.service.bean.Enterpriseinfo" resultMap="enterpriseResultMap"/>
+		<association property="quoteStatistic" javaType="com.wangmeng.service.bean.QuoteStatistic" resultMap="quoteStatisticResultMap"/>
+		<collection property="orderTransferList" ofType="com.wangmeng.service.bean.OrderTransfer" resultMap="orderTransferResultMap" />
+	</resultMap>
+
+
+	<!-- 订单关联报价商品清单结果集（废弃） -->
+	<resultMap id="orderPurchaseProductResultMap" type="com.wangmeng.service.bean.vo.OrderInfoVo">
+		<result property="orderNo" column="OrderNo"/>
+		<result property="projectName" column="ProjectName"/>
+		<result property="sendTime" column="SendTime"/>
+		<result property="totalCost" column="TotalCost"/>
+		<result property="productKind" column="ProductKind"/>
+		<result property="status" column="Status"/>
+		<result property="address" column="Address"/>
+		<collection property="purchaseProductList" ofType="com.wangmeng.service.bean.PurchaseProduct" resultMap="purchaseProductResultMap" />
+	</resultMap>
+
+
+	<!-- 下单 -->
+	<insert id="OrderInfo.order" parameterType="com.wangmeng.service.bean.OrderInfo">
+		insert into wm_orderinfo_t
+		(OrderNo,ProjectName,SupplyId,Role,BuyCompany,UserId,ProductKind,ProductCount,
+		TotalCost,TotalCostLong,Address,SecondAddr,ThirdAddr,SendTime,PurchaseNo,QuoteNo,Status,PayType)
+		values(#{orderNo},#{projectName},#{supplyId},#{role},#{buyCompany},
+		#{userId},#{productKind},#{productCount},#{totalCost},#{totalCostLong},#{address},#{secondAddr},
+		#{thirdAddr},NOW(),#{purchaseNo},#{quoteNo},#{status},#{payType})
+	</insert>
+	
+	<!-- 修改订单信息 -->
+	<update id="OrderInfo.updateOrder" parameterType="com.wangmeng.service.bean.OrderInfo">
+		update wm_orderinfo_t
+		<set>
+			OrderNo = #{orderNo}
+			<if test="status != 0">
+			,Status = #{status}
+			</if>
+			<if test="payType != 0">
+			,PayType = #{payType}
+			</if>
+			<if test="payTime != null">
+			,PayTime = #{payTime}
+			</if>
+			<if test="userId != 0">
+			,UserId = #{userId}
+			</if>
+			<if test="address != null and address != ''">
+			,Address = #{address}
+			</if>
+			<if test="role != 0">
+			,Role = #{role}
+			</if>
+			<if test="buyCompany != 0">
+			,BuyCompany = #{buyCompany}
+			</if>
+		</set>
+		<where>
+			OrderNo = #{orderNo}
+		</where>
+	</update>
+	
+	<!-- 订单查询 -->
+	<select id="OrderInfo.queryOrder" parameterType="com.wangmeng.service.bean.OrderInfo"
+		resultType="com.wangmeng.service.bean.OrderInfo">
+		select *,
+		#{buyerseller} as buyerseller
+		from wm_orderinfo_t
+		where 1=1
+		<if test="id != 0">
+		and Id = #{id}
+		</if>
+		<if test="orderNo != null and orderNo != ''">
+		and OrderNo = #{orderNo}
+		</if>
+		<if test="supplyId != 0">
+		and SupplyId = #{supplyId}
+		</if>
+		<if test="buyCompany != 0">
+		and BuyCompany = #{buyCompany}
+		</if>
+		<if test="userId != 0">
+		and UserId = #{userId}
+		</if>
+		<if test="purchaseNo != null and purchaseNo != ''">
+		and PurchaseNo = #{purchaseNo}
+		</if>
+		<if test="quoteNo != null and quoteNo != ''">
+		and QuoteNo = #{quoteNo}
+		</if>
+		<if test="status > 0">
+		and Status = #{status}
+		</if>
+		<if test="status == -1">
+		and Status = 0
+		</if>
+		<if test="status == 0">
+		and Status != 0
+		</if>
+		<if test="payType != 0">
+		and PayType = #{payType}
+		</if>
+		order by SendTime desc
+	</select>
+
+	<!-- 订单分页查询 -->
+	<select id="OrderInfo.queryOrderListByPage" resultType="com.wangmeng.service.bean.OrderInfo">
+		select #{param.buyerseller} as buyerseller, 
+		a.*,b.CompanyName as supplyName,tu.RealName as userName,
+		(SELECT count(0) FROM wm_ordercomments_t comm WHERE comm.OrderId = a.Id AND #{param.userId}=comm.UserId) commentCount, wsysus.user_name as customerName
+		from wm_orderinfo_t a 
+		<!--  <if test="param.roleId != null and param.roleId >0"> inner join wm_distributionorder_t wdi on a.OrderNo = wdi.relationNo and wdi.type = 3 and  wdi.sysUserId = #{param.sysUserId}</if> -->
+	    <choose>
+             <when test="param.roleId != null and param.roleId >0"> inner join wm_distributionorder_t wdi on a.OrderNo = wdi.relationNo and wdi.type = 3 and  wdi.sysUserId = #{param.sysUserId}</when>
+             <otherwise> left join wm_distributionorder_t wdi on wdi.relationNo = a.OrderNo and wdi.type = 3 </otherwise>
+          </choose>
+         left join  wm_sys_user wsysus  on wdi.sysuserid = wsysus.id
+		left join wm_enterpriseinfo_t b on a.supplyId = b.Id
+		left join wm_user_t tu on a.UserId = tu.Id
+		where 1=1
+		<if test="param.orderNo != null and param.orderNo != ''">
+		and a.OrderNo = #{param.orderNo}
+		</if>
+		<if test="param.supplyId != 0">
+		and a.SupplyId = #{param.supplyId}
+		</if>
+		<if test="param.buyCompany != 0">
+		and a.BuyCompany = #{param.buyCompany}
+		</if>
+		<if test="param.userId != 0">
+		and a.UserId = #{param.userId}
+		</if>
+		<if test="param.userName != null and param.userName != ''">
+		and tu.RealName=#{param.userName}
+		</if>
+		<if test="param.purchaseNo != null and param.purchaseNo != ''">
+		and a.PurchaseNo = #{param.purchaseNo}
+		</if>
+		<if test="param.quoteNo != null and param.quoteNo != ''">
+		and a.QuoteNo = #{param.quoteNo}
+		</if>
+		<if test="param.projectName !=null and param.projectName !='' ">
+		and a.projectName like  '%${param.projectName}%'
+		</if>
+		<if test="param.status > 0">
+		and a.Status = #{param.status}
+		</if>
+		<if test="param.status == -1">
+		and a.Status = 0
+		</if>
+		<if test="param.status == 0">
+		and a.Status != 0
+		</if>
+		<if test="param.state !=null and param.state != ''">
+		and a.Status in (${param.state})
+		</if>
+		<if test="param.payType > 0">
+		and a.PayType = #{param.payType}
+		</if>
+		<if test="param.startTime != null and param.startTime != ''">
+		and a.SendTime > #{param.startTime}
+		</if>
+		<if test="param.endTime != null and param.endTime != ''">
+		and #{param.endTime} > a.SendTime
+		</if>
+		order by SendTime desc
+	</select>
+
+
+
+	<!-- 移动端订单分页查询 统计全部订单时只包括4种状态 (40 70 90 99)  废弃 -->
+	<select id="OrderInfo.queryOrder4AppListByPage" resultType="com.wangmeng.service.bean.OrderInfo">
+		select a.*,b.CompanyName as supplyName,tu.RealName as userName,
+		#{buyerseller} as buyerseller,
+		(SELECT count(0) FROM wm_ordercomments_t comm WHERE comm.OrderId = a.Id AND #{param.userId}=comm.UserId) commentCount
+
+		from wm_orderinfo_t a left join wm_enterpriseinfo_t b on a.supplyId = b.Id
+		left join wm_user_t tu on a.UserId = tu.Id
+		where 1=1
+		<if test="param.orderNo != null and param.orderNo != ''">
+			and a.OrderNo = #{param.orderNo}
+		</if>
+		<if test="param.supplyId != 0">
+			and a.SupplyId = #{param.supplyId}
+		</if>
+		<if test="param.buyCompany != 0">
+			and a.BuyCompany = #{param.buyCompany}
+		</if>
+		<if test="param.userId != 0">
+			and a.UserId = #{param.userId}
+		</if>
+		<if test="param.purchaseNo != null and param.purchaseNo != ''">
+			and a.PurchaseNo = #{param.purchaseNo}
+		</if>
+		<if test="param.quoteNo != null and param.quoteNo != ''">
+			and a.QuoteNo = #{param.quoteNo}
+		</if>
+		<if test="param.status > 0">
+			and a.Status = #{param.status}
+		</if>
+
+		<if test="param.status == 0">
+			and ((a.Status=40 OR a.Status=60 OR a.Status=90 OR a.Status=99) and a.Status != 0)
+		</if>
+		<if test="param.status == -1">
+		and a.Status != 0
+		</if>
+		<if test="param.payType > 0">
+			and a.PayType = #{param.payType}
+		</if>
+		<if test="param.startTime != null and param.startTime != ''">
+			and a.SendTime > #{param.startTime}
+		</if>
+		<if test="param.endTime != null and param.endTime != ''">
+			and #{param.endTime} > a.SendTime
+		</if>
+	</select>
+
+
+	<!-- 移动端订单分页查询 -->
+	<select id="OrderInfo.queryOrders4AppListByPage" resultType="com.wangmeng.service.bean.OrderInfo">
+		select a.*,b.CompanyName as supplyName,tu.RealName as userName,quotestatis.ExpressFee as expressFee,
+
+		(SELECT count(0) FROM wm_ordercomments_t comm WHERE comm.OrderId = a.Id AND #{param.userId}=comm.UserId) commentCount
+
+		from wm_orderinfo_t a
+		left join wm_enterpriseinfo_t b on a.supplyId = b.Id
+		left join wm_user_t tu on a.UserId = tu.Id
+
+		left join wm_quotestatistic_t quotestatis ON (a.QuoteNo=quotestatis.QuoteNo)
+
+		where 1=1 and a.Status !=0
+
+		<if test="param.supplyId != 0">
+			and a.SupplyId = #{param.supplyId}
+		</if>
+		<if test="param.userId != 0">
+			and a.UserId = #{param.userId}
+		</if>
+
+		<if test="statusList!=null">
+			AND a.Status IN
+			<foreach collection="statusList" item="status" index="index" open="(" close=")" separator=",">
+				#{status,jdbcType=INTEGER}
+			</foreach>
+		</if>
+		order by a.SendTime DESC
+	</select>
+
+
+	<!-- 查询订单详情 -->
+	<select id="OrderInfo.getOrder" parameterType="com.wangmeng.service.bean.OrderInfo" 
+		resultType="com.wangmeng.service.bean.OrderInfo">
+		select * from wm_orderinfo_t
+		where 1=1
+		<if test="id != 0">
+		and Id = #{id}
+		</if>
+		<if test="orderNo != null and orderNo != ''">
+		and OrderNo = #{orderNo}
+		</if>
+	</select>
+
+	<!-- 根据状态统计订单数量 -->
+	<select id="OrderInfo.countByStatus" parameterType="com.wangmeng.service.bean.OrderInfo" resultType="java.lang.Long" >
+		select count(distinct id) from wm_orderinfo_t WHERE Status not in (0) and Status = #{status}
+		<if test="supplyId > 0"> and SupplyId = #{supplyId}</if>
+		<if test="userId > 0"> and UserId = #{userId} </if>
+	</select>
+
+	<!-- 卖家订单分页查询 -->
+	<select id="OrderInfo.queryByPagination4SellerListByPage" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo"
+			resultType="com.wangmeng.service.bean.vo.OrderInfoVo">
+		select orderinfo.*,enterpriseinfo.CompanyName
+
+		from wm_orderinfo_t orderinfo
+		LEFT JOIN wm_enterpriseinfo_t enterpriseinfo ON (enterpriseinfo.Id=orderinfo.BuyCompany)
+		where orderinfo.Status not in (0,10)
+
+		and orderinfo.SupplyId = #{param.supplyId}
+
+		<if test="param.id!=0" >
+			and orderinfo.Id = #{param.id}
+		</if>
+		<if test="param.orderNo!=null and param.orderNo!=''" >
+			and orderinfo.OrderNo = #{param.orderNo}
+		</if>
+		<if test="param.projectName!=null and param.projectName!=''" >
+			and orderinfo.ProjectName = #{param.projectName}
+		</if>
+		<if test="param.buyCompany!=0" >
+			and orderinfo.BuyCompany = #{param.buyCompany}
+		</if>
+		<if test="param.userId!=0" >
+			and orderinfo.UserId = #{param.userId}
+		</if>
+		<if test="param.purchaseNo!=null and param.purchaseNo!=''" >
+			and orderinfo.PurchaseNo = #{param.purchaseNo}
+		</if>
+		<if test="param.quoteNo!=null and param.quoteNo!=''" >
+			and orderinfo.QuoteNo = #{param.quoteNo}
+		</if>
+		<if test="param.status>0" >
+			and orderinfo.Status = #{param.status}
+		</if>
+		<if test="param.status==0" >
+			and orderinfo.Status != 0
+		</if>
+		<if test="param.payType!=0" >
+			and orderinfo.PayType = #{param.payType}
+		</if>
+		<if test="param.beginTime!=null and param.beginTime!='' and param.endTime!=null and param.endTime!=''" >
+		<![CDATA[
+		 	and orderinfo.SendTime >= #{param.beginTime} and orderinfo.SendTime <= #{param.endTime}
+		]]>
+		</if>
+		ORDER BY orderinfo.SendTime DESC
+	</select>
+
+
+	<!-- 卖家查询明细 -->
+	<select id="OrderInfo.queryDetail" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo" resultMap="orderDetailResultMap">
+		SELECT #{buyerseller} buyerseller,orderinfo.*,
+		enterprise.Id enterprise_id ,enterprise.CompanyName enterprise_companyname,
+		ordertransfer.Id ordertransfer_id,ordertransfer.SendType ordertransfer_sendtype,ordertransfer.SendTime ordertransfer_sendtime,
+		ordertransfer.TransferCom ordertransfer_transcom,ordertransfer.TransCode ordertransfer_transcode, ordertransfer.SendProv ordertransfer_sendprov,
+		ordertransfer.ReachTime ordertransfer_reachtime,ordertransfer.ReachProv ordertransfer_reachprov,
+		ordertransfer.ShipperContact shipperContact,ordertransfer.ShipperPhone shipperPhone,ordertransfer.ShipperAdd shipperAdd,
+		quotestatis.id quotestatis_id, quotestatis.ExpressFee quotestatis_expressfee, quotestatis.TotalCost quotestatis_totalcost,
+		quotestatis.InvoiceType quotestatis_invoicetype, quotestatis.FeeRate  quotestatis_feerate, quotestatis.Fee quotestatis_fee, orderflow.Cost Cost
+		FROM wm_orderinfo_t orderinfo
+		LEFT JOIN wm_enterpriseinfo_t enterprise ON (orderinfo.supplyId=enterprise.Id)
+		LEFT JOIN wm_ordertransfer_t ordertransfer ON (orderinfo.OrderNo=ordertransfer.OrderNo)
+		LEFT JOIN wm_quotestatistic_t quotestatis ON (orderinfo.QuoteNo=quotestatis.QuoteNo)
+		LEFT JOIN wm_orderflow_t orderflow ON (orderinfo.OrderNo=orderflow.OrderNo)
+		WHERE 1=1
+		<if test="id != 0">
+			and orderinfo.Id = #{id}
+		</if>
+		<if test="orderNo != null and orderNo != ''">
+			and orderinfo.OrderNo = #{orderNo}
+		</if>
+		<if test="quoteNo != null and quoteNo != ''">
+			and orderinfo.QuoteNo = #{quoteNo}
+		</if>
+		limit 0,1
+	</select>
+
+	<!-- 卖家根据订单ID查询明细 -->
+	<select id="OrderInfo.queryDetailById" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo" resultMap="orderDetailResultMap">
+		SELECT orderinfo.*,
+			enterprise.Id enterprise_id ,enterprise.CompanyName enterprise_companyname,
+			ordertransfer.Id ordertransfer_id,ordertransfer.SendType ordertransfer_sendtype,ordertransfer.SendTime ordertransfer_sendtime,
+			ordertransfer.TransferCom ordertransfer_transcom,ordertransfer.TransCode ordertransfer_transcode, ordertransfer.SendProv ordertransfer_sendprov,
+			ordertransfer.ReachTime ordertransfer_reachtime,ordertransfer.ReachProv ordertransfer_reachprov,
+			ordertransfer.ShipperContact shipperContact,ordertransfer.ShipperPhone shipperPhone,ordertransfer.ShipperAdd shipperAdd,
+			quotestatis.id quotestatis_id, quotestatis.ExpressFee quotestatis_expressfee, quotestatis.TotalCost quotestatis_totalcost,
+			quotestatis.InvoiceType quotestatis_invoicetype, quotestatis.FeeRate  quotestatis_feerate, quotestatis.Fee quotestatis_fee
+		FROM wm_orderinfo_t orderinfo
+			LEFT JOIN wm_enterpriseinfo_t enterprise ON (orderinfo.supplyId=enterprise.Id)
+			LEFT JOIN wm_ordertransfer_t ordertransfer ON (orderinfo.OrderNo=ordertransfer.OrderNo)
+			LEFT JOIN wm_quotestatistic_t quotestatis ON (orderinfo.QuoteNo=quotestatis.QuoteNo)
+		WHERE orderinfo.Id = #{id}
+	</select>
+	
+	<!-- 卖家根据订单号查询明细 -->
+	<select id="OrderInfo.queryDetailByNo" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo" resultMap="orderDetailResultMap">
+		SELECT orderinfo.*,
+			enterprise.Id enterprise_id ,enterprise.CompanyName enterprise_companyname,
+			ordertransfer.Id ordertransfer_id,ordertransfer.SendType ordertransfer_sendtype,ordertransfer.SendTime ordertransfer_sendtime,
+			ordertransfer.TransferCom ordertransfer_transcom,ordertransfer.TransCode ordertransfer_transcode, ordertransfer.SendProv ordertransfer_sendprov,
+			ordertransfer.ReachTime ordertransfer_reachtime,ordertransfer.ReachProv ordertransfer_reachprov,
+			ordertransfer.ShipperContact shipperContact,ordertransfer.ShipperPhone shipperPhone,ordertransfer.ShipperAdd shipperAdd,
+			quotestatis.id quotestatis_id, quotestatis.ExpressFee quotestatis_expressfee, quotestatis.TotalCost quotestatis_totalcost,
+			quotestatis.InvoiceType quotestatis_invoicetype, quotestatis.FeeRate  quotestatis_feerate, quotestatis.Fee quotestatis_fee
+		FROM wm_orderinfo_t orderinfo
+			LEFT JOIN wm_enterpriseinfo_t enterprise ON (orderinfo.supplyId=enterprise.Id)
+			LEFT JOIN wm_ordertransfer_t ordertransfer ON (orderinfo.OrderNo=ordertransfer.OrderNo)
+			LEFT JOIN wm_quotestatistic_t quotestatis ON (orderinfo.QuoteNo=quotestatis.QuoteNo)
+		WHERE orderinfo.OrderNo = #{orderNo}
+	</select>
+
+	<!-- 卖家根据报价单号查询明细 -->
+	<select id="OrderInfo.queryDetailByQuoteNo" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo" resultMap="orderDetailResultMap">
+		SELECT orderinfo.*,
+			enterprise.Id enterprise_id ,enterprise.CompanyName enterprise_companyname,
+			ordertransfer.Id ordertransfer_id,ordertransfer.SendType ordertransfer_sendtype,ordertransfer.SendTime ordertransfer_sendtime,
+			ordertransfer.TransferCom ordertransfer_transcom,ordertransfer.TransCode ordertransfer_transcode, ordertransfer.SendProv ordertransfer_sendprov,
+			ordertransfer.ReachTime ordertransfer_reachtime,ordertransfer.ReachProv ordertransfer_reachprov,
+			ordertransfer.ShipperContact shipperContact,ordertransfer.ShipperPhone shipperPhone,ordertransfer.ShipperAdd shipperAdd,
+			quotestatis.id quotestatis_id, quotestatis.ExpressFee quotestatis_expressfee, quotestatis.TotalCost quotestatis_totalcost,
+			quotestatis.InvoiceType quotestatis_invoicetype, quotestatis.FeeRate  quotestatis_feerate, quotestatis.Fee quotestatis_fee
+		FROM wm_orderinfo_t orderinfo
+			LEFT JOIN wm_enterpriseinfo_t enterprise ON (orderinfo.supplyId=enterprise.Id)
+			LEFT JOIN wm_ordertransfer_t ordertransfer ON (orderinfo.OrderNo=ordertransfer.OrderNo)
+			LEFT JOIN wm_quotestatistic_t quotestatis ON (orderinfo.QuoteNo=quotestatis.QuoteNo)
+		WHERE orderinfo.QuoteNo = #{quoteNo}
+	</select>
+
+	<!-- 根据订单id查询采购商品列表 -->
+	<select id="OrderInfo.queryPurchaseProductsByOrderId" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo" resultMap="purchaseProductResultMap">
+		SELECT purchaseproduct.*,quoteinfo.Price quoteinfo_price
+		FROM wm_purchaseproduct_t purchaseproduct
+			LEFT JOIN wm_quoteinfo_t quoteinfo ON (quoteinfo.InquiryId=purchaseproduct.Id)
+			LEFT JOIN wm_orderinfo_t orderinfo ON (orderinfo.QuoteNo=quoteinfo.QuoteNo)
+		WHERE orderinfo.Id = #{id}
+	</select>
+
+	<!-- 根据订单编号查询采购协议扩展信息 -->
+	<select id="OrderInfo.queryProtocolExtraByOrderNo" parameterType="com.wangmeng.service.bean.vo.OrderInfoVo" resultType="com.wangmeng.service.bean.PurchaseProtocolExtraInfo">
+		SELECT extra.Id,extra.ProtocolCode,extra.ShipTo1,extra.IdNo1,extra.ContanctPhone1,extra.ShipTo2,extra.IdNo2,extra.ContanctPhone2,extra.OpenBank,extra.BankCardNo,extra.BankUserName
+		FROM wm_orderinfo_t orderinfo
+		LEFT JOIN wm_purchaseprotocol_t protocol ON (orderinfo.OrderNo=protocol.OrderNo)
+		LEFT JOIN wm_protocolextra_t extra ON (protocol.ProtocolNo=extra.ProtocolCode)
+		WHERE orderinfo.OrderNo=#{orderNo}
+	</select>
+
+	<!-- 订单评分 -->
+	<insert id="addOrderComments" parameterType="com.wangmeng.service.bean.OrderComments" >
+		insert into wm_ordercomments_t(OrderId,UserId,CommentDate,PackMark,DeliveryMark,ServiceMark,Content,UserType)
+	   	values(#{orderId},#{userId},now(),#{packMark},#{deliveryMark},#{serviceMark},#{content},#{userType})
+	</insert>
+
+    <!-- 推送订单 -->
+    <update id="pushOrderForSeller" parameterType="map">
+        update wm_orderinfo_t 
+        <set> 
+            status=#{status} 
+        <if test="supplyId != '' and supplyId != null">,SupplyId =#{supplyId}</if>
+        <if test="status == 99">
+            ,ClosedTime = now()    
+        </if>
+		<if test="gatheringDate != null">
+			,PayTime = #{gatheringDate}
+		</if>
+        </set>
+        where OrderNo = #{orderNo}
+    </update>
+    
+    <!-- 确认收款 -->
+    <insert id="confirmToAccount">
+        insert into wm_gathering_t(OrderNo,PriceTotal,GatheringTime,GatheringTotal,GatheringAccount,DepositBank,path,createDate)
+        values(#{orderNo},#{priceTotal},#{gatheringDate},#{gatheringTotal},#{gatheringAccount},#{depositBank},#{path},now())
+    </insert>
+    
+    <!-- 更新订单状态 -->
+    <update id="updateOrderStatus" parameterType="map">
+        update wm_orderinfo_t set Status=#{orderStatus} where OrderNo = #{orderNo} <if test=" orderRawStatus != null and orderRawStatus gt 0"> and Status =#{orderRawStatus}</if>
+    </update>
+    
+    <!-- 获取订单状态 -->
+   	<select id="queryOrderStatusByNo" parameterType="map"
+		resultType="java.lang.Integer">
+		select Status from wm_orderinfo_t where OrderNo = #{orderNo}
+	</select>
+	
+	<!-- 订单状态汇总 -->
+	<select id="OrderInfo.orderStatisitc" resultType="com.wangmeng.service.bean.MapEntity"
+		parameterType="com.wangmeng.service.bean.OrderInfo">
+		select count(0) as value, Status as `key`
+		from wm_orderinfo_t
+		where 1=1
+		<if test="id != 0">
+		and Id = #{id}
+		</if>
+		<if test="orderNo != null and orderNo != ''">
+		and OrderNo = #{orderNo}
+		</if>
+		<if test="supplyId != 0">
+		and SupplyId = #{supplyId}
+		</if>
+		<if test="buyCompany != 0">
+		and BuyCompany = #{buyCompany}
+		</if>
+		<if test="userId != 0">
+		and UserId = #{userId}
+		</if>
+		<if test="purchaseNo != null and purchaseNo != ''">
+		and PurchaseNo = #{purchaseNo}
+		</if>
+		<if test="quoteNo != null and quoteNo != ''">
+		and QuoteNo = #{quoteNo}
+		</if>
+		<if test="payType != 0">
+		and PayType = #{payType}
+		</if>
+		group by Status
+	</select>
+	
+    <select id="OrderInfo.queryAccountGatering" parameterType="map" resultType="com.wangmeng.service.bean.Gathering">
+         select * from wm_gathering_t
+         <where>
+            <if test="orderNo != null and orderNo !=''">
+             and OrderNo =#{orderNo} 
+            </if>
+         </where>
+         order by  createDate desc
+    </select>
+    
+    
+    <!-- 插入订单备注 -->
+    <insert id="OrderInfo.insertOrderoparetionlog" parameterType="com.wangmeng.service.bean.Orderoparetionlog">
+    	insert into wm_orderoparetionlog_t(
+			OrderNo,
+			SysUserId,
+			SysUserName,
+			Remark,
+			CreateDate
+    	)values(
+    		#{orderNo},
+    		#{sysUserId},
+    		#{sysUserName},
+    		#{remark},
+    		now()
+    	)
+    </insert>
+    <!-- 订单编号查询订单备注 -->
+    <select id="OrderInfo.searchOrderoparetionlog" parameterType="java.lang.String" resultType="com.wangmeng.service.bean.Orderoparetionlog">
+    	select * from wm_orderoparetionlog_t where OrderNo =#{orderNo}
+    </select>
+    
+    
+       
+    
+    <!--  第二期 訂單 sql 修改如下 -->
+   	<select id="OrderInfo.queryOrdersNewInfoListByPage" resultType="com.wangmeng.service.bean.OrderInfo">
+   	select ProjectName, o.`Status`,o.SendTime,q.BrandNames,e.CompanyName,o.ProductKind,o.TotalCost
+   	    from wm_orderinfo_t o
+		left JOIN wm_enterpriseinfo_t e on  o.SupplyId = e.Id
+		left JOIN wm_quotestatistic_t q on o.quoteNo = q.QuoteNo
+		where 1=1 and a.Status !=0
+
+		<if test="param.supplyId != 0">
+			and a.SupplyId = #{param.supplyId}
+		</if>
+		<if test="param.userId != 0">
+			and a.UserId = #{param.userId}
+		</if>
+
+		<if test="statusList!=null">
+			AND a.Status IN
+			<foreach collection="statusList" item="status" index="index" open="(" close=")" separator=",">
+				#{status,jdbcType=INTEGER}
+			</foreach>
+		</if>
+		
+		order by sendtime desc 
+   	</select>
+    
+    <!-- 第二期訂單相關sql查詢 -->
+    <select id="OrderInfo.getOrdersNew4AppListByPage" resultType="com.wangmeng.service.bean.vo.OrderNewInfoVo">
+		select #{param.buyerseller} as buyerseller,
+		 o.id, o.orderNo, projectName, o.`Status` as status,o.SendTime,q.BrandNames,e.CompanyName as supplyName,o.ProductKind,o.TotalCost
+   	    from wm_orderinfo_t o
+		left JOIN wm_enterpriseinfo_t e on  o.SupplyId = e.Id
+		left JOIN wm_quotestatistic_t q on o.quoteNo = q.QuoteNo
+		
+		where 1=1  and o.Status !=0
+		<if test="param.supplyId != 0">
+			and o.SupplyId = #{param.supplyId}
+		</if>
+		<if test="param.userId != 0">
+			and o.UserId = #{param.userId}
+		</if>
+
+		<if test="statusList!=null">
+			AND o.Status IN
+			<foreach collection="statusList" item="status" index="index" open="(" close=")" separator=",">
+				#{status,jdbcType=INTEGER}
+			</foreach>
+		</if>
+		order by sendtime desc 
+	</select>
+</mapper>

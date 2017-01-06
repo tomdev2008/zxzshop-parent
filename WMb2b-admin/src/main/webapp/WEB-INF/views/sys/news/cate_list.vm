@@ -1,0 +1,154 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>文章管理</title>
+    
+     <link href="$!{request.getContextPath()}/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+   	 <link href="$!{request.getContextPath()}/assets/css/bui-min.css" rel="stylesheet" type="text/css" />
+     <link href="$!{request.getContextPath()}/assets/css/main-min.css" rel="stylesheet" type="text/css" />
+     <link href="$!{request.getContextPath()}/assets/css/admin/bootstrap.min.css" rel="stylesheet">
+	 <link href="$!{request.getContextPath()}/assets/css/admin/artdilog.css" rel="stylesheet">
+     <link href="$!{request.getContextPath()}/assets/css/admin/admin-article-category.css" rel="stylesheet">
+     <script type="text/javascript" src="$request.getContextPath()/assets/js/LAB.min.js"></script>
+   	 <script type="text/javascript" src="$request.getContextPath()/assets/js/jquery-1.8.1.min.js"></script>
+   	 <script type="text/javascript" src="$request.getContextPath()/assets/js/bui-min.js"></script>
+   	 <script type="text/javascript" src="$request.getContextPath()/assets/js/admin/jquery.artDialog.js"></script>
+   	 <script type="text/javascript" src="$request.getContextPath()/assets/js/admin/artDialog.iframeTools.js"></script>
+   	 <script type="text/javascript" src="$request.getContextPath()/assets/js/admin/admin-article-category.js"></script>
+        <script src="$!{request.getContextPath()}/assets/js/sea.js"></script>
+        <script src="$!{request.getContextPath()}/assets/js/config.js"></script>
+  	 <script type="text/javascript" language="JavaScript">
+  	 
+  	   //新增分类
+  	    var dialog_add
+    	BUI.use('bui/overlay',function(Overlay){
+    	  dialog_add = new Overlay.Dialog({
+                    title:'新增下级',
+                    width:600,
+                    height:370,
+                    loader : {
+                      url : '$request.getContextPath()/News/to_addCate.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'   //加载的数据类型
+                    },
+                    mask:false,
+					success:function () {
+					$("#U_Add_Form").submit();
+                          this.close();
+                    }
+                  });
+    	 });
+		 
+		 //新增下级
+		 var dialog_addChild
+		 BUI.use('bui/overlay',function(Overlay){
+    	    dialog_addChild = new Overlay.Dialog({
+                    title:'修改信息',
+                     width:600,
+                    height:370,
+                    loader : {
+                      url : '$request.getContextPath()/News/to_addChild.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    mask:false,
+					success:function () {
+					  	$("#U_Add_Child_Form").submit();
+                        this.close();
+                    }
+                  });
+    	 });
+		 //编辑分类
+		 var dialog_edit_cate
+		 BUI.use('bui/overlay',function(Overlay){
+    	    dialog_edit_cate = new Overlay.Dialog({
+                    title:'修改信息',
+                     width:600,
+                    height:370,
+                    loader : {
+                      url : '$request.getContextPath()/News/to_cate_edit.do',
+                      autoLoad : false, //不自动加载
+                      //params : {a : 'a'},//附加的参数
+                      lazyLoad : false, //不延迟加载
+                      dataType : 'text'
+                    },
+                    mask:false,
+					success:function () {
+					  	$("#U_Edit_Cate_Form").submit();
+                        this.close();
+                    }
+                  });
+    	 });
+  	 
+  	 	//新增分类
+  	 	function add_form(){
+            dialog_add.show();
+            dialog_add.get('loader').load();
+		 } 
+  	 	
+		 //新增下级
+		 function addChild_form(userId){
+            dialog_addChild.show();
+            dialog_addChild.get('loader').load({id:userId});
+		 }  
+		 
+		 //编辑分类
+		 function edit_cate_form(userId){
+            dialog_edit_cate.show();
+            dialog_edit_cate.get('loader').load({id:userId});
+		 } 
+		  
+  	 </script>
+    </head>
+    <body>
+
+
+        #auth($request.getSession().getAttribute("session.user").getId(),"文章分类.新增分类")
+            <div style="display: inline-block;padding-bottom: 15px;">
+   				<a href="#" title="新增分类" onClick="javascript:add_form();">新增分类</a>
+             </div>
+	    #end
+
+            <table cellspacing="0" class="table table-bordered category">
+              <thead>
+                <tr>
+                  <th>分类名称/排序</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+               #foreach( $cate in $catelist )
+                    <tr data-id="$cate.id">
+                      <td><i class=""></i>$cate.name</td>
+                      <td>
+                      #auth($request.getSession().getAttribute("session.user").getId(),"文章分类.新增下级")
+                        <a href="#" title="新增下级" onClick="javascript:addChild_form($cate.id);" tab="$cate.id">新增下级</a>
+                      #end
+                      #auth($request.getSession().getAttribute("session.user").getId(),"文章分类.编辑")
+                        <a href="#" title="编辑" onClick="javascript:edit_cate_form($cate.id);" tab="$cate.id">编辑</a>
+                      #end
+					  </td>
+                    </tr>
+                   
+                     #foreach( $childCate in $cate.subNesCategory )
+                     
+	                     <tr data-parent="$cate.id" data-id="$childCate.id">
+	                        <td>&nbsp;&nbsp;&nbsp;&nbsp;├───$childCate.name</td>
+		                    <td class="second">
+		                     <a href="#" title="编辑" onClick="javascript:edit_cate_form($childCate.id);" tab="$childCate.id">编辑</a>
+		                     <a href="javascript:;" class="delete" tab="$childCate.id">删除</a>
+		                    </td>
+		                </tr>
+                        
+                     #end
+				#end
+              </tbody>
+            </table>
+    
+    </body>
+    </html>       
